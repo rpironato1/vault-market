@@ -2,11 +2,13 @@
 
 import React, { useState } from 'react';
 import AppLayout from '@/components/layout/AppLayout';
-import HighConversionCard from '@/features/marketplace/components/HighConversionCard';
-import ImmersiveOpener from '@/features/marketplace/components/ImmersiveOpener';
+import HighConversionCard from '../features/marketplace/components/HighConversionCard';
+import NearMissOpener from '../features/marketplace/components/NearMissOpener';
+import LiveTicker from '@/features/marketing/components/LiveTicker';
 import { MysteryBox, Reward } from '@/_core/domain/entities';
 import { useStore } from '../_infrastructure/state/store';
 import { showError } from '@/utils/toast';
+import { Lightning, TrendUp, UserCirclePlus } from '@phosphor-icons/react';
 
 const BOX_REGISTRY: MysteryBox[] = [
   {
@@ -28,9 +30,9 @@ const BOX_REGISTRY: MysteryBox[] = [
   {
     id: 'box-3',
     name: 'Core Starter Pack',
-    price: 14.50,
+    price: 1.00,
     tier: 'Common',
-    description: 'Unidades de entrada para novos exploradores do ecossistema.',
+    description: 'Abra a Caixa do Milhão por apenas $1. Oportunidade limitada.',
     imageUrl: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=400&q=80'
   },
   {
@@ -50,7 +52,6 @@ const Marketplace = () => {
   const handleAcquire = (box: MysteryBox) => {
     if (balance >= box.price) {
       updateBalance(-box.price);
-      
       const newReward: Reward = {
         id: `rw-${Math.random().toString(36).substr(2, 9)}`,
         name: `${box.name} Artifact`,
@@ -58,40 +59,53 @@ const Marketplace = () => {
         value: box.price * (Math.random() > 0.7 ? 1.5 : 0.8),
         timestamp: Date.now()
       };
-      
       setActiveReward(newReward);
     } else {
-      showError("Saldo insuficiente para sincronizar esta unidade.");
+      showError("Saldo insuficiente. Deposite via PIX ou Crypto.");
     }
   };
 
   return (
     <AppLayout>
-      <div className="flex flex-col gap-12">
-        <header className="relative py-16 px-10 rounded-3xl bg-gradient-to-br from-emerald-500/20 via-[#121214] to-[#121214] border border-white/10 overflow-hidden shadow-2xl">
-          <div className="absolute -right-20 -top-20 h-64 w-64 bg-emerald-500/10 blur-[100px]" />
-          <div className="relative z-10 max-w-3xl">
-            <h1 className="text-6xl font-black tracking-tighter mb-6 uppercase text-white leading-none">
-              Expanda sua <span className="text-emerald-500 italic">Rede.</span>
-            </h1>
-            <p className="text-xl text-zinc-300 font-medium leading-relaxed">
-              Adquira unidades verificadas, sincronize seu vault e ganhe tokens de engajamento para validar novas experiências dentro do protocolo.
-            </p>
+      <div className="flex flex-col gap-12 relative">
+        <header className="relative py-24 px-12 rounded-[40px] bg-[#121212] border border-white/5 overflow-hidden shadow-2xl">
+          <div className="absolute top-0 right-0 p-8 flex flex-col items-end gap-1">
+             <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Global Payout</span>
+             <span className="text-3xl font-mono font-black text-[#00FF9C] tracking-tighter">$1.482.020,42</span>
           </div>
+          
+          <div className="relative z-10 max-w-3xl">
+            <div className="flex items-center gap-2 mb-6">
+               <div className="h-6 w-12 rounded-full bg-[#FF007F]/10 border border-[#FF007F]/20 flex items-center justify-center">
+                  <span className="text-[9px] font-black text-[#FF007F] uppercase tracking-widest animate-pulse">Live</span>
+               </div>
+               <span className="text-xs font-bold text-zinc-400">1.240 usuários ativos agora</span>
+            </div>
+            <h1 className="text-7xl font-black tracking-tighter mb-8 uppercase text-white leading-[0.9]">
+              Abra a Caixa do <br />
+              <span className="text-[#FFD700] italic">Milhão por $1.</span>
+            </h1>
+            <div className="flex items-center gap-6">
+               <button className="h-16 px-10 rounded-2xl bg-white text-black font-black uppercase tracking-widest hover:scale-105 transition-transform flex items-center gap-3">
+                  <UserCirclePlus weight="fill" size={24} />
+                  Acesso Instantâneo
+               </button>
+               <div className="flex flex-col">
+                  <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Ticket Médio de Volta</span>
+                  <span className="text-[#00FF9C] font-black text-xl">+142%</span>
+               </div>
+            </div>
+          </div>
+          
+          <div className="absolute -bottom-20 -right-20 h-96 w-96 bg-[#00FF9C]/5 blur-[120px] rounded-full" />
         </header>
 
         <section>
-          <div className="flex items-center justify-between mb-10 border-b border-white/10 pb-6">
-            <h2 className="text-sm font-black uppercase tracking-[0.3em] text-zinc-400 flex items-center gap-3">
-              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,1)]" />
-              Unidades Disponíveis
-            </h2>
-            <div className="flex gap-3">
-              {['Common', 'Rare', 'Epic', 'Legendary'].map(t => (
-                <span key={t} className="text-[10px] font-black px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 uppercase text-zinc-500">
-                  {t}
-                </span>
-              ))}
+          <div className="flex items-center justify-between mb-12 border-b border-white/5 pb-8">
+            <div className="flex items-center gap-4">
+               <h2 className="text-2xl font-black uppercase tracking-tighter text-white">Marketplace de Oportunidades</h2>
+               <div className="h-8 w-px bg-white/10" />
+               <span className="text-xs font-bold text-zinc-500 uppercase tracking-[0.2em]">Sincronia Global</span>
             </div>
           </div>
 
@@ -102,7 +116,9 @@ const Marketplace = () => {
           </div>
         </section>
 
-        <ImmersiveOpener 
+        <LiveTicker />
+
+        <NearMissOpener 
           reward={activeReward} 
           onClose={() => {
             if (activeReward) addReward(activeReward);
