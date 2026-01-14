@@ -1,8 +1,11 @@
+"use client";
+
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Package, Info, TrendUp } from '@phosphor-icons/react';
 import { useMarketplaceStore } from '../infrastructure/store';
-import { MarketBox } from '../domain/entities';
+import { MarketBox, BoxTier } from '../domain/entities';
+import { Tier } from '@/_core/domain/entities';
 import { cn } from '@/lib/utils';
 import { useStore } from '@/_infrastructure/state/store';
 import { showSuccess, showError } from '@/utils/toast';
@@ -86,5 +89,62 @@ const BoxCard = ({ box, onPurchase }: { box: MarketBox; onPurchase: (box: Market
         </div>
       </div>
     </motion.div>
+  );
+};
+
+export const BoxGrid = () => {
+  const { availableBoxes, purchaseBox } = useMarketplaceStore();
+  const { balance, updateBalance, addReward } = useStore();
+
+  const handlePurchase = async (box: MarketBox) => {
+    if (balance < box.price) {
+      showError("Saldo insuficiente para esta operação.");
+      return;
+    }
+
+    try {
+      updateBalance(-box.price);
+      const reward = await purchaseBox(box.id);
+      
+      const tierMapping: Record<BoxTier, Tier> = {
+        'Starter': 'Common',
+        'Advanced': 'Rare',
+        'Elite': 'Epic',
+        'Prestige': 'Legendary'
+      };
+
+      addReward({
+        id: reward.id,
+        name: reward.name,
+        rarity: tierMapping[reward.tier],
+        value: reward.value,
+        timestamp: Date.now()
+      });
+      
+      showSuccess("Item adicionado ao seu Vault com sucesso!");
+    } catch (e) {
+      showError("Erro ao processar transação.");
+    }
+  };
+
+  return (
+    <div className="max-w-7xl mx-auto py-16 px-6 md:px-12">
+      <div className="flex items-end justify-between mb-10 border-b border-white/5 pb-6">
+        <div>
+          <h2 className="text-3xl font-black text-white uppercase tracking-tighter mb-2">Catálogo Oficial</h2>
+          <p className="text-zinc-500 text-sm font-medium">Itens verificados com garantia de valor de revenda interna.</p>
+        </div>
+        <div className="hidden md:flex items-center gap-2 text-xs font-bold text-zinc-600 uppercase">
+          <Info size={16} />
+          <span>Moedas não sacáveis • Uso exclusivo In-Game</span>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {availableBoxes.map(box => (
+          <BoxCard key={box.id} box={box} onPurchase={handlePurchase} />
+        ))}
+      </div>
+    </div>
   );
 };
