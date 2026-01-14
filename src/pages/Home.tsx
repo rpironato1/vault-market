@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import AppLayout from '@/components/layout/AppLayout';
+import LandingLayout from '@/components/layout/LandingLayout';
 import { HeroMarketplace } from '@/features/landing-marketplace/components/HeroMarketplace';
 import { BoxGrid } from '@/features/landing-marketplace/components/BoxGrid';
 import { RewardModal } from '@/features/landing-marketplace/components/RewardModal';
@@ -19,7 +19,7 @@ const FeatureItem = ({ icon: Icon, title, desc }: any) => (
 
 const Home = () => {
   return (
-    <AppLayout>
+    <LandingLayout>
       <div className="min-h-screen pb-20">
         <HeroMarketplace />
         
@@ -49,7 +49,7 @@ const Home = () => {
         {/* Components Overlay */}
         <RewardModal />
       </div>
-    </AppLayout>
+    </LandingLayout>
   );
 };
 
