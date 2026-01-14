@@ -1,43 +1,43 @@
 import { create } from 'zustand';
 import { MarketBox, UnboxedItem, BoxTier } from '../domain/entities';
 
-// CURADORIA DE 28 IMAGENS ÚNICAS, FUNCIONAIS E TESTADAS
+// CURADORIA DE 28 IMAGENS ÚNICAS E FUNCIONAIS
 const UNIQUE_CURATED_IMAGES = [
   // --- STARTER TIER (Gadgets, Consoles, Neon Básico) ---
-  'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&q=80&w=800', // 0: Cyber Cache
-  'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80&w=800', // 1: Neon Vault
-  'https://images.unsplash.com/photo-1527814050087-3793815479db?auto=format&fit=crop&q=80&w=800', // 2: Quantum Node
-  'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?auto=format&fit=crop&q=80&w=800', // 3: Void Fragment
-  'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=800', // 4: Apex Core
-  'https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&q=80&w=800', // 5: Flux Matrix
-  'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=800', // 6: Neural Pod
-  'https://images.unsplash.com/photo-1614850523296-d8c1af93d400?auto=format&fit=crop&q=80&w=800', // 7: Cosmic Link
+  'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&q=80', // Console Retrô
+  'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=800&q=80', // Teclado Mecânico Neon
+  'https://images.unsplash.com/photo-1527814050087-3793815479db?w=800&q=80', // Mouse RGB
+  'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=800&q=80', // Headphones Neon
+  'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&q=80', // Smartwatch Tech
+  'https://images.unsplash.com/photo-1563089145-599997674d42?w=800&q=80', // Abstrato Vaporwave
+  'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&q=80', // Tech Component
+  'https://images.unsplash.com/photo-1614850523296-d8c1af93d400?w=800&q=80', // Fluid Neon
 
   // --- ADVANCED TIER (Hardware, Circuitos, Infraestrutura) ---
-  'https://images.unsplash.com/photo-1605810230434-7631ac76ec81?auto=format&fit=crop&q=80&w=800', // 8: Hyper Signal
-  'https://images.unsplash.com/photo-1555680202-c86f0e12f086?auto=format&fit=crop&q=80&w=800', // 9: Data Drive
-  'https://images.unsplash.com/photo-1531297484001-80022131f5a1?auto=format&fit=crop&q=80&w=800', // 10: Solar Shard
-  'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80&w=800', // 11: Lunar Gate
-  'https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&q=80&w=800', // 12: Mecha Key
-  'https://images.unsplash.com/photo-1558494949-ef010cbdcc48?auto=format&fit=crop&q=80&w=800', // 13: Nano Lock
-  'https://images.unsplash.com/photo-1563770095-2587008675ba?auto=format&fit=crop&q=80&w=800', // 14: Cyber Cache (loop)
-  'https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&q=80&w=800', // 15: Neon Vault (loop)
+  'https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=800&q=80', // Placa Mãe Detalhe
+  'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80', // Processador
+  'https://images.unsplash.com/photo-1555680202-c86f0e12f086?w=800&q=80', // Cooler Fan
+  'https://images.unsplash.com/photo-1535378437327-1e8c83279326?w=800&q=80', // Robótica
+  'https://images.unsplash.com/photo-1591405351990-4726e331f141?w=800&q=80', // CPU Unit
+  'https://images.unsplash.com/photo-1519638399535-1b036603ac77?w=800&q=80', // Tech Setup
+  'https://images.unsplash.com/photo-1558494949-ef010cbdcc48?w=800&q=80', // Servidores
+  'https://images.unsplash.com/photo-1563770095-2587008675ba?w=800&q=80', // Data Lines
 
   // --- ELITE TIER (Segurança, Criptografia, Abstrato Dark) ---
-  'https://images.unsplash.com/photo-1518432031352-d6fc5c10da5a?auto=format&fit=crop&q=80&w=800', // 16
-  'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=800', // 17
-  'https://images.unsplash.com/photo-1635322966219-b75ed372eb01?auto=format&fit=crop&q=80&w=800', // 18
-  'https://images.unsplash.com/photo-1614728263952-84ea256f9679?auto=format&fit=crop&q=80&w=800', // 19
-  'https://images.unsplash.com/photo-1614332287897-cdc485fa562d?auto=format&fit=crop&q=80&w=800', // 20
-  'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&q=80&w=800', // 21
+  'https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?w=800&q=80', // Deep Net
+  'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&q=80', // Dark Nodes
+  'https://images.unsplash.com/photo-1635322966219-b75ed372eb01?w=800&q=80', // Encryption 3D
+  'https://images.unsplash.com/photo-1614728263952-84ea256f9679?w=800&q=80', // Cyber Core
+  'https://images.unsplash.com/photo-1614332287897-cdc485fa562d?w=800&q=80', // Signal Pulse
+  'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800&q=80', // Code Matrix
 
   // --- PRESTIGE TIER (Ouro, High-End, Cosmic Crypto) ---
-  'https://images.unsplash.com/photo-1639762681485-074b7f938ba0?auto=format&fit=crop&q=80&w=800', // 22
-  'https://images.unsplash.com/photo-1620321023374-d1a68fbc720d?auto=format&fit=crop&q=80&w=800', // 23
-  'https://images.unsplash.com/photo-1639815188546-c43c240ff4df?auto=format&fit=crop&q=80&w=800', // 24
-  'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&q=80&w=800', // 25
-  'https://images.unsplash.com/photo-1506318137071-a8e063b4bc04?auto=format&fit=crop&q=80&w=800', // 26
-  'https://images.unsplash.com/photo-1642104704074-907c0698b98d?auto=format&fit=crop&q=80&w=800'  // 27
+  'https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=800&q=80', // Gold Bitcoin
+  'https://images.unsplash.com/photo-1620321023374-d1a68fbc720d?w=800&q=80', // Ethereum Gold
+  'https://images.unsplash.com/photo-1639815188546-c43c240ff4df?w=800&q=80', // Crypto Sphere
+  'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=800&q=80', // AI Tech Gold
+  'https://images.unsplash.com/photo-1506318137071-a8e063b4bc04?w=800&q=80', // Golden Orb
+  'https://images.unsplash.com/photo-1642104704074-907c0698b98d?w=800&q=80'  // NFT Prestige
 ];
 
 const TIER_CONFIG: Record<BoxTier, { price: number; min: number; max: number }> = {
