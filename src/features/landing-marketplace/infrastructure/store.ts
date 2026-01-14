@@ -1,49 +1,79 @@
 import { create } from 'zustand';
-import { MarketBox, UnboxedItem } from '../domain/entities';
+import { MarketBox, UnboxedItem, BoxTier } from '../domain/entities';
 
-const BOXES: MarketBox[] = [
-  {
-    id: 'box-starter',
-    name: 'Starter Kit',
-    description: 'Entrada segura no ecossistema. Retorno garantido em Game Coins.',
+// Configurações base para geração
+const TIERS: Record<BoxTier, { price: number; min: number; max: number; images: string[] }> = {
+  Starter: {
     price: 4.90,
-    minValue: 5.00,
-    maxValue: 12.00,
-    tier: 'Starter',
-    coverImage: 'https://images.unsplash.com/photo-1628126235206-5260b9ea6441?w=400&q=80',
-    isHot: true
+    min: 5.00,
+    max: 15.00,
+    images: [
+      'https://images.unsplash.com/photo-1628126235206-5260b9ea6441?w=400&q=80',
+      'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=400&q=80',
+      'https://images.unsplash.com/photo-1592478411213-61535fdd861d?w=400&q=80'
+    ]
   },
-  {
-    id: 'box-advanced',
-    name: 'Operator Crate',
-    description: 'Para usuários que buscam volume de operação.',
+  Advanced: {
     price: 19.90,
-    minValue: 21.00,
-    maxValue: 45.00,
-    tier: 'Advanced',
-    coverImage: 'https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=400&q=80'
+    min: 21.00,
+    max: 50.00,
+    images: [
+      'https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=400&q=80',
+      'https://images.unsplash.com/photo-1535378437327-1e8c83279326?w=400&q=80',
+      'https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?w=400&q=80'
+    ]
   },
-  {
-    id: 'box-elite',
-    name: 'Elite Vault',
-    description: 'Acesso a fragmentos raros e alto volume de liquidez interna.',
+  Elite: {
     price: 49.90,
-    minValue: 55.00,
-    maxValue: 150.00,
-    tier: 'Elite',
-    coverImage: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=400&q=80'
+    min: 55.00,
+    max: 200.00,
+    images: [
+      'https://images.unsplash.com/photo-1518770660439-4636190af475?w=400&q=80',
+      'https://images.unsplash.com/photo-1618193139062-2c5bf4f935b7?w=400&q=80',
+      'https://images.unsplash.com/photo-1614726365723-49cfae9545d1?w=400&q=80'
+    ]
   },
-  {
-    id: 'box-prestige',
-    name: 'Prestige Global',
-    description: 'A caixa definitiva. Somente ativos de alta fidelidade.',
+  Prestige: {
     price: 99.90,
-    minValue: 110.00,
-    maxValue: 500.00,
-    tier: 'Prestige',
-    coverImage: 'https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=400&q=80'
+    min: 110.00,
+    max: 1000.00,
+    images: [
+      'https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=400&q=80',
+      'https://images.unsplash.com/photo-1620321023374-d1a68fbc720d?w=400&q=80',
+      'https://images.unsplash.com/photo-1639815188546-c43c240ff4df?w=400&q=80'
+    ]
   }
-];
+};
+
+const PREFIXES = ['Cyber', 'Neon', 'Quantum', 'Void', 'Apex', 'Flux', 'Neural', 'Cosmic', 'Hyper', 'Data'];
+const SUFFIXES = ['Cache', 'Vault', 'Node', 'Fragment', 'Core', 'Matrix', 'Pod', 'Link', 'Signal', 'Drive'];
+
+const generateBoxes = (count: number): MarketBox[] => {
+  return Array.from({ length: count }).map((_, i) => {
+    // Distribuição de tiers
+    let tier: BoxTier = 'Starter';
+    if (i % 8 === 0) tier = 'Prestige';
+    else if (i % 4 === 0) tier = 'Elite';
+    else if (i % 2 === 0) tier = 'Advanced';
+
+    const config = TIERS[tier];
+    const name = `${PREFIXES[i % PREFIXES.length]} ${SUFFIXES[i % SUFFIXES.length]} ${i + 1}`;
+    
+    return {
+      id: `box-${i}`,
+      name: name,
+      description: `Unidade de armazenamento ${tier} contendo ativos digitais verificados e recursos de rede.`,
+      price: config.price,
+      minValue: config.min,
+      maxValue: config.max,
+      tier: tier,
+      coverImage: config.images[i % config.images.length],
+      isHot: i === 0 || i === 7 || i === 14 // Alguns itens "Hot" espalhados
+    };
+  });
+};
+
+const BOXES = generateBoxes(28);
 
 interface MarketplaceState {
   availableBoxes: MarketBox[];

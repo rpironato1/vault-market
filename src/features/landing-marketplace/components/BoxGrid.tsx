@@ -15,9 +15,12 @@ const BoxCard = ({ box, onPurchase }: { box: MarketBox; onPurchase: (box: Market
   
   return (
     <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-50px" }}
       whileHover={{ y: -5 }}
       className={cn(
-        "group relative flex flex-col bg-[#121212] border rounded-2xl overflow-hidden transition-all duration-300",
+        "group relative flex flex-col bg-[#121212] border rounded-2xl overflow-hidden transition-all duration-300 h-full",
         isPrestige ? "border-[#FFD700]/30 shadow-[0_0_20px_rgba(255,215,0,0.05)]" : "border-white/5 hover:border-white/10"
       )}
     >
@@ -32,6 +35,7 @@ const BoxCard = ({ box, onPurchase }: { box: MarketBox; onPurchase: (box: Market
         <img 
           src={box.coverImage} 
           alt={box.name}
+          loading="lazy"
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-80 group-hover:opacity-100"
         />
       </div>
@@ -42,7 +46,7 @@ const BoxCard = ({ box, onPurchase }: { box: MarketBox; onPurchase: (box: Market
             <span className={cn("text-[9px] font-black uppercase tracking-[0.2em] mb-1", isPrestige ? "text-[#FFD700]" : "text-zinc-500")}>
               {box.tier} Tier
             </span>
-            <h3 className="text-xl font-bold text-white leading-tight">{box.name}</h3>
+            <h3 className="text-lg md:text-xl font-bold text-white leading-tight">{box.name}</h3>
           </div>
           <div className="bg-black/40 backdrop-blur-md border border-white/10 rounded-lg p-2">
             <Package size={20} className={isPrestige ? "text-[#FFD700]" : "text-white"} />
@@ -128,19 +132,19 @@ export const BoxGrid = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto py-16 px-6 md:px-12">
-      <div className="flex items-end justify-between mb-10 border-b border-white/5 pb-6">
+    <div className="max-w-[1600px] mx-auto py-16 px-6 md:px-8">
+      <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 border-b border-white/5 pb-6 gap-4">
         <div>
-          <h2 className="text-3xl font-black text-white uppercase tracking-tighter mb-2">Catálogo Oficial</h2>
+          <h2 className="text-3xl md:text-4xl font-black text-white uppercase tracking-tighter mb-2">Catálogo Oficial</h2>
           <p className="text-zinc-500 text-sm font-medium">Itens verificados com garantia de valor de revenda interna.</p>
         </div>
-        <div className="hidden md:flex items-center gap-2 text-xs font-bold text-zinc-600 uppercase">
+        <div className="flex items-center gap-2 text-xs font-bold text-zinc-600 uppercase bg-white/5 px-4 py-2 rounded-full">
           <Info size={16} />
           <span>Moedas não sacáveis • Uso exclusivo In-Game</span>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
         {availableBoxes.map(box => (
           <BoxCard key={box.id} box={box} onPurchase={handlePurchase} />
         ))}
