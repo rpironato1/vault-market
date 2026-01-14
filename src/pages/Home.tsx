@@ -5,6 +5,7 @@ import LandingLayout from '@/components/layout/LandingLayout';
 import { HeroMarketplace } from '@/features/landing-marketplace/components/HeroMarketplace';
 import { BoxGrid } from '@/features/landing-marketplace/components/BoxGrid';
 import { RewardModal } from '@/features/landing-marketplace/components/RewardModal';
+import { GiftCardSection } from '@/features/gift-cards/components/GiftCardSection'; // Nova importação
 import { CreditCard, ShieldCheck, GameController } from '@phosphor-icons/react';
 
 const FeatureItem = ({ icon: Icon, title, desc }: any) => (
@@ -44,6 +45,10 @@ const Home = () => {
           </div>
         </div>
 
+        {/* Nova Seção de Gift Cards */}
+        <GiftCardSection />
+
+        {/* Catálogo Original */}
         <BoxGrid />
         
         {/* Components Overlay */}
