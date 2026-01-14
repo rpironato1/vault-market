@@ -1,0 +1,90 @@
+import React from 'react';
+import { motion } from 'framer-motion';
+import { Package, Info, TrendUp } from '@phosphor-icons/react';
+import { useMarketplaceStore } from '../infrastructure/store';
+import { MarketBox } from '../domain/entities';
+import { cn } from '@/lib/utils';
+import { useStore } from '@/_infrastructure/state/store';
+import { showSuccess, showError } from '@/utils/toast';
+
+const BoxCard = ({ box, onPurchase }: { box: MarketBox; onPurchase: (box: MarketBox) => void }) => {
+  const isPrestige = box.tier === 'Prestige';
+  
+  return (
+    <motion.div 
+      whileHover={{ y: -5 }}
+      className={cn(
+        "group relative flex flex-col bg-[#121212] border rounded-2xl overflow-hidden transition-all duration-300",
+        isPrestige ? "border-[#FFD700]/30 shadow-[0_0_20px_rgba(255,215,0,0.05)]" : "border-white/5 hover:border-white/10"
+      )}
+    >
+      {box.isHot && (
+        <div className="absolute top-3 left-3 z-10 bg-[#FF007F] text-white text-[9px] font-black uppercase px-2 py-1 rounded-sm tracking-widest shadow-lg">
+          Hot Offer
+        </div>
+      )}
+
+      <div className="relative aspect-[4/3] bg-zinc-900 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-t from-[#121212] via-transparent to-transparent z-10" />
+        <img 
+          src={box.coverImage} 
+          alt={box.name}
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-80 group-hover:opacity-100"
+        />
+      </div>
+
+      <div className="flex flex-col p-5 flex-1 relative z-20 -mt-10">
+        <div className="flex items-start justify-between mb-3">
+          <div className="flex flex-col">
+            <span className={cn("text-[9px] font-black uppercase tracking-[0.2em] mb-1", isPrestige ? "text-[#FFD700]" : "text-zinc-500")}>
+              {box.tier} Tier
+            </span>
+            <h3 className="text-xl font-bold text-white leading-tight">{box.name}</h3>
+          </div>
+          <div className="bg-black/40 backdrop-blur-md border border-white/10 rounded-lg p-2">
+            <Package size={20} className={isPrestige ? "text-[#FFD700]" : "text-white"} />
+          </div>
+        </div>
+
+        <p className="text-xs text-zinc-400 font-medium mb-6 line-clamp-2 leading-relaxed">
+          {box.description}
+        </p>
+
+        <div className="mt-auto space-y-4">
+          <div className="grid grid-cols-2 gap-2 bg-white/[0.02] p-3 rounded-xl border border-white/5">
+            <div className="flex flex-col">
+              <span className="text-[8px] font-bold text-zinc-600 uppercase">Min. Value</span>
+              <span className="text-xs font-mono font-bold text-zinc-300">${box.minValue.toFixed(2)}</span>
+            </div>
+            <div className="flex flex-col items-end">
+              <span className="text-[8px] font-bold text-zinc-600 uppercase">Max. Potential</span>
+              <span className="text-xs font-mono font-bold text-[#00FF9C]">${box.maxValue.toFixed(2)}</span>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex flex-col">
+               <span className="text-[9px] font-bold text-zinc-500 uppercase line-through opacity-50">
+                 ${(box.price * 1.2).toFixed(2)}
+               </span>
+               <span className="text-xl font-mono font-black text-white">
+                 ${box.price.toFixed(2)}
+               </span>
+            </div>
+            <button 
+              onClick={() => onPurchase(box)}
+              className={cn(
+                "h-10 px-5 rounded-lg font-bold text-xs uppercase tracking-widest flex items-center gap-2 transition-all active:scale-95",
+                isPrestige 
+                  ? "bg-[#FFD700] text-black hover:bg-[#ffe033]" 
+                  : "bg-white text-black hover:bg-zinc-200"
+              )}
+            >
+              Comprar <TrendUp weight="bold" />
+            </button>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
