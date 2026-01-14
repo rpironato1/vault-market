@@ -13,10 +13,10 @@ interface Props {
 
 const HighConversionCard = ({ box, onSelect }: Props) => {
   const tierStyles = {
-    Common: "border-white/5 hover:border-white/20",
-    Rare: "border-blue-500/20 hover:border-blue-500/40",
-    Epic: "border-purple-500/20 hover:border-purple-500/40",
-    Legendary: "border-emerald-500/20 hover:border-emerald-500/50 shadow-[0_0_20px_rgba(16,185,129,0.05)]",
+    Common: "border-white/10 hover:border-white/30",
+    Rare: "border-blue-500/30 hover:border-blue-500/60",
+    Epic: "border-purple-500/30 hover:border-purple-500/60",
+    Legendary: "border-emerald-500/30 hover:border-emerald-500/70 shadow-[0_0_30px_rgba(16,185,129,0.1)]",
   };
 
   return (
@@ -24,37 +24,35 @@ const HighConversionCard = ({ box, onSelect }: Props) => {
       whileHover={{ y: -8 }}
       onClick={() => onSelect(box)}
       className={cn(
-        "group relative cursor-pointer overflow-hidden rounded-2xl border bg-white/[0.02] p-4 transition-all duration-500",
+        "group relative cursor-pointer overflow-hidden rounded-2xl border bg-[#121214] p-5 transition-all duration-500",
         tierStyles[box.tier]
       )}
     >
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60" />
-      
-      <div className="relative aspect-square mb-6 overflow-hidden rounded-xl">
+      <div className="relative aspect-square mb-6 overflow-hidden rounded-xl bg-zinc-900">
         <motion.img 
           src={box.imageUrl} 
           alt={box.name}
-          className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+          className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100"
         />
-        <div className="absolute top-2 right-2">
-          <div className="flex items-center gap-1 rounded-full bg-black/60 px-2 py-1 backdrop-blur-md">
-             <div className={cn("h-1.5 w-1.5 rounded-full", 
-               box.tier === 'Legendary' ? 'bg-emerald-400 animate-pulse' : 'bg-white/40')} />
-             <span className="text-[10px] font-bold uppercase tracking-widest">{box.tier}</span>
+        <div className="absolute top-3 right-3">
+          <div className="flex items-center gap-2 rounded-full bg-black/80 px-3 py-1.5 backdrop-blur-md border border-white/10">
+             <div className={cn("h-2 w-2 rounded-full", 
+               box.tier === 'Legendary' ? 'bg-emerald-400 animate-pulse' : 'bg-zinc-400')} />
+             <span className="text-[11px] font-bold text-white uppercase tracking-wider">{box.tier}</span>
           </div>
         </div>
       </div>
 
       <div className="relative">
-        <h3 className="text-lg font-bold tracking-tight mb-1">{box.name}</h3>
-        <p className="text-xs text-muted-foreground line-clamp-2 mb-4 h-8">{box.description}</p>
+        <h3 className="text-xl font-bold tracking-tight mb-2 text-white">{box.name}</h3>
+        <p className="text-sm text-zinc-400 line-clamp-2 mb-6 h-10 leading-relaxed">{box.description}</p>
         
-        <div className="flex items-center justify-between border-t border-white/5 pt-4">
+        <div className="flex items-center justify-between border-t border-white/10 pt-5">
           <div className="flex flex-col">
-            <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-tighter">Custo de Aquisição</span>
-            <span className="font-mono text-lg font-bold text-emerald-400">${box.price.toFixed(2)}</span>
+            <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">Investimento</span>
+            <span className="font-mono text-xl font-bold text-emerald-400">${box.price.toFixed(2)}</span>
           </div>
-          <button className="flex h-10 items-center gap-2 rounded-lg bg-emerald-500 px-4 text-sm font-bold text-black transition-all hover:bg-emerald-400 hover:shadow-[0_0_15px_rgba(16,185,129,0.3)]">
+          <button className="flex h-11 items-center gap-2 rounded-xl bg-emerald-500 px-6 text-sm font-bold text-black transition-all hover:bg-emerald-400 hover:shadow-[0_0_20px_rgba(16,185,129,0.4)]">
             OBTER
           </button>
         </div>

@@ -8,22 +8,22 @@ import { cn } from '@/lib/utils';
 
 const ExperienceCard = ({ title, description, icon: Icon, reward, locked = false }: any) => (
   <div className={cn(
-    "group relative overflow-hidden rounded-2xl border bg-white/[0.02] p-6 transition-all duration-300",
-    locked ? "opacity-50 cursor-not-allowed border-white/5" : "hover:border-emerald-500/30 cursor-pointer border-white/5"
+    "group relative overflow-hidden rounded-2xl border bg-[#121214] p-7 transition-all duration-300",
+    locked ? "opacity-60 cursor-not-allowed border-white/5" : "hover:border-emerald-500/40 cursor-pointer border-white/10"
   )}>
-    <div className="flex items-start justify-between mb-6">
-      <div className="h-12 w-12 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-500">
-        <Icon size={24} weight="duotone" />
+    <div className="flex items-start justify-between mb-8">
+      <div className="h-14 w-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-500 border border-emerald-500/20">
+        <Icon size={28} weight="duotone" />
       </div>
       <div className="text-right">
-        <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">Incentivo</span>
-        <p className="text-emerald-500 font-mono font-bold">+{reward} TK</p>
+        <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Incentivo</span>
+        <p className="text-emerald-400 font-mono text-lg font-bold">+{reward} TK</p>
       </div>
     </div>
-    <h3 className="text-lg font-bold mb-2 tracking-tight uppercase">{title}</h3>
-    <p className="text-xs text-muted-foreground leading-relaxed mb-6 h-12 line-clamp-3">{description}</p>
-    <div className="flex items-center gap-2 text-[10px] font-black text-white/40 group-hover:text-white transition-colors uppercase tracking-widest">
-      {locked ? "Requer Nível 2" : "Iniciar Sincronia"} <ArrowUpRight size={14} weight="bold" />
+    <h3 className="text-xl font-bold mb-3 tracking-tight uppercase text-white">{title}</h3>
+    <p className="text-sm text-zinc-400 leading-relaxed mb-8 h-12 line-clamp-3 font-medium">{description}</p>
+    <div className="flex items-center gap-2 text-xs font-black text-zinc-500 group-hover:text-emerald-400 transition-colors uppercase tracking-[0.2em]">
+      {locked ? "Requer Nível 2" : "Iniciar Sincronia"} <ArrowUpRight size={16} weight="bold" />
     </div>
   </div>
 );
@@ -35,39 +35,39 @@ const Tokens = () => {
     <AppLayout>
       <div className="flex flex-col gap-10">
         <header>
-          <div className="flex items-center gap-3 mb-2">
-            <Coins weight="fill" className="text-emerald-500 h-5 w-5" />
-            <span className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.3em]">Protocolo de Valor</span>
+          <div className="flex items-center gap-3 mb-3">
+            <Coins weight="fill" className="text-emerald-500 h-6 w-6" />
+            <span className="text-[11px] font-black text-emerald-500 uppercase tracking-[0.3em]">Protocolo de Valor</span>
           </div>
-          <h1 className="text-4xl font-black tracking-tighter uppercase mb-4">Central de Tokens</h1>
-          <p className="text-muted-foreground max-w-xl font-medium">
+          <h1 className="text-4xl font-black tracking-tighter uppercase mb-4 text-white">Central de Tokens</h1>
+          <p className="text-zinc-400 text-lg max-w-xl font-medium leading-relaxed">
             Utilize seus Tokens de Engajamento para desbloquear novas camadas de utilidade e prioridade na rede.
           </p>
         </header>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="col-span-1 md:col-span-2 rounded-3xl border border-white/5 bg-gradient-to-br from-emerald-500/10 via-transparent to-transparent p-8 relative overflow-hidden">
-            <div className="absolute -right-20 -top-20 h-64 w-64 bg-emerald-500/5 blur-[100px]" />
-            <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Saldo de Tokens Verificados</span>
-            <div className="flex items-baseline gap-3 mt-4">
-              <span className="text-6xl font-mono font-black tracking-tighter text-white">
+          <div className="col-span-1 md:col-span-2 rounded-3xl border border-white/10 bg-gradient-to-br from-emerald-500/10 via-[#121214] to-[#121214] p-10 relative overflow-hidden">
+            <div className="absolute -right-20 -top-20 h-64 w-64 bg-emerald-500/10 blur-[100px]" />
+            <span className="text-[11px] font-black text-zinc-500 uppercase tracking-widest">Saldo de Tokens Verificados</span>
+            <div className="flex items-baseline gap-4 mt-6">
+              <span className="text-7xl font-mono font-black tracking-tighter text-white">
                 {engagementTokens.toLocaleString()}
               </span>
-              <span className="text-lg font-black text-emerald-500 italic uppercase">TK</span>
+              <span className="text-2xl font-black text-emerald-500 italic uppercase">TK</span>
             </div>
           </div>
           
-          <div className="rounded-3xl border border-white/5 bg-white/[0.02] p-8 flex flex-col justify-center">
-            <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-4">Próximo Milestone</span>
-            <div className="h-2 w-full bg-white/5 rounded-full mb-4 overflow-hidden">
-              <div className="h-full bg-emerald-500 w-[65%]" />
+          <div className="rounded-3xl border border-white/10 bg-[#121214] p-10 flex flex-col justify-center">
+            <span className="text-[11px] font-black text-zinc-500 uppercase tracking-widest mb-6">Próximo Milestone</span>
+            <div className="h-3 w-full bg-zinc-800 rounded-full mb-6 overflow-hidden border border-white/5">
+              <div className="h-full bg-emerald-500 w-[65%] shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
             </div>
-            <p className="text-[10px] font-bold text-white/60">Atingir 10.000 TK para Nível 2</p>
+            <p className="text-xs font-bold text-zinc-300">Atingir 10.000 TK para Nível 2</p>
           </div>
         </div>
 
         <section>
-          <h2 className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground mb-8 flex items-center gap-4">
+          <h2 className="text-[11px] font-black uppercase tracking-[0.3em] text-zinc-500 mb-10 flex items-center gap-4">
             <Lightning weight="fill" className="text-emerald-500" />
             Experiências de Acúmulo
           </h2>

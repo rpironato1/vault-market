@@ -51,7 +51,6 @@ const Marketplace = () => {
     if (balance >= box.price) {
       updateBalance(-box.price);
       
-      // Simulação de backend p/ gerar recompensa
       const newReward: Reward = {
         id: `rw-${Math.random().toString(36).substr(2, 9)}`,
         name: `${box.name} Artifact`,
@@ -68,35 +67,35 @@ const Marketplace = () => {
 
   return (
     <AppLayout>
-      <div className="flex flex-col gap-10">
-        <header className="relative py-12 px-8 rounded-3xl bg-gradient-to-br from-emerald-500/10 to-transparent border border-white/5 overflow-hidden">
+      <div className="flex flex-col gap-12">
+        <header className="relative py-16 px-10 rounded-3xl bg-gradient-to-br from-emerald-500/20 via-[#121214] to-[#121214] border border-white/10 overflow-hidden shadow-2xl">
           <div className="absolute -right-20 -top-20 h-64 w-64 bg-emerald-500/10 blur-[100px]" />
-          <div className="relative z-10 max-w-2xl">
-            <h1 className="text-5xl font-black tracking-tighter mb-4 uppercase">
-              Expanda sua <span className="text-emerald-500">Rede.</span>
+          <div className="relative z-10 max-w-3xl">
+            <h1 className="text-6xl font-black tracking-tighter mb-6 uppercase text-white leading-none">
+              Expanda sua <span className="text-emerald-500 italic">Rede.</span>
             </h1>
-            <p className="text-lg text-muted-foreground font-medium">
-              Adquira unidades verificadas, sincronize seu vault e ganhe tokens de engajamento para validar novas experiências.
+            <p className="text-xl text-zinc-300 font-medium leading-relaxed">
+              Adquira unidades verificadas, sincronize seu vault e ganhe tokens de engajamento para validar novas experiências dentro do protocolo.
             </p>
           </div>
         </header>
 
         <section>
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-xl font-bold uppercase tracking-widest flex items-center gap-2">
-              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+          <div className="flex items-center justify-between mb-10 border-b border-white/10 pb-6">
+            <h2 className="text-sm font-black uppercase tracking-[0.3em] text-zinc-400 flex items-center gap-3">
+              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,1)]" />
               Unidades Disponíveis
             </h2>
-            <div className="flex gap-2">
+            <div className="flex gap-3">
               {['Common', 'Rare', 'Epic', 'Legendary'].map(t => (
-                <span key={t} className="text-[10px] font-bold px-2 py-1 rounded bg-white/5 border border-white/10 uppercase opacity-60">
+                <span key={t} className="text-[10px] font-black px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 uppercase text-zinc-500">
                   {t}
                 </span>
               ))}
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {BOX_REGISTRY.map((box) => (
               <HighConversionCard key={box.id} box={box} onSelect={handleAcquire} />
             ))}
