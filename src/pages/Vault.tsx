@@ -2,68 +2,54 @@
 
 import React from 'react';
 import AppLayout from '@/components/layout/AppLayout';
-import VaultItemCard from '@/features/vault/components/VaultItemCard';
 import { useStore } from '../_infrastructure/state/store';
-import { Package, MagnifyingGlass, Funnel } from '@phosphor-icons/react';
+import VaultItemCard from '../features/vault/components/VaultItemCard';
+import { HardDrive, MagnifyingGlass, Funnel } from '@phosphor-icons/react';
 
 const Vault = () => {
   const { vaultItems } = useStore();
 
   return (
     <AppLayout>
-      <div className="flex flex-col gap-8">
-        <header className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="flex items-center gap-4">
-            <div className="h-14 w-14 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10 shadow-inner">
-              <Package weight="duotone" className="text-emerald-500 h-7 w-7" />
+      <div className="flex flex-col gap-10">
+        <header className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-white/5 pb-10">
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center gap-3">
+               <HardDrive className="text-[#00FF9C]" weight="fill" size={24} />
+               <span className="text-[10px] font-black text-[#00FF9C] uppercase tracking-[0.4em]">Secure Custody Protocol</span>
             </div>
-            <div>
-              <h1 className="text-3xl font-black tracking-tighter uppercase">Meu Vault</h1>
-              <p className="text-sm text-muted-foreground font-medium">Gerenciamento de ativos e unidades criptografadas.</p>
-            </div>
+            <h1 className="text-5xl font-black tracking-tighter uppercase text-white">Meu Vault</h1>
+            <p className="text-zinc-500 font-medium max-w-md">
+              Gerencie seus ativos validados e prepare-os para sincronização de liquidez externa.
+            </p>
           </div>
 
-          <div className="flex items-center gap-3">
-            <div className="relative group">
-              <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-emerald-500 transition-colors" size={16} />
+          <div className="flex items-center gap-4">
+            <div className="relative">
+              <MagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500" size={18} />
               <input 
-                placeholder="Filtrar coleção..." 
-                className="h-11 w-64 rounded-xl bg-white/[0.03] border border-white/5 pl-10 pr-4 text-xs font-medium focus:outline-none focus:border-emerald-500/50 focus:bg-white/[0.05] transition-all"
+                placeholder="PROCURAR HASH..."
+                className="bg-[#121212] border border-white/10 rounded-2xl h-14 pl-12 pr-6 font-mono text-xs font-bold focus:border-[#00FF9C]/50 outline-none w-64 transition-all"
               />
             </div>
-            <button className="h-11 px-4 rounded-xl bg-white/[0.03] border border-white/5 flex items-center gap-2 hover:bg-white/10 transition-colors border-dashed">
-              <Funnel size={16} />
-              <span className="text-xs font-bold uppercase tracking-wider">Filtros</span>
+            <button className="h-14 w-14 rounded-2xl bg-[#121212] border border-white/10 flex items-center justify-center text-zinc-400 hover:text-white hover:border-white/20 transition-all">
+              <Funnel size={20} />
             </button>
           </div>
         </header>
 
-        <section className="min-h-[400px]">
-          <div className="flex items-center justify-between mb-8 border-b border-white/5 pb-4">
-            <h2 className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground flex items-center gap-3">
-              Itens Sincronizados
-              <span className="h-5 px-2 flex items-center justify-center rounded-full bg-emerald-500/10 text-emerald-500 font-mono text-[10px]">
-                {vaultItems.length}
-              </span>
-            </h2>
+        {vaultItems.length === 0 ? (
+          <div className="py-40 flex flex-col items-center justify-center text-center opacity-30">
+            <HardDrive size={80} weight="thin" className="mb-6" />
+            <p className="font-mono text-sm uppercase tracking-[0.3em]">Nenhum ativo detectado no setor de custódia.</p>
           </div>
-          
-          {vaultItems.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-32 border-2 border-dashed border-white/5 rounded-3xl bg-white/[0.01]">
-              <Package weight="thin" className="text-white/10 h-16 w-16 mb-6" />
-              <p className="text-muted-foreground font-bold uppercase tracking-widest text-xs">O Vault está vazio</p>
-              <button className="mt-4 text-emerald-500 text-[10px] font-black uppercase tracking-[0.2em] hover:underline">
-                Adquirir Unidades no Marketplace
-              </button>
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-              {vaultItems.map((item) => (
-                <VaultItemCard key={item.id} item={item} />
-              ))}
-            </div>
-          )}
-        </section>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+            {vaultItems.map((item) => (
+              <VaultItemCard key={item.id} item={item} />
+            ))}
+          </div>
+        )}
       </div>
     </AppLayout>
   );

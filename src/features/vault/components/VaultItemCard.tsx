@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ShieldCheck, Tag, Cpu, ShareNetwork } from '@phosphor-icons/react';
+import { ShieldCheck, Cpu, HardDrive, ShareNetwork } from '@phosphor-icons/react';
 import { Reward } from '../../../_core/domain/entities';
 import { cn } from '@/lib/utils';
 
@@ -12,47 +12,53 @@ interface Props {
 
 const VaultItemCard = ({ item }: Props) => {
   const rarityColors = {
-    Common: "text-zinc-400 border-white/10",
-    Rare: "text-blue-400 border-blue-500/40",
-    Epic: "text-purple-400 border-purple-500/40",
-    Legendary: "text-emerald-400 border-emerald-500/40",
+    Common: "text-zinc-500 border-zinc-500/20",
+    Rare: "text-blue-400 border-blue-400/20",
+    Epic: "text-purple-400 border-purple-400/20",
+    Legendary: "text-[#FFD700] border-[#FFD700]/30 shadow-[0_0_15px_rgba(255,215,0,0.1)]",
   };
 
   return (
     <motion.div 
-      layout
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
       className={cn(
-        "group relative rounded-xl border bg-[#121214] p-5 hover:bg-[#161618] transition-all duration-300",
+        "group relative bg-[#121212] border rounded-2xl p-5 overflow-hidden transition-all hover:bg-[#181818]",
         rarityColors[item.rarity]
       )}
     >
-      <div className="aspect-square rounded-lg bg-black mb-4 flex items-center justify-center relative overflow-hidden border border-white/5">
-        <div className="absolute inset-0 bg-gradient-to-br from-current to-transparent opacity-10" />
-        <Cpu weight="duotone" className="h-16 w-16 opacity-30 group-hover:opacity-60 transition-opacity" />
-        <div className="absolute top-3 right-3">
-           <ShieldCheck weight="fill" className="h-5 w-5 text-emerald-500" />
+      <div className="flex justify-between items-start mb-6">
+        <div className="h-10 w-10 rounded-xl bg-white/5 flex items-center justify-center">
+          {item.rarity === 'Legendary' ? <Cpu weight="fill" size={20} /> : <HardDrive weight="bold" size={20} />}
         </div>
+        <div className="flex flex-col items-end">
+          <span className="text-[8px] font-black uppercase tracking-[0.2em] opacity-50">Hash ID</span>
+          <span className="font-mono text-[9px] text-white">0x{item.id.toUpperCase()}</span>
+        </div>
+      </div>
+
+      <div className="mb-6">
+        <h3 className="text-white font-black text-lg tracking-tighter uppercase leading-tight mb-1">
+          {item.name}
+        </h3>
+        <div className="flex items-center gap-2">
+          <div className={cn("h-1.5 w-1.5 rounded-full", item.rarity === 'Legendary' ? 'bg-[#FFD700] animate-pulse' : 'bg-current')} />
+          <span className="text-[10px] font-bold uppercase tracking-widest opacity-80">{item.rarity}</span>
+        </div>
+      </div>
+
+      <div className="flex items-center justify-between pt-4 border-t border-white/5">
+        <div className="flex flex-col">
+          <span className="text-[8px] font-black uppercase tracking-widest opacity-40 text-zinc-400">Valor de Resgate</span>
+          <span className="text-[#00FF9C] font-mono font-black text-md">${item.value.toFixed(2)}</span>
+        </div>
+        <button className="h-8 px-4 rounded-lg bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-widest text-white hover:bg-white/10 transition-all">
+          Sincronizar
+        </button>
       </div>
       
-      <div className="flex flex-col gap-1">
-        <div className="flex items-center justify-between mb-1">
-          <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400 group-hover:text-current transition-colors">{item.rarity}</span>
-          <span className="text-[10px] font-mono text-zinc-600 font-bold">#{item.id.slice(-4)}</span>
-        </div>
-        <h4 className="font-bold text-base truncate text-white">{item.name}</h4>
-        
-        <div className="flex items-center justify-between mt-4 pt-4 border-t border-white/10">
-          <div className="flex items-center gap-2">
-            <Tag size={14} className="text-zinc-500" />
-            <span className="font-mono text-sm font-bold text-emerald-400">${item.value.toFixed(2)}</span>
-          </div>
-          <button className="p-2 rounded-lg hover:bg-white/5 text-zinc-500 hover:text-white transition-all">
-            <ShareNetwork size={18} weight="bold" />
-          </button>
-        </div>
-      </div>
+      {/* Scanline effect on hover */}
+      <div className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-10 transition-opacity bg-gradient-to-b from-[#00FF9C] via-transparent to-transparent h-1 w-full animate-[scan_2s_linear_infinite]" />
     </motion.div>
   );
 };
