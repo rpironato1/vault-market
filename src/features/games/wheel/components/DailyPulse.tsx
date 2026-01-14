@@ -1,27 +1,22 @@
 "use client";
 
-import React, { useState, useRef } from 'react';
-import { motion, useAnimation, AnimatePresence } from 'framer-motion';
-import { Target, Clock, Lightning, Trophy, Crown } from '@phosphor-icons/react';
+import React, { useState } from 'react';
+import { motion, useAnimation } from 'framer-motion';
+import { Target, Clock, Lightning, Trophy, ShareNetwork } from '@phosphor-icons/react';
 import confetti from 'canvas-confetti';
 import { showSuccess, showError } from '@/utils/toast';
 import { useStore } from '@/_infrastructure/state/store';
 import { cn } from '@/lib/utils';
+import { WheelPointer } from './WheelPointer';
+import { WheelSectors } from './WheelSectors';
 
-interface Sector {
-  label: string;
-  color: string;
-  value: number;
-  chance: number;
-}
-
-const SECTORS: Sector[] = [
+const SECTORS = [
   { label: '50 TK', color: '#00FF9C', value: 50, chance: 0.3 },
   { label: '100 TK', color: '#121212', value: 100, chance: 0.2 },
-  { label: '0 TK', color: '#1a1a1a', value: 0, chance: 0.2 },
+  { label: 'EMPTY', color: '#1a1a1a', value: 0, chance: 0.2 },
   { label: '500 TK', color: '#FFD700', value: 500, chance: 0.1 },
-  { label: '20 TK', color: '#00FF9C', value: 20, chance: 0.15 },
-  { label: '1000 TK', color: '#FF007F', value: 1000, chance: 0.05 },
+  { label: '25 TK', color: '#00FF9C', value: 25, chance: 0.15 },
+  { label: 'JACKPOT', color: '#FF007F', value: 2500, chance: 0.05 },
 ];
 
 const DailyPulse = () => {
@@ -33,186 +28,158 @@ const DailyPulse = () => {
 
   const spin = async () => {
     if (isSpinning) return;
-    
     setIsSpinning(true);
     setLastWin(null);
 
-    // Lógica de sorteio baseada em pesos
     const totalChance = SECTORS.reduce((acc, s) => acc + s.chance, 0);
     let random = Math.random() * totalChance;
     let selectedIndex = 0;
-    
     for (let i = 0; i < SECTORS.length; i++) {
-      if (random < SECTORS[i].chance) {
-        selectedIndex = i;
-        break;
-      }
+      if (random < SECTORS[i].chance) { selectedIndex = i; break; }
       random -= SECTORS[i].chance;
     }
 
     const sectorAngle = 360 / SECTORS.length;
-    // Cálculo para cair no centro do setor sorteado
-    // Adicionamos 5 voltas completas (1800 deg) para o efeito visual
-    const extraDegrees = (SECTORS.length - selectedIndex) * sectorAngle - (sectorAngle / 2);
-    const newRotation = rotation + 1800 + extraDegrees;
+    const stopAt = (SECTORS.length - selectedIndex) * sectorAngle - (sectorAngle / 2);
+    const newRotation = rotation + (360 * 8) + stopAt;
     
     setRotation(newRotation);
 
     await controls.start({
       rotate: newRotation,
-      transition: { duration: 5, ease: [0.2, 0, 0, 1] }
+      transition: { duration: 6, ease: [0.15, 0, 0.15, 1] }
     });
 
     const reward = SECTORS[selectedIndex];
-
     if (reward.value > 0) {
-      confetti({
-        particleCount: 150,
-        spread: 70,
-        origin: { y: 0.6 },
-        colors: ['#00FF9C', '#FFD700', '#ffffff']
-      });
-      showSuccess(`Sincronia Estável! +${reward.label} adicionados.`);
+      confetti({ particleCount: 200, spread: 90, origin: { y: 0.7 }, colors: ['#00FF9C', '#FFD700', '#FF007F'] });
+      showSuccess(`ESTABILIZADO: +${reward.label}`);
       setLastWin(reward.label);
     } else {
-      showError("Ciclo de Sincronia interrompido.");
+      showError("SINCRO-FALHA: Setor Vazio.");
     }
-
     setIsSpinning(false);
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-      {/* Painel de Controle */}
-      <div className="bg-[#121212] rounded-[32px] border border-white/5 p-8 flex flex-col gap-8 shadow-2xl">
-        <header>
-          <div className="flex items-center gap-2 mb-2">
-            <Clock size={16} className="text-[#00FF9C]" />
-            <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Janela de Sincronia</span>
-          </div>
-          <h2 className="text-2xl font-black text-white uppercase tracking-tighter leading-tight">Pulso Orbital</h2>
-          <p className="text-xs text-zinc-500 font-medium mt-2 leading-relaxed">
-            Sincronize seu Vault com o pulso orbital diário para coletar tokens de engajamento bônus.
-          </p>
-        </header>
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      {/* Sidebar de Status Tático */}
+      <div className="lg:col-span-4 flex flex-col gap-6">
+        <div className="bg-[#0A0A0A] rounded-[40px] border border-white/5 p-8 relative overflow-hidden group shadow-2xl">
+          <div className="absolute top-0 right-0 h-32 w-32 bg-[#00FF9C]/5 blur-[60px]" />
+          <header className="mb-10">
+            <div className="flex items-center gap-3 mb-2">
+              <Lightning weight="fill" className="text-[#00FF9C]" size={20} />
+              <span className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.4em]">Reactor Core v.02</span>
+            </div>
+            <h2 className="text-4xl font-black text-white uppercase tracking-tighter italic">Orbital Pulse</h2>
+          </header>
 
-        <div className="space-y-4">
-          <div className="rounded-2xl bg-black/40 border border-white/5 p-5 flex justify-between items-center">
-             <div className="flex flex-col">
-                <span className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">Última Coleta</span>
-                <span className="text-sm font-mono font-bold text-white">{lastWin || '---'}</span>
-             </div>
-             <div className="h-10 w-10 rounded-xl bg-[#00FF9C]/5 flex items-center justify-center text-[#00FF9C]">
-                <Lightning size={20} weight="fill" />
-             </div>
+          <div className="space-y-4 mb-10">
+            <div className="p-6 rounded-3xl bg-white/[0.02] border border-white/5 flex justify-between items-center">
+              <div>
+                <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-1">Último Ganho</p>
+                <p className="text-2xl font-mono font-black text-[#FFD700]">{lastWin || 'NONE'}</p>
+              </div>
+              <Trophy weight="duotone" size={32} className="text-[#FFD700]" />
+            </div>
           </div>
+
+          <button 
+            onClick={spin}
+            disabled={isSpinning}
+            className={cn(
+              "w-full h-24 rounded-[30px] font-black uppercase tracking-[0.3em] text-sm transition-all flex flex-col items-center justify-center gap-1",
+              isSpinning 
+                ? "bg-zinc-900 text-zinc-600 border border-white/5 cursor-not-allowed" 
+                : "bg-white text-black hover:bg-[#00FF9C] hover:shadow-[0_0_50px_rgba(0,255,156,0.4)] active:scale-95"
+            )}
+          >
+            <span>{isSpinning ? 'Synchronizing...' : 'Engage Pulse'}</span>
+            {!isSpinning && <span className="text-[8px] font-mono opacity-60">Consumo: 1 Daily Credit</span>}
+          </button>
         </div>
 
-        <button 
-          onClick={spin}
-          disabled={isSpinning}
-          className={cn(
-            "w-full h-20 rounded-2xl font-black uppercase tracking-[0.2em] text-sm transition-all active:scale-95 flex items-center justify-center gap-3",
-            isSpinning 
-              ? "bg-zinc-800 text-zinc-500 cursor-not-allowed" 
-              : "bg-[#00FF9C] text-black hover:shadow-[0_0_30px_rgba(0,255,156,0.3)]"
-          )}
-        >
-          {isSpinning ? 'SINCRONIZANDO...' : 'INICIAR PULSO'}
-        </button>
-
-        <div className="flex flex-col items-center gap-2">
-           <span className="text-[9px] font-black text-zinc-600 uppercase tracking-[0.4em]">Próximo Ciclo: 24h</span>
+        <div className="bg-[#0A0A0A] rounded-[40px] border border-white/5 p-8">
+           <div className="flex items-center justify-between mb-4">
+              <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Network Load</span>
+              <span className="text-[#00FF9C] font-mono text-xs">98.4% Stable</span>
+           </div>
+           <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+              <motion.div 
+                animate={{ width: isSpinning ? '100%' : '60%' }}
+                className="h-full bg-gradient-to-r from-[#00FF9C] to-white" 
+              />
+           </div>
         </div>
       </div>
 
-      {/* Roleta SVG */}
-      <div className="lg:col-span-2 bg-[#050505] rounded-[40px] border border-white/5 p-12 flex items-center justify-center relative overflow-hidden min-h-[550px]">
-        {/* Pointer (Seta) */}
-        <div className="absolute top-8 left-1/2 -translate-x-1/2 z-30">
-          <motion.div 
-            animate={isSpinning ? { y: [0, 5, 0] } : {}}
-            transition={{ duration: 0.2, repeat: Infinity }}
-            className="flex flex-col items-center"
-          >
-            <div className="w-1.5 h-12 bg-[#00FF9C] shadow-[0_0_20px_#00FF9C] rounded-full" />
-            <div className="w-4 h-4 bg-[#00FF9C] rotate-45 -mt-2 shadow-[0_0_20px_#00FF9C]" />
-          </motion.div>
-        </div>
+      {/* A Super Roleta (Design Vegas/TV) */}
+      <div className="lg:col-span-8 bg-[#050505] rounded-[60px] border border-white/5 p-16 flex items-center justify-center relative shadow-[inset_0_0_100px_rgba(0,0,0,1)] min-h-[700px]">
+        {/* Camadas de Brilho de Fundo */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,255,156,0.05),transparent)]" />
+        
+        <div className="relative w-[550px] h-[550px]">
+          {/* Chassis Externo com LEDs */}
+          <div className="absolute inset-[-60px] rounded-full border-[20px] border-[#121212] shadow-[0_0_100px_rgba(0,0,0,0.5),inset_0_0_20px_rgba(255,255,255,0.05)]">
+            {Array.from({ length: 24 }).map((_, i) => (
+              <motion.div 
+                key={i}
+                animate={isSpinning ? { opacity: [0.2, 1, 0.2] } : { opacity: 0.3 }}
+                transition={{ duration: 0.5, repeat: Infinity, delay: i * 0.05 }}
+                className="absolute w-2 h-2 rounded-full bg-white shadow-[0_0_10px_white]"
+                style={{ 
+                  top: '50%', left: '50%',
+                  transform: `translate(-50%, -50%) rotate(${i * 15}deg) translateY(-295px)`
+                }}
+              />
+            ))}
+          </div>
 
-        <div className="relative w-[450px] h-[450px]">
-          {/* Anel Decorativo Externo */}
-          <div className="absolute inset-[-30px] rounded-full border border-white/5 border-dashed animate-[spin_60s_linear_infinite]" />
-          <div className="absolute inset-[-15px] rounded-full border border-[#00FF9C]/10" />
+          <WheelPointer isSpinning={isSpinning} />
 
+          {/* O Corpo da Roleta */}
           <motion.div 
             animate={controls}
             className="w-full h-full relative"
           >
-            <svg viewBox="0 0 100 100" className="w-full h-full overflow-visible">
-              {SECTORS.map((sector, i) => {
-                const angle = 360 / SECTORS.length;
-                const startAngle = i * angle;
-                const endAngle = (i + 1) * angle;
-                
-                // Cálculo das coordenadas do setor
-                const x1 = 50 + 50 * Math.cos((Math.PI * (startAngle - 90)) / 180);
-                const y1 = 50 + 50 * Math.sin((Math.PI * (startAngle - 90)) / 180);
-                const x2 = 50 + 50 * Math.cos((Math.PI * (endAngle - 90)) / 180);
-                const y2 = 50 + 50 * Math.sin((Math.PI * (endAngle - 90)) / 180);
-
-                return (
-                  <g key={i}>
-                    <path
-                      d={`M 50 50 L ${x1} ${y1} A 50 50 0 0 1 ${x2} ${y2} Z`}
-                      fill={sector.color}
-                      fillOpacity={sector.color.startsWith('#1') ? 1 : 0.15}
-                      stroke="rgba(255,255,255,0.05)"
-                      strokeWidth="0.5"
-                    />
-                    
-                    {/* Texto Rotacionado */}
-                    <g style={{ transform: `rotate(${startAngle + angle / 2}deg)`, transformOrigin: '50% 50%' }}>
-                      <text
-                        x="50"
-                        y="15"
-                        textAnchor="middle"
-                        fill={sector.color === '#121212' || sector.color === '#1a1a1a' ? 'rgba(255,255,255,0.4)' : sector.color}
-                        className="text-[4px] font-black uppercase tracking-widest"
-                        style={{ transform: 'rotate(0deg)' }}
-                      >
-                        {sector.label}
-                      </text>
-                    </g>
-                  </g>
-                );
-              })}
+            {/* Sombras de Profundidade */}
+            <div className="absolute inset-0 rounded-full shadow-[inset_0_0_80px_rgba(0,0,0,0.8),0_20px_50px_rgba(0,0,0,0.5)] z-10 pointer-events-none" />
+            
+            <svg viewBox="0 0 100 100" className="w-full h-full overflow-visible drop-shadow-2xl">
+              <defs>
+                <radialGradient id="wheelGrad" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stopColor="#1a1a1a" />
+                  <stop offset="100%" stopColor="#050505" />
+                </radialGradient>
+              </defs>
+              
+              <circle cx="50" cy="50" r="50" fill="url(#wheelGrad)" />
+              <WheelSectors sectors={SECTORS} />
+              
+              {/* Pinos de Ouro (Pins) */}
+              {Array.from({ length: SECTORS.length }).map((_, i) => (
+                <circle 
+                  key={i} 
+                  cx="50" cy="2" r="1.5" 
+                  fill="#FFD700" 
+                  style={{ transformOrigin: '50% 50%', transform: `rotate(${i * (360/SECTORS.length)}deg)` }}
+                  className="shadow-xl"
+                />
+              ))}
             </svg>
-
-            {/* Pinos Externos */}
-            {Array.from({ length: SECTORS.length }).map((_, i) => (
-              <div 
-                key={i}
-                className="absolute top-1/2 left-1/2 h-full w-2 flex flex-col items-center"
-                style={{ transform: `translate(-50%, -50%) rotate(${i * (360 / SECTORS.length)}deg)` }}
-              >
-                <div className="w-1.5 h-1.5 rounded-full bg-zinc-800 border border-white/10 mt-1" />
-              </div>
-            ))}
           </motion.div>
 
-          {/* Centro da Roleta */}
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="w-24 h-24 rounded-full bg-black border-4 border-[#121212] flex items-center justify-center shadow-2xl">
-               <div className="w-16 h-16 rounded-full bg-[#00FF9C]/5 border border-[#00FF9C]/20 flex items-center justify-center">
-                  <Target size={32} weight="duotone" className="text-[#00FF9C]" />
+          {/* O Centro - Unidade de Processamento (Core) */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
+            <div className="w-40 h-40 rounded-full bg-[#121212] border-[8px] border-[#0A0A0A] flex items-center justify-center shadow-[0_0_50px_rgba(0,0,0,0.8)] relative">
+               <div className="absolute inset-0 rounded-full border border-white/5 animate-[spin_10s_linear_infinite]" />
+               <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#00FF9C]/20 to-transparent flex items-center justify-center border border-[#00FF9C]/30">
+                  <Target size={48} weight="duotone" className="text-[#00FF9C] animate-pulse" />
                </div>
             </div>
           </div>
         </div>
-
-        {/* Efeito de Scanline e Brilho */}
-        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,rgba(0,255,156,0.03),transparent)]" />
       </div>
     </div>
   );
