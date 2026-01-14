@@ -32,7 +32,7 @@ const LandingLayout = ({ children }: { children: React.ReactNode }) => {
               Jogar
             </button>
             <button 
-              onClick={() => navigate('/marketplace')}
+              onClick={() => navigate('/login')}
               className="h-12 px-6 rounded-xl bg-[#00FF9C]/10 border border-[#00FF9C]/20 flex items-center gap-2 hover:bg-[#00FF9C]/20 transition-all group"
             >
                <span className="text-xs font-black text-[#00FF9C] tracking-widest uppercase">Entrar</span>

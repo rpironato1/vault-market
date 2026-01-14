@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Home from "./pages/Home";
 import Marketplace from "./pages/Marketplace";
 import Vault from "./pages/Vault";
@@ -10,8 +10,16 @@ import Tokens from "./pages/Tokens";
 import Partners from "./pages/Partners";
 import Games from "./pages/Games";
 import NotFound from "./pages/NotFound";
+import LoginPage from "./features/auth/presentation/pages/LoginPage";
+import RegisterPage from "./features/auth/presentation/pages/RegisterPage";
 
 const queryClient = new QueryClient();
+
+// ProtectedRoute simplificado (pode ser expandido com useAuthStore futuramente)
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  // Em uma implementação real, verificamos o auth.user aqui
+  return <>{children}</>;
+};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -20,12 +28,18 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
+          {/* Rotas Públicas */}
           <Route path="/" element={<Home />} />
-          <Route path="/marketplace" element={<Marketplace />} />
-          <Route path="/vault" element={<Vault />} />
-          <Route path="/tokens" element={<Tokens />} />
-          <Route path="/partners" element={<Partners />} />
-          <Route path="/games" element={<Games />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          
+          {/* Rotas Protegidas (Conceitualmente) */}
+          <Route path="/marketplace" element={<ProtectedRoute><Marketplace /></ProtectedRoute>} />
+          <Route path="/vault" element={<ProtectedRoute><Vault /></ProtectedRoute>} />
+          <Route path="/tokens" element={<ProtectedRoute><Tokens /></ProtectedRoute>} />
+          <Route path="/partners" element={<ProtectedRoute><Partners /></ProtectedRoute>} />
+          <Route path="/games" element={<ProtectedRoute><Games /></ProtectedRoute>} />
+          
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
