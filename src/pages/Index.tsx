@@ -5,7 +5,8 @@ import AppLayout from '@/components/layout/AppLayout';
 import BoxCard from '@/features/marketplace/components/BoxCard';
 import OpeningAnimation from '@/features/marketplace/components/OpeningAnimation';
 import { MysteryBox, Reward } from '@/_core/domain/types';
-import { showSuccess } from '@/utils/toast';
+import { useUserStore } from '../_infrastructure/state/useUserStore';
+import { showSuccess, showError } from '@/utils/toast';
 
 const MOCK_BOXES: MysteryBox[] = [
   {
@@ -47,26 +48,39 @@ const MOCK_BOXES: MysteryBox[] = [
 ];
 
 const Index = () => {
+  const { spendBalance, addReward } = useUserStore();
   const [isOpening, setIsOpening] = useState(false);
   const [activeReward, setActiveReward] = useState<Reward | null>(null);
 
   const handlePurchase = (id: string) => {
-    // Simulação de fluxo Greedy UX
-    setIsOpening(true);
-    // Mock de recompensa após 2s
-    setTimeout(() => {
-      setActiveReward({
-        id: 'r1',
-        name: 'NVIDIA RTX 4090 Voucher',
-        rarity: 'Legendary',
-        value: 1500,
-        type: 'ITEM'
-      });
-    }, 500);
+    const box = MOCK_BOXES.find(b => b.id === id);
+    if (!box) return;
+
+    if (spendBalance(box.price)) {
+      setIsOpening(true);
+      // Simulação de delay para criar antecipação (Greedy UX)
+      setTimeout(() => {
+        const reward: Reward = {
+          id: `r-${Date.now()}`,
+          name: `${box.tier} Collectible #${Math.floor(Math.random() * 1000)}`,
+          rarity: box.tier,
+          value: box.price * (Math.random() > 0.8 ? 5 : 0.8),
+          type: 'ITEM'
+        };
+        setActiveReward(reward);
+      }, 500);
+    } else {
+      showError("Saldo insuficiente para adquirir esta unidade.");
+    }
   };
 
   return (
     <AppLayout>
+      <div className="mb-10">
+        <h1 className="text-3xl font-bold tracking-tight">Marketplace</h1>
+        <p className="text-muted-foreground">Unidades de colecionáveis verificadas e seguras.</p>
+      </div>
+
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {MOCK_BOXES.map((box) => (
           <BoxCard key={box.id} box={box} onPurchase={handlePurchase} />
@@ -79,7 +93,10 @@ const Index = () => {
             <h2 className="text-2xl font-bold mb-2">Colete & Evolua</h2>
             <p className="text-muted-foreground text-sm">Ao adquirir unidades no Marketplace, você gera tokens de engajamento que podem ser utilizados na nossa Central de Experiências.</p>
           </div>
-          <button className="rounded-xl bg-emerald-500 px-8 py-4 font-bold text-black hover:bg-emerald-400 transition-colors">
+          <button 
+            onClick={() => window.location.href = '/tokens'}
+            className="rounded-xl bg-emerald-500 px-8 py-4 font-bold text-black hover:bg-emerald-400 transition-colors"
+          >
             IR PARA CENTRAL DE TOKENS
           </button>
         </div>
@@ -88,6 +105,7 @@ const Index = () => {
       <OpeningAnimation 
         reward={activeReward} 
         onClose={() => {
+          if (activeReward) addReward(activeReward);
           setIsOpening(false);
           setActiveReward(null);
           showSuccess("Item adicionado ao seu Vault com sucesso!");
