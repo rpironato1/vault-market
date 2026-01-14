@@ -4,11 +4,9 @@ import React from 'react';
 import { ShieldCheck, ArrowUpRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { MadeWithDyad } from '@/components/made-with-dyad';
-import { useStore } from '../../_infrastructure/state/store';
 
 const LandingLayout = ({ children }: { children: React.ReactNode }) => {
   const navigate = useNavigate();
-  const { balance } = useStore();
 
   return (
     <div className="min-h-screen bg-[#050505] text-zinc-100 font-sans selection:bg-[#00FF9C]/30 selection:text-white flex flex-col">
@@ -26,11 +24,6 @@ const LandingLayout = ({ children }: { children: React.ReactNode }) => {
         </div>
         
         <div className="flex items-center gap-6">
-          <div className="flex flex-col items-end hidden sm:flex">
-             <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Saldo Disponível</span>
-             <span className="font-mono text-xl font-black text-[#00FF9C] tracking-tighter tabular-nums">${balance.toFixed(2)}</span>
-          </div>
-          
           <div className="flex items-center gap-3">
             <button 
               onClick={() => navigate('/games')}
@@ -38,7 +31,10 @@ const LandingLayout = ({ children }: { children: React.ReactNode }) => {
             >
               Jogar
             </button>
-            <button className="h-12 px-6 rounded-xl bg-[#00FF9C]/10 border border-[#00FF9C]/20 flex items-center gap-2 hover:bg-[#00FF9C]/20 transition-all group">
+            <button 
+              onClick={() => navigate('/marketplace')}
+              className="h-12 px-6 rounded-xl bg-[#00FF9C]/10 border border-[#00FF9C]/20 flex items-center gap-2 hover:bg-[#00FF9C]/20 transition-all group"
+            >
                <span className="text-xs font-black text-[#00FF9C] tracking-widest uppercase">Entrar</span>
                <ArrowUpRight size={16} className="text-[#00FF9C] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
             </button>
