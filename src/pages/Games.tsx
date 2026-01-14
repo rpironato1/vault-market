@@ -2,10 +2,12 @@
 
 import React from 'react';
 import AppLayout from '@/components/layout/AppLayout';
-import DataSyncGame from '../features/games/mines/components/DataSyncGame';
-import DailyPulse from '../features/games/wheel/components/DailyPulse';
+import DataSyncGame from '@/features/games/mines/components/DataSyncGame';
+import DailyPulse from '@/features/games/wheel/components/DailyPulse';
+import QuantumCrash from '@/features/games/crash/components/QuantumCrash';
+import GravityPlinko from '@/features/games/plinko/components/GravityPlinko';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Zap, Radio } from 'lucide-react';
+import { Zap, Radio, Rocket, Database } from 'lucide-react';
 
 const Games = () => {
   return (
@@ -22,8 +24,14 @@ const Games = () => {
           </p>
         </header>
 
-        <Tabs defaultValue="sync" className="w-full">
-          <TabsList className="bg-[#121212] border border-white/5 p-2 rounded-[24px] mb-12 inline-flex">
+        <Tabs defaultValue="crash" className="w-full">
+          <TabsList className="bg-[#121212] border border-white/5 p-2 rounded-[24px] mb-12 inline-flex overflow-x-auto max-w-full">
+            <TabsTrigger value="crash" className="data-[state=active]:bg-[#00FF9C] data-[state=active]:text-black rounded-xl px-8 py-3 gap-3 font-black uppercase text-[10px] tracking-widest transition-all">
+              <Rocket size={16} /> Quantum Crash
+            </TabsTrigger>
+            <TabsTrigger value="plinko" className="data-[state=active]:bg-[#00FF9C] data-[state=active]:text-black rounded-xl px-8 py-3 gap-3 font-black uppercase text-[10px] tracking-widest transition-all">
+              <Database size={16} /> Gravity Plinko
+            </TabsTrigger>
             <TabsTrigger value="sync" className="data-[state=active]:bg-[#00FF9C] data-[state=active]:text-black rounded-xl px-8 py-3 gap-3 font-black uppercase text-[10px] tracking-widest transition-all">
               <Zap size={16} fill="currentColor" /> Sincronia de Dados
             </TabsTrigger>
@@ -31,6 +39,14 @@ const Games = () => {
               <Radio size={16} /> Pulso Orbital
             </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="crash" className="outline-none focus-visible:ring-0">
+            <QuantumCrash />
+          </TabsContent>
+
+          <TabsContent value="plinko" className="outline-none focus-visible:ring-0">
+            <GravityPlinko />
+          </TabsContent>
 
           <TabsContent value="sync" className="outline-none focus-visible:ring-0">
             <DataSyncGame />
