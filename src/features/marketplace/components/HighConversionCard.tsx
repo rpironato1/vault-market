@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Cube, TreedingUp, Info } from '@phosphor-icons/react';
+import { Cube, Info } from '@phosphor-icons/react';
 import { MysteryBox } from '../../../_core/domain/entities';
 import { cn } from '@/lib/utils';
 

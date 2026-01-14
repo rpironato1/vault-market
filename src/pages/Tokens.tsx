@@ -2,74 +2,97 @@
 
 import React from 'react';
 import AppLayout from '@/components/layout/AppLayout';
-import { Gamepad2, Zap, Trophy, ArrowUpRight } from 'lucide-react';
+import { useStore } from '../_infrastructure/state/store';
+import { Lightning, Trophy, GameController, ArrowUpRight, Coins } from '@phosphor-icons/react';
+import { cn } from '@/lib/utils';
 
-const TokenCard = ({ title, description, icon: Icon, reward }: { title: string, description: string, icon: any, reward: string }) => (
-  <div className="group relative overflow-hidden rounded-2xl border border-white/5 bg-white/5 p-6 hover:border-emerald-500/30 transition-all cursor-pointer">
-    <div className="absolute -right-8 -top-8 h-32 w-32 bg-emerald-500/10 blur-[40px] group-hover:bg-emerald-500/20 transition-all" />
-    <div className="flex items-start justify-between mb-4">
-      <div className="h-12 w-12 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400">
-        <Icon size={24} />
+const ExperienceCard = ({ title, description, icon: Icon, reward, locked = false }: any) => (
+  <div className={cn(
+    "group relative overflow-hidden rounded-2xl border bg-white/[0.02] p-6 transition-all duration-300",
+    locked ? "opacity-50 cursor-not-allowed border-white/5" : "hover:border-emerald-500/30 cursor-pointer border-white/5"
+  )}>
+    <div className="flex items-start justify-between mb-6">
+      <div className="h-12 w-12 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-500">
+        <Icon size={24} weight="duotone" />
       </div>
       <div className="text-right">
-        <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Recompensa</span>
-        <p className="text-emerald-400 font-mono font-bold">+{reward} TK</p>
+        <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">Incentivo</span>
+        <p className="text-emerald-500 font-mono font-bold">+{reward} TK</p>
       </div>
     </div>
-    <h3 className="text-xl font-bold mb-1">{title}</h3>
-    <p className="text-sm text-muted-foreground mb-4">{description}</p>
-    <div className="flex items-center gap-2 text-xs font-bold text-white/40 group-hover:text-white transition-colors">
-      ACESSAR EXPERIÊNCIA <ArrowUpRight size={14} />
+    <h3 className="text-lg font-bold mb-2 tracking-tight uppercase">{title}</h3>
+    <p className="text-xs text-muted-foreground leading-relaxed mb-6 h-12 line-clamp-3">{description}</p>
+    <div className="flex items-center gap-2 text-[10px] font-black text-white/40 group-hover:text-white transition-colors uppercase tracking-widest">
+      {locked ? "Requer Nível 2" : "Iniciar Sincronia"} <ArrowUpRight size={14} weight="bold" />
     </div>
   </div>
 );
 
 const Tokens = () => {
+  const { engagementTokens } = useStore();
+
   return (
     <AppLayout>
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-10">
         <header>
-          <h1 className="text-3xl font-bold tracking-tight">Central de Tokens</h1>
-          <p className="text-muted-foreground">Utilize seus tokens de engajamento para desbloquear utilidades e benefícios na rede.</p>
+          <div className="flex items-center gap-3 mb-2">
+            <Coins weight="fill" className="text-emerald-500 h-5 w-5" />
+            <span className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.3em]">Protocolo de Valor</span>
+          </div>
+          <h1 className="text-4xl font-black tracking-tighter uppercase mb-4">Central de Tokens</h1>
+          <p className="text-muted-foreground max-w-xl font-medium">
+            Utilize seus Tokens de Engajamento para desbloquear novas camadas de utilidade e prioridade na rede.
+          </p>
         </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          <div className="rounded-2xl border border-white/5 bg-gradient-to-br from-emerald-500/10 to-transparent p-6">
-            <span className="text-xs font-bold text-emerald-400 uppercase tracking-widest">Saldo de Tokens</span>
-            <div className="flex items-baseline gap-2 mt-2">
-              <span className="text-4xl font-mono font-bold tracking-tighter">8,420</span>
-              <span className="text-sm font-bold opacity-40">TK</span>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="col-span-1 md:col-span-2 rounded-3xl border border-white/5 bg-gradient-to-br from-emerald-500/10 via-transparent to-transparent p-8 relative overflow-hidden">
+            <div className="absolute -right-20 -top-20 h-64 w-64 bg-emerald-500/5 blur-[100px]" />
+            <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Saldo de Tokens Verificados</span>
+            <div className="flex items-baseline gap-3 mt-4">
+              <span className="text-6xl font-mono font-black tracking-tighter text-white">
+                {engagementTokens.toLocaleString()}
+              </span>
+              <span className="text-lg font-black text-emerald-500 italic uppercase">TK</span>
             </div>
           </div>
-          {/* Outros stats podem ser adicionados aqui */}
+          
+          <div className="rounded-3xl border border-white/5 bg-white/[0.02] p-8 flex flex-col justify-center">
+            <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-4">Próximo Milestone</span>
+            <div className="h-2 w-full bg-white/5 rounded-full mb-4 overflow-hidden">
+              <div className="h-full bg-emerald-500 w-[65%]" />
+            </div>
+            <p className="text-[10px] font-bold text-white/60">Atingir 10.000 TK para Nível 2</p>
+          </div>
         </div>
 
-        <div>
-          <h2 className="text-lg font-bold mb-6 flex items-center gap-2">
-            <Zap size={20} className="text-emerald-400" />
-            Experiências de Engajamento
+        <section>
+          <h2 className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground mb-8 flex items-center gap-4">
+            <Lightning weight="fill" className="text-emerald-500" />
+            Experiências de Acúmulo
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <TokenCard 
-              title="Validação de Redes"
-              description="Participe do fluxo de validação de itens e ganhe tokens por cada unidade verificada com sucesso."
-              icon={Zap}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <ExperienceCard 
+              title="Validação de Setores"
+              description="Analise e valide a integridade de setores de rede para ganhar tokens de utilidade."
+              icon={Lightning}
               reward="50"
             />
-            <TokenCard 
-              title="Missões de Curadoria"
-              description="Analise as tendências do marketplace e ajude a selecionar as próximas Mystery Boxes da temporada."
+            <ExperienceCard 
+              title="Ciclo de Sincronia"
+              description="Participe dos ciclos diários de sincronização global do vault."
               icon={Trophy}
               reward="120"
             />
-            <TokenCard 
-              title="Mini-Sincronia"
-              description="Teste de precisão e agilidade para coletar fragmentos de tokens em tempo real."
-              icon={Gamepad2}
+            <ExperienceCard 
+              title="Teste de Agilidade"
+              description="Protocolos experimentais de resposta rápida para usuários avançados."
+              icon={GameController}
               reward="200"
+              locked={true}
             />
           </div>
-        </div>
+        </section>
       </div>
     </AppLayout>
   );
