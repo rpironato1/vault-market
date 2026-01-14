@@ -2,15 +2,22 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bomb, Diamond, ShieldCheck, Play, StopCircle } from 'lucide-react'; // Usando Bomb/Diamond para semântica de Mines
+import { Bomb, Diamond, ShieldCheck, Play, StopCircle, AlertTriangle, RefreshCcw } from 'lucide-react'; 
 import { showSuccess, showError } from '@/utils/toast';
 import { useStore } from '@/_infrastructure/state/store';
 import { cn } from '@/lib/utils';
 
 const GRID_SIZE = 25;
-
-// Configuração de dificuldade
 const MINES_OPTIONS = [1, 3, 5, 10, 15];
+
+// Frases provocativas para o momento do saque (Hover)
+const RISK_MESSAGES = [
+  "Lucro marginal detectado. Continuar?",
+  "Apenas isso? O padrão indica mais diamantes.",
+  "Sinal fraco. Arrisque para amplificar.",
+  "Potencial da rede subutilizado.",
+  "Vai parar agora? A sorte está ativa."
+];
 
 const DataSyncGame = () => {
   const { balance, updateBalance } = useStore();
@@ -18,30 +25,29 @@ const DataSyncGame = () => {
   // Game State
   const [isPlaying, setIsPlaying] = useState(false);
   const [isGameOver, setIsGameOver] = useState(false);
+  const [gameResult, setGameResult] = useState<'WIN' | 'LOSS' | null>(null);
   
   // Logic State
   const [grid, setGrid] = useState<('IDLE' | 'SAFE' | 'MINE')[]>(new Array(GRID_SIZE).fill('IDLE'));
   const [mineLocations, setMineLocations] = useState<number[]>([]);
   const [revealedCount, setRevealedCount] = useState(0);
   
+  // UI/UX State
+  const [shakeGrid, setShakeGrid] = useState(false);
+  const [showCashoutHint, setShowCashoutHint] = useState(false);
+  const [hintMessage, setHintMessage] = useState("");
+  
   // Inputs
   const [bet, setBet] = useState(10);
   const [minesCount, setMinesCount] = useState(3);
   const [multiplier, setMultiplier] = useState(1.0);
 
-  // Calcula multiplicador baseado na probabilidade
   const calculateNextMultiplier = (currentRevealed: number, totalMines: number) => {
-    // Fórmula simplificada de Mines: total_spots / safe_spots_remaining
     const totalSpots = GRID_SIZE - currentRevealed;
     const safeSpots = GRID_SIZE - totalMines - currentRevealed;
-    
-    // Margem da casa (1%)
     const houseEdge = 0.99;
     const probability = safeSpots / totalSpots;
-    
-    // Evita divisão por zero no final
     if (probability <= 0) return multiplier;
-    
     return multiplier * (1 / probability) * houseEdge;
   };
 
@@ -54,12 +60,12 @@ const DataSyncGame = () => {
     updateBalance(-bet);
     setIsPlaying(true);
     setIsGameOver(false);
+    setGameResult(null);
     setGrid(new Array(GRID_SIZE).fill('IDLE'));
     setRevealedCount(0);
     setMultiplier(1.0);
+    setShakeGrid(false);
     
-    // Gerar minas (lazy generation - só decidimos as posições no primeiro clique para garantir first-safe se quiséssemos, 
-    // mas aqui faremos pré-geração simples para manter a integridade)
     const newMines: number[] = [];
     while (newMines.length < minesCount) {
       const pos = Math.floor(Math.random() * GRID_SIZE);
@@ -72,10 +78,8 @@ const DataSyncGame = () => {
     if (!isPlaying || isGameOver || grid[index] !== 'IDLE') return;
 
     if (mineLocations.includes(index)) {
-      // Hit a mine
       handleGameOver(index);
     } else {
-      // Safe spot
       const nextMult = calculateNextMultiplier(revealedCount, minesCount);
       setMultiplier(nextMult);
       setRevealedCount(prev => prev + 1);
@@ -86,7 +90,6 @@ const DataSyncGame = () => {
         return next;
       });
 
-      // Check win condition (all safe spots revealed)
       if (revealedCount + 1 === GRID_SIZE - minesCount) {
         cashOut(nextMult);
       }
@@ -96,9 +99,13 @@ const DataSyncGame = () => {
   const handleGameOver = (triggerIndex: number) => {
     setIsPlaying(false);
     setIsGameOver(true);
-    showError("MINA DETONADA! Operação falhou.");
+    setGameResult('LOSS');
+    setShakeGrid(true); // Aciona o tremor
+    setTimeout(() => setShakeGrid(false), 500);
 
-    // Revelar todo o grid
+    // Efeito sonoro visual (Flash vermelho na tela inteira poderia ser agressivo demais, focamos no grid)
+    showError("FALHA CRÍTICA: Mina Detonada.");
+
     setGrid(prev => prev.map((_, idx) => 
       mineLocations.includes(idx) ? 'MINE' : (prev[idx] === 'SAFE' ? 'SAFE' : 'IDLE')
     ));
@@ -107,20 +114,33 @@ const DataSyncGame = () => {
   const cashOut = (finalMult = multiplier) => {
     setIsPlaying(false);
     setIsGameOver(true);
+    setGameResult('WIN');
     const win = bet * finalMult;
     updateBalance(win);
-    showSuccess(`Saque realizado! +$${win.toFixed(2)}`);
+    showSuccess(`Sincronia Bem-sucedida! +$${win.toFixed(2)}`);
     
-    // Revelar minas sem explodir visualmente (status neutro)
     setGrid(prev => prev.map((status, idx) => 
       mineLocations.includes(idx) ? 'IDLE' : status
     ));
   };
 
+  // Lógica de "Hover Trap" para o botão de Cashout
+  const handleCashoutHover = (isHovering: boolean) => {
+    if (!isPlaying) return;
+    
+    if (isHovering && multiplier < 1.5) {
+      const randomMsg = RISK_MESSAGES[Math.floor(Math.random() * RISK_MESSAGES.length)];
+      setHintMessage(randomMsg);
+      setShowCashoutHint(true);
+    } else {
+      setShowCashoutHint(false);
+    }
+  };
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start min-h-[600px]">
-      {/* Control Panel (Sidebar) - Precision & Density */}
-      <div className="lg:col-span-4 bg-[#09090b] rounded-xl border border-white/10 p-6 flex flex-col gap-6 h-full shadow-xl">
+      {/* Control Panel */}
+      <div className="lg:col-span-4 bg-[#09090b] rounded-xl border border-white/10 p-6 flex flex-col gap-6 h-full shadow-xl relative z-20">
         <header className="mb-2">
           <div className="flex items-center gap-2 mb-2 opacity-50">
             <ShieldCheck size={14} />
@@ -129,7 +149,6 @@ const DataSyncGame = () => {
           <h2 className="text-2xl font-bold text-white tracking-tight">Campo Minado</h2>
         </header>
 
-        {/* Input Section */}
         <div className="space-y-6">
           <div className="space-y-2">
             <label className="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">Aposta (USDT)</label>
@@ -142,7 +161,6 @@ const DataSyncGame = () => {
                 className="w-full bg-[#121212] border border-white/10 rounded-lg h-12 pl-4 pr-4 font-mono text-sm text-white focus:border-[#00FF9C] focus:ring-1 focus:ring-[#00FF9C]/20 outline-none transition-all disabled:opacity-50"
               />
             </div>
-            {/* Quick selectors */}
             <div className="grid grid-cols-4 gap-2">
               {[10, 20, 50, 100].map(val => (
                 <button
@@ -179,7 +197,6 @@ const DataSyncGame = () => {
           </div>
         </div>
 
-        {/* Stats Display */}
         <div className="mt-auto pt-6 border-t border-white/5 space-y-4">
           <div className="flex justify-between items-end">
              <span className="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">Próximo Multiplicador</span>
@@ -195,29 +212,83 @@ const DataSyncGame = () => {
           </div>
         </div>
 
-        {/* Action Button */}
-        {!isPlaying ? (
-          <button 
-            onClick={startGame}
-            className="w-full bg-[#00FF9C] text-black h-14 rounded-lg font-bold text-sm uppercase tracking-widest hover:bg-[#00e68d] active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(0,255,156,0.1)]"
-          >
-            <Play size={16} fill="currentColor" /> Iniciar Rodada
-          </button>
-        ) : (
-          <button 
-            onClick={() => cashOut()}
-            className="w-full bg-white text-black h-14 rounded-lg font-bold text-sm uppercase tracking-widest hover:bg-zinc-200 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
-          >
-            <StopCircle size={18} /> Encerrar (Saque)
-          </button>
-        )}
+        <div className="relative">
+          {/* Tooltip de Incentivo ao Risco */}
+          <AnimatePresence>
+            {showCashoutHint && (
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                className="absolute -top-16 left-0 right-0 bg-[#FFD700] text-black p-3 rounded-lg shadow-lg z-30 pointer-events-none"
+              >
+                <div className="flex items-center gap-2">
+                  <AlertTriangle size={16} fill="black" className="shrink-0" />
+                  <p className="text-[10px] font-black uppercase leading-tight">{hintMessage}</p>
+                </div>
+                <div className="absolute bottom-[-6px] left-1/2 -translate-x-1/2 w-3 h-3 bg-[#FFD700] rotate-45" />
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {!isPlaying ? (
+            <button 
+              onClick={startGame}
+              className="w-full bg-[#00FF9C] text-black h-14 rounded-lg font-bold text-sm uppercase tracking-widest hover:bg-[#00e68d] active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(0,255,156,0.1)]"
+            >
+              <Play size={16} fill="currentColor" /> Iniciar Rodada
+            </button>
+          ) : (
+            <button 
+              onClick={() => cashOut()}
+              onMouseEnter={() => handleCashoutHover(true)}
+              onMouseLeave={() => handleCashoutHover(false)}
+              className="w-full bg-white text-black h-14 rounded-lg font-bold text-sm uppercase tracking-widest hover:bg-zinc-200 active:scale-[0.98] transition-all flex items-center justify-center gap-2 relative overflow-hidden"
+            >
+              <StopCircle size={18} /> Encerrar (Saque)
+            </button>
+          )}
+        </div>
       </div>
 
-      {/* Grid Interface - Sophistication & Trust */}
-      <div className="lg:col-span-8 h-full bg-[#050505] rounded-xl border border-white/5 p-8 flex flex-col items-center justify-center relative overflow-hidden">
-        {/* Ambient Background */}
+      {/* Grid Interface */}
+      <motion.div 
+        animate={shakeGrid ? { x: [-5, 5, -5, 5, 0] } : {}}
+        transition={{ duration: 0.4 }}
+        className="lg:col-span-8 h-full bg-[#050505] rounded-xl border border-white/5 p-8 flex flex-col items-center justify-center relative overflow-hidden group"
+      >
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.03),transparent_70%)] pointer-events-none" />
         
+        {/* Overlay de Reengajamento (Loss) */}
+        <AnimatePresence>
+          {isGameOver && gameResult === 'LOSS' && (
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 z-40 bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center p-8 text-center"
+            >
+              <motion.div 
+                initial={{ y: 20 }}
+                animate={{ y: 0 }}
+                className="max-w-md w-full bg-[#121212] border border-red-500/30 rounded-2xl p-8 shadow-[0_0_50px_rgba(239,68,68,0.2)]"
+              >
+                <AlertTriangle size={48} className="text-red-500 mx-auto mb-4" />
+                <h3 className="text-2xl font-black text-white uppercase tracking-tighter mb-2">Conexão Perdida</h3>
+                <p className="text-zinc-400 text-sm mb-8 font-medium">
+                  A mina interrompeu a sincronia. O próximo padrão tem 87% de chance de sucesso estatístico.
+                </p>
+                <button 
+                  onClick={startGame}
+                  className="w-full h-14 bg-red-600 hover:bg-red-500 text-white rounded-xl font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-all hover:shadow-[0_0_30px_rgba(220,38,38,0.4)]"
+                >
+                  <RefreshCcw size={18} /> Retomar Imediatamente
+                </button>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         <div className="grid grid-cols-5 gap-3 w-full max-w-[500px] aspect-square relative z-10">
           {grid.map((status, i) => (
             <motion.button
@@ -228,13 +299,9 @@ const DataSyncGame = () => {
               disabled={!isPlaying && status === 'IDLE'}
               className={cn(
                 "relative rounded-lg flex items-center justify-center transition-all duration-200 border",
-                // Base States
                 status === 'IDLE' && "bg-[#121212] border-white/5 cursor-pointer disabled:cursor-default",
-                // Safe State
                 status === 'SAFE' && "bg-[#00FF9C]/5 border-[#00FF9C]/30 cursor-default",
-                // Mine State
                 status === 'MINE' && "bg-red-500/10 border-red-500/30 cursor-default shadow-[inset_0_0_20px_rgba(239,68,68,0.2)]",
-                // Disabled State
                 !isPlaying && status === 'IDLE' && "opacity-40"
               )}
             >
@@ -259,26 +326,10 @@ const DataSyncGame = () => {
                   </motion.div>
                 )}
               </AnimatePresence>
-              
-              {/* Hover effect highlight for idle tiles */}
-              {status === 'IDLE' && isPlaying && (
-                <div className="absolute inset-0 bg-white/0 hover:bg-white/5 transition-colors rounded-lg" />
-              )}
             </motion.button>
           ))}
         </div>
-        
-        {/* Game Over / Idle Message */}
-        {!isPlaying && (
-          <motion.div 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="absolute bottom-6 px-4 py-2 rounded-full bg-[#121212] border border-white/10 text-[10px] font-mono text-zinc-500 uppercase tracking-widest"
-          >
-             {isGameOver ? "Ciclo Encerrado - Reinicie o Protocolo" : "Sistema Pronto - Defina Parâmetros"}
-          </motion.div>
-        )}
-      </div>
+      </motion.div>
     </div>
   );
 };
