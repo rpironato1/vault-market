@@ -4,7 +4,7 @@ import React, { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Database, ShieldAlert, CheckCircle2, Zap } from 'lucide-react';
 import { showSuccess, showError } from '@/utils/toast';
-import { useUserStore } from '../../../_infrastructure/state/useUserStore';
+import { useUserStore } from '@/_infrastructure/state/useUserStore';
 
 const GRID_SIZE = 25;
 const INITIAL_MINES = 3;
