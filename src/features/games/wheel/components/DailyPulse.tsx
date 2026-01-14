@@ -25,21 +25,29 @@ const DailyPulse = () => {
   const [isSpinning, setIsSpinning] = useState(false);
   const [rotation, setRotation] = useState(0);
   const [lastWin, setLastWin] = useState<string | null>(null);
+  const [winningIndex, setWinningIndex] = useState<number | null>(null);
 
   const spin = async () => {
     if (isSpinning) return;
+    
     setIsSpinning(true);
     setLastWin(null);
+    setWinningIndex(null); // Reset do estado de vitória
 
     const totalChance = SECTORS.reduce((acc, s) => acc + s.chance, 0);
     let random = Math.random() * totalChance;
     let selectedIndex = 0;
+    
     for (let i = 0; i < SECTORS.length; i++) {
-      if (random < SECTORS[i].chance) { selectedIndex = i; break; }
+      if (random < SECTORS[i].chance) { 
+        selectedIndex = i; 
+        break; 
+      }
       random -= SECTORS[i].chance;
     }
 
     const sectorAngle = 360 / SECTORS.length;
+    // Cálculo preciso para parar no centro da fatia
     const stopAt = (SECTORS.length - selectedIndex) * sectorAngle - (sectorAngle / 2);
     const newRotation = rotation + (360 * 8) + stopAt;
     
@@ -51,9 +59,19 @@ const DailyPulse = () => {
     });
 
     const reward = SECTORS[selectedIndex];
+    setWinningIndex(selectedIndex); // Ativa a pulsação do setor
+
     if (reward.value > 0) {
-      confetti({ particleCount: 200, spread: 90, origin: { y: 0.7 }, colors: ['#00FF9C', '#FFD700', '#FF007F'] });
-      showSuccess(`ESTABILIZADO: +${reward.label}`);
+      const isJackpot = reward.label === 'JACKPOT';
+      
+      confetti({ 
+        particleCount: isJackpot ? 500 : 200, 
+        spread: isJackpot ? 120 : 90, 
+        origin: { y: 0.7 }, 
+        colors: isJackpot ? ['#FFD700', '#FF007F', '#00FF9C', '#FFFFFF'] : ['#00FF9C', '#FFD700', '#FF007F'] 
+      });
+
+      showSuccess(isJackpot ? `Protocolo ALPHA: JACKPOT ATIVADO!` : `ESTABILIZADO: +${reward.label}`);
       setLastWin(reward.label);
     } else {
       showError("SINCRO-FALHA: Setor Vazio.");
@@ -114,13 +132,11 @@ const DailyPulse = () => {
         </div>
       </div>
 
-      {/* A Super Roleta (Design Vegas/TV) */}
+      {/* A Super Roleta */}
       <div className="lg:col-span-8 bg-[#050505] rounded-[60px] border border-white/5 p-16 flex items-center justify-center relative shadow-[inset_0_0_100px_rgba(0,0,0,1)] min-h-[700px]">
-        {/* Camadas de Brilho de Fundo */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,255,156,0.05),transparent)]" />
         
         <div className="relative w-[550px] h-[550px]">
-          {/* Chassis Externo com LEDs */}
           <div className="absolute inset-[-60px] rounded-full border-[20px] border-[#121212] shadow-[0_0_100px_rgba(0,0,0,0.5),inset_0_0_20px_rgba(255,255,255,0.05)]">
             {Array.from({ length: 24 }).map((_, i) => (
               <motion.div 
@@ -138,12 +154,10 @@ const DailyPulse = () => {
 
           <WheelPointer isSpinning={isSpinning} />
 
-          {/* O Corpo da Roleta */}
           <motion.div 
             animate={controls}
             className="w-full h-full relative"
           >
-            {/* Sombras de Profundidade */}
             <div className="absolute inset-0 rounded-full shadow-[inset_0_0_80px_rgba(0,0,0,0.8),0_20px_50px_rgba(0,0,0,0.5)] z-10 pointer-events-none" />
             
             <svg viewBox="0 0 100 100" className="w-full h-full overflow-visible drop-shadow-2xl">
@@ -155,9 +169,8 @@ const DailyPulse = () => {
               </defs>
               
               <circle cx="50" cy="50" r="50" fill="url(#wheelGrad)" />
-              <WheelSectors sectors={SECTORS} />
+              <WheelSectors sectors={SECTORS} winningIndex={winningIndex} />
               
-              {/* Pinos de Ouro (Pins) */}
               {Array.from({ length: SECTORS.length }).map((_, i) => (
                 <circle 
                   key={i} 
@@ -170,7 +183,6 @@ const DailyPulse = () => {
             </svg>
           </motion.div>
 
-          {/* O Centro - Unidade de Processamento (Core) */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
             <div className="w-40 h-40 rounded-full bg-[#121212] border-[8px] border-[#0A0A0A] flex items-center justify-center shadow-[0_0_50px_rgba(0,0,0,0.8)] relative">
                <div className="absolute inset-0 rounded-full border border-white/5 animate-[spin_10s_linear_infinite]" />
