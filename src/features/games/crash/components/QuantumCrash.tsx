@@ -28,14 +28,15 @@ const QuantumCrash = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [payout, setPayout] = useState<number | null>(null);
 
-  // -- Render/Logic Refs --
+  // -- Refs de Loop e Lógica --
   const reqRef = useRef<number>();
   const startTimeRef = useRef<number>(0);
   const crashPointRef = useRef<number>(0);
   
-  // -- Camera/Graph State --
-  const [scaleX, setScaleX] = useState(10); // Segundos visíveis no eixo X
-  const [scaleY, setScaleY] = useState(2);  // Multiplicador visível no eixo Y
+  // -- Refs de Renderização (Mutable para evitar Re-renders desnecessários no DOM) --
+  // Usamos estado apenas para o que precisa atualizar a UI do React (números), 
+  // mas coordenadas de alta frequência calculamos no render para garantir sincronia.
+  const [viewScale, setViewScale] = useState({ x: 10, y: 2 }); // Escala máxima atual (Tempo, Multiplicador)
 
   useEffect(() => {
     return () => cancelAnimation();
@@ -55,8 +56,7 @@ const QuantumCrash = () => {
     setStatus('STARTING');
     setPayout(null);
     setMultiplier(1.00);
-    setScaleX(8);
-    setScaleY(2);
+    setViewScale({ x: 8, y: 2 }); // Reset da câmera
     
     // Simulação de delay de rede
     setTimeout(() => {
@@ -68,7 +68,7 @@ const QuantumCrash = () => {
       let crash = 1.0;
       // 3% de chance de crash instantâneo
       if (r > 0.03) {
-         // Distribuição exponencial para simular crash
+         // Distribuição exponencial
          crash = Math.floor(100 * Math.E ** (Math.random() * Math.log(100))) / 100;
          if (crash > 50) crash = 50; 
          if (crash < 1.1) crash = 1.1; 
@@ -81,20 +81,25 @@ const QuantumCrash = () => {
 
   const loop = () => {
     const now = Date.now();
+    // Delta Time real desde o início do voo
     const elapsedSeconds = (now - startTimeRef.current) / 1000;
     
-    // Crescimento Exponencial
-    const currentMult = Math.pow(Math.E, 0.12 * elapsedSeconds);
+    // Crescimento Exponencial Padrão: M(t) = e^(k * t)
+    // k = 0.06 define a velocidade da curva. 
+    // Usamos o tempo total (elapsedSeconds) para garantir que a posição
+    // seja uma função pura do tempo, sem erros de acumulação de frames.
+    const growthRate = 0.12; 
+    const currentMult = Math.pow(Math.E, growthRate * elapsedSeconds);
 
     setMultiplier(currentMult);
 
-    // Ajuste dinâmico da Câmera (Zoom Out) mais suave
-    if (elapsedSeconds > scaleX * 0.8) {
-      setScaleX(prev => prev * 1.005);
-    }
-    if (currentMult > scaleY * 0.8) {
-      setScaleY(prev => prev * 1.01);
-    }
+    // Lógica da Câmera (Determinística)
+    // Mantemos o avião sempre visível dentro de uma "janela" segura.
+    // Se o avião passar de 80% da tela, expandimos a escala.
+    setViewScale(prev => ({
+      x: Math.max(prev.x, elapsedSeconds * 1.2), // Mantém no max em ~83% da largura
+      y: Math.max(prev.y, currentMult * 1.1)     // Mantém no max em ~90% da altura
+    }));
 
     if (currentMult >= crashPointRef.current) {
       handleCrash(crashPointRef.current);
@@ -127,49 +132,52 @@ const QuantumCrash = () => {
     setHistory(prev => [{ multiplier: val, timestamp: Date.now() }, ...prev].slice(0, HISTORY_LIMIT));
   };
 
-  // -- Render Calculations --
-
-  // Transforma Tempo/Mult em coordenadas SVG (0-100)
-  const getPosition = (t: number, m: number) => {
-    const x = (t / scaleX) * 100;
-    // Normalização logarítmica para visualização vertical mais agradável,
-    // ou linear (m-1)/(scaleY-1). Linear é mais fiel ao eixo Y numérico.
-    const normalizedY = (m - 1) / (scaleY - 1); 
-    const y = 100 - (normalizedY * 100);
-    return { x, y };
-  };
-
-  const elapsed = status === 'FLYING' || status === 'CRASHED' || status === 'CASHOUT' 
-    ? (Math.log(multiplier) / 0.12)
-    : 0;
-    
-  const dronePos = getPosition(elapsed, multiplier);
+  // -- Cálculos de Renderização (Executados a cada Render) --
   
-  // Clamping para evitar que o avião saia do SVG antes do re-scale
-  const safeDroneX = Math.min(Math.max(dronePos.x, 0), 100);
-  const safeDroneY = Math.min(Math.max(dronePos.y, 0), 100);
+  // 1. Determinar o tempo decorrido baseado no estado atual
+  // Se estiver voando, recalcula. Se parou (Crash/Cashout), usa o valor final travado.
+  const currentTime = status === 'STARTING' || status === 'IDLE' 
+    ? 0 
+    : (Math.log(multiplier) / 0.12); // Inverso da exponencial para obter o tempo exato do multiplicador atual
 
-  // Curva Bezier Suave
+  // 2. Mapeamento Linear Estrito (0 a 100%)
+  // X = Porcentagem do tempo atual em relação à escala X da câmera
+  const xPercent = (currentTime / viewScale.x) * 100;
+  
+  // Y = Porcentagem do multiplicador atual (acima de 1.0) em relação à escala Y da câmera
+  // O "-1" é porque o gráfico começa em 1.0x, que deve ser a base (0%)
+  const yPercent = ((multiplier - 1) / (viewScale.y - 1)) * 100;
+  
+  // Inverter Y para coordenadas SVG (onde 0 é topo e 100 é base)
+  const svgY = 100 - yPercent;
+
+  // Clamping de segurança para renderização
+  const safeX = Math.min(Math.max(xPercent, 0), 100);
+  const safeY = Math.min(Math.max(svgY, 0), 100);
+
+  // 3. Construção do Gráfico
+  // Usamos Quadratic Bezier para suavizar levemente a curva visual, 
+  // mas o ponto final (safeX, safeY) é matematicamente exato.
   const pathData = `
     M 0 100 
-    Q ${safeDroneX * 0.6} 100, ${safeDroneX} ${safeDroneY}
+    Q ${safeX * 0.5} 100, ${safeX} ${safeY}
   `;
   
   const areaData = `
     ${pathData}
-    L ${safeDroneX} 100
+    L ${safeX} 100
     L 0 100
     Z
   `;
 
-  // Cálculo de rotação dinâmica (tangente aproximada)
-  // Quanto mais alto o Y (menor valor numérico), maior o ângulo
-  const rotation = status === 'CRASHED' ? 90 : Math.min(-15 - (100 - safeDroneY) * 0.3, -10);
+  // Rotação baseada na inclinação da curva (Tangente)
+  // Quanto maior o Y percentual, mais inclinado o avião (até max -45deg)
+  const rotation = status === 'CRASHED' ? 90 : Math.max(-45, -10 - (yPercent * 0.5));
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch h-[600px]">
       
-      {/* --- Painel de Controle (Esquerda) --- */}
+      {/* --- Painel de Controle --- */}
       <div className="bg-[#09090b] rounded-[32px] border border-white/5 p-8 flex flex-col justify-between shadow-2xl relative z-20">
         <div className="space-y-8">
           <header>
@@ -252,7 +260,7 @@ const QuantumCrash = () => {
         </div>
       </div>
 
-      {/* --- Display Gráfico (Direita) --- */}
+      {/* --- Display Gráfico --- */}
       <div className="lg:col-span-2 bg-[#050505] rounded-[40px] border border-white/5 relative overflow-hidden flex flex-col">
         <div className="absolute inset-0 opacity-10 pointer-events-none" 
           style={{ 
@@ -263,10 +271,6 @@ const QuantumCrash = () => {
         />
         
         <div className="relative flex-1 w-full h-full z-10">
-          {/* 
-             CORREÇÃO: viewBox="0 0 100 100" é crucial para alinhar o sistema de coordenadas do SVG
-             com as porcentagens usadas no posicionamento do avião.
-          */}
           <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
             <defs>
               <linearGradient id="trailGradient" x1="0" y1="0" x2="0" y2="1">
@@ -282,35 +286,34 @@ const QuantumCrash = () => {
               </filter>
             </defs>
 
+            {/* Linhas SVG sem transition-all para evitar desync */}
             {(status === 'FLYING' || status === 'CRASHED' || status === 'CASHOUT') && (
               <>
                 <path 
                   d={areaData} 
                   fill="url(#trailGradient)" 
-                  className="transition-all duration-75 ease-linear"
                 />
                 <path 
                   d={pathData} 
                   fill="none" 
                   stroke={status === 'CRASHED' ? '#EF4444' : '#00FF9C'} 
-                  strokeWidth="0.8" // Ajustado para a escala 0-100 do viewBox
+                  strokeWidth="0.8"
                   filter="url(#glow)"
                   strokeLinecap="round"
-                  className="transition-colors duration-200"
-                  vectorEffect="non-scaling-stroke" // Mantém a linha fina mesmo com escala
+                  vectorEffect="non-scaling-stroke"
                 />
               </>
             )}
           </svg>
 
-          {/* Avião / Drone */}
+          {/* O "Drone" / Avião */}
+          {/* IMPORTANTE: Removemos transition-all para que a posição siga exatamente o JS */}
           {(status === 'FLYING' || status === 'CRASHED' || status === 'CASHOUT') && (
             <div 
               className="absolute w-8 h-8 -ml-4 -mt-4 z-20 will-change-transform"
               style={{ 
-                left: `${safeDroneX}%`, 
-                top: `${safeDroneY}%`,
-                // Rotação dinâmica baseada na subida
+                left: `${safeX}%`, 
+                top: `${safeY}%`,
                 transform: `translate(-30%, -30%) rotate(${rotation}deg)` 
               }}
             >
@@ -329,6 +332,7 @@ const QuantumCrash = () => {
           )}
         </div>
 
+        {/* Counter Overlay */}
         <div className="absolute inset-0 z-30 flex flex-col items-center justify-center pointer-events-none">
           <AnimatePresence mode="wait">
             {status === 'STARTING' && (
@@ -343,7 +347,7 @@ const QuantumCrash = () => {
             )}
 
             {(status === 'FLYING' || status === 'CASHOUT') && (
-              <motion.div className="text-center">
+              <div className="text-center">
                  <div className="text-7xl font-mono font-black text-white tracking-tighter drop-shadow-2xl">
                    {multiplier.toFixed(2)}<span className="text-[#00FF9C] text-4xl">x</span>
                  </div>
@@ -356,7 +360,7 @@ const QuantumCrash = () => {
                      Saque Realizado
                    </motion.div>
                  )}
-              </motion.div>
+              </div>
             )}
 
             {status === 'CRASHED' && (
