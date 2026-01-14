@@ -1,41 +1,43 @@
 "use client";
 
 import React from 'react';
-import { LayoutDashboard, Package, Gamepad2, Wallet, History, Settings, Share2 } from 'lucide-react';
+import { LayoutDashboard, Package, Gamepad2, Wallet, History, Users, ArrowUpRight } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { MadeWithDyad } from '@/components/made-with-dyad';
-import { useUserStore } from '../../_infrastructure/state/useUserStore';
+import { useStore } from '../../_infrastructure/state/store';
 
 const NavItem = ({ icon: Icon, label, active = false, onClick }: { icon: any, label: string, active?: boolean, onClick?: () => void }) => (
   <div 
     onClick={onClick}
-    className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-colors cursor-pointer ${active ? 'bg-emerald-500/10 text-emerald-500' : 'text-muted-foreground hover:bg-white/5 hover:text-foreground'}`}
+    className={`flex items-center gap-3 rounded-xl px-4 py-3 transition-all cursor-pointer group ${active ? 'bg-emerald-500 text-black' : 'text-muted-foreground hover:bg-white/5 hover:text-foreground'}`}
   >
-    <Icon size={18} />
-    <span className="text-sm font-medium">{label}</span>
+    <Icon size={18} strokeWidth={active ? 3 : 2} className={active ? '' : 'group-hover:text-emerald-400'} />
+    <span className={`text-sm ${active ? 'font-bold' : 'font-medium'}`}>{label}</span>
   </div>
 );
 
 const AppLayout = ({ children }: { children: React.ReactNode }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { balance, tokens } = useUserStore();
+  const { balance, engagementTokens } = useStore();
 
   return (
     <div className="flex min-h-screen bg-[#09090b] text-foreground font-sans selection:bg-emerald-500/30">
-      <aside className="w-64 border-r border-white/5 flex flex-col p-6 sticky top-0 h-screen">
+      <aside className="w-72 border-r border-white/5 flex flex-col p-8 sticky top-0 h-screen bg-[#09090b]/50 backdrop-blur-xl">
         <div 
-          className="mb-10 flex items-center gap-2 cursor-pointer"
+          className="mb-12 flex items-center gap-3 cursor-pointer group"
           onClick={() => navigate('/')}
         >
-          <div className="h-8 w-8 rounded-lg bg-emerald-500 flex items-center justify-center">
-            <Package className="text-black" size={20} />
+          <div className="h-10 w-10 rounded-xl bg-emerald-500 flex items-center justify-center transition-transform group-hover:rotate-12">
+            <Package className="text-black" size={24} strokeWidth={2.5} />
           </div>
-          <span className="text-xl font-bold tracking-tighter">VAULT<span className="text-emerald-500">MARKET</span></span>
+          <span className="text-2xl font-black tracking-tighter uppercase italic">
+            Vault<span className="text-emerald-500">Net</span>
+          </span>
         </div>
 
-        <nav className="flex flex-col gap-1 flex-1">
-          <div className="text-[10px] font-bold text-muted-foreground uppercase mb-2 px-3 tracking-widest">Plataforma</div>
+        <nav className="flex flex-col gap-2 flex-1">
+          <div className="text-[10px] font-black text-muted-foreground uppercase mb-4 px-4 tracking-[0.2em] opacity-50">Plataforma</div>
           <NavItem 
             icon={LayoutDashboard} 
             label="Marketplace" 
@@ -55,47 +57,51 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
             onClick={() => navigate('/games')}
           />
           <NavItem 
-            icon={Share2} 
-            label="Parceiros" 
+            icon={Users} 
+            label="Rede de Parceiros" 
             active={location.pathname === '/partners'}
             onClick={() => navigate('/partners')}
           />
           
-          <div className="text-[10px] font-bold text-muted-foreground uppercase mt-6 mb-2 px-3 tracking-widest">Financeiro</div>
-          <NavItem icon={Wallet} label="Carteira Crypto" />
-          <NavItem icon={History} label="Transações" />
-          <NavItem icon={Settings} label="Configurações" />
+          <div className="text-[10px] font-black text-muted-foreground uppercase mt-8 mb-4 px-4 tracking-[0.2em] opacity-50">Sincronia</div>
+          <NavItem icon={Wallet} label="Ativos Digitais" />
+          <NavItem icon={History} label="Log de Operações" />
         </nav>
 
-        <div className="mt-auto border-t border-white/5 pt-6">
-          <div className="rounded-xl bg-white/5 p-4">
-            <div className="flex justify-between items-center mb-1">
-              <span className="text-xs text-muted-foreground uppercase font-bold tracking-tighter">Tokens</span>
-              <span className="text-emerald-400 font-mono text-xs">{tokens.toLocaleString()} TK</span>
-            </div>
-            <div className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
-              <div 
-                className="h-full bg-emerald-500 transition-all duration-1000" 
-                style={{ width: `${Math.min((tokens / 10000) * 100, 100)}%` }}
-              />
-            </div>
-          </div>
-          <MadeWithDyad />
+        <div className="mt-auto pt-8 flex flex-col gap-4">
+           <div className="rounded-2xl bg-white/5 p-5 border border-white/5">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Tokens de Engajamento</span>
+                <span className="text-emerald-400 font-mono font-bold text-xs">{engagementTokens.toLocaleString()}</span>
+              </div>
+              <div className="h-1 w-full bg-white/10 rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-emerald-500 transition-all duration-1000" 
+                  style={{ width: `${Math.min((engagementTokens / 10000) * 100, 100)}%` }}
+                />
+              </div>
+           </div>
+           <MadeWithDyad />
         </div>
       </aside>
 
-      <main className="flex-1 flex flex-col p-8 overflow-y-auto">
-        <header className="flex justify-between items-center mb-10">
+      <main className="flex-1 flex flex-col overflow-y-auto">
+        <header className="h-24 px-12 flex justify-between items-center border-b border-white/5 bg-[#09090b]/20 backdrop-blur-md sticky top-0 z-50">
           <div className="flex-1" />
-          <div className="flex items-center gap-4 bg-white/5 px-4 py-2 rounded-2xl border border-white/5">
+          <div className="flex items-center gap-6">
             <div className="flex flex-col items-end">
-              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Saldo Disponível</span>
-              <span className="font-mono text-lg font-bold text-white">${balance.toFixed(2)}</span>
+               <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest opacity-60">Saldo em Carteira</span>
+               <span className="font-mono text-2xl font-black text-white tracking-tighter tabular-nums">${balance.toFixed(2)}</span>
             </div>
-            <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-emerald-500 to-emerald-700" />
+            <button className="h-12 w-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors">
+               <ArrowUpRight size={20} className="text-emerald-500" />
+            </button>
           </div>
         </header>
-        {children}
+        
+        <div className="p-12 max-w-7xl mx-auto w-full">
+          {children}
+        </div>
       </main>
     </div>
   );

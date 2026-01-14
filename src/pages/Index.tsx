@@ -2,117 +2,117 @@
 
 import React, { useState } from 'react';
 import AppLayout from '@/components/layout/AppLayout';
-import BoxCard from '@/features/marketplace/components/BoxCard';
-import OpeningAnimation from '@/features/marketplace/components/OpeningAnimation';
-import { MysteryBox, Reward } from '@/_core/domain/types';
-import { useUserStore } from '../_infrastructure/state/useUserStore';
-import { showSuccess, showError } from '@/utils/toast';
+import HighConversionCard from '@/features/marketplace/components/HighConversionCard';
+import ImmersiveOpener from '@/features/marketplace/components/ImmersiveOpener';
+import { MysteryBox, Reward } from '@/_core/domain/entities';
+import { useStore } from '../_infrastructure/state/store';
+import { showError } from '@/utils/toast';
 
-const MOCK_BOXES: MysteryBox[] = [
+const BOX_REGISTRY: MysteryBox[] = [
   {
-    id: '1',
-    name: 'Tech Genesis Box',
-    description: 'Hardware e Gift Cards de alta performance.',
-    price: 49.90,
-    tier: 'Rare',
-    imageUrl: 'https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=400&auto=format&fit=crop&q=60',
-    potentialRewards: []
-  },
-  {
-    id: '2',
-    name: 'Crypto Whale Vault',
-    description: 'Ativos digitais e recompensas em tokens premium.',
-    price: 199.99,
-    tier: 'Legendary',
-    imageUrl: 'https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=400&auto=format&fit=crop&q=60',
-    potentialRewards: []
-  },
-  {
-    id: '3',
-    name: 'Starter Essentials',
-    description: 'O começo da sua jornada de colecionador.',
-    price: 9.90,
-    tier: 'Common',
-    imageUrl: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=400&auto=format&fit=crop&q=60',
-    potentialRewards: []
-  },
-  {
-    id: '4',
-    name: 'Neon Cyber Unit',
-    description: 'Exclusividade estética e utilidade em rede.',
-    price: 85.00,
+    id: 'box-1',
+    name: 'Cyber Sentinel Unit',
+    price: 89.90,
     tier: 'Epic',
-    imageUrl: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=400&auto=format&fit=crop&q=60',
-    potentialRewards: []
+    description: 'Hardware criptográfico de alta fidelidade e acessos restritos de rede.',
+    imageUrl: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=400&q=80'
+  },
+  {
+    id: 'box-2',
+    name: 'Apex Liquidity Vault',
+    price: 249.00,
+    tier: 'Legendary',
+    description: 'A maior probabilidade de ativos de alta liquidez e tokens raros.',
+    imageUrl: 'https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=400&q=80'
+  },
+  {
+    id: 'box-3',
+    name: 'Core Starter Pack',
+    price: 14.50,
+    tier: 'Common',
+    description: 'Unidades de entrada para novos exploradores do ecossistema.',
+    imageUrl: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=400&q=80'
+  },
+  {
+    id: 'box-4',
+    name: 'Neural Node Box',
+    price: 45.00,
+    tier: 'Rare',
+    description: 'Aprimoramentos de rede e pacotes de dados processados.',
+    imageUrl: 'https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=400&q=80'
   }
 ];
 
-const Index = () => {
-  const { spendBalance, addReward } = useUserStore();
-  const [isOpening, setIsOpening] = useState(false);
+const Marketplace = () => {
+  const { balance, updateBalance, addReward } = useStore();
   const [activeReward, setActiveReward] = useState<Reward | null>(null);
 
-  const handlePurchase = (id: string) => {
-    const box = MOCK_BOXES.find(b => b.id === id);
-    if (!box) return;
-
-    if (spendBalance(box.price)) {
-      setIsOpening(true);
-      // Simulação de delay para criar antecipação (Greedy UX)
-      setTimeout(() => {
-        const reward: Reward = {
-          id: `r-${Date.now()}`,
-          name: `${box.tier} Collectible #${Math.floor(Math.random() * 1000)}`,
-          rarity: box.tier,
-          value: box.price * (Math.random() > 0.8 ? 5 : 0.8),
-          type: 'ITEM'
-        };
-        setActiveReward(reward);
-      }, 500);
+  const handleAcquire = (box: MysteryBox) => {
+    if (balance >= box.price) {
+      updateBalance(-box.price);
+      
+      // Simulação de backend p/ gerar recompensa
+      const newReward: Reward = {
+        id: `rw-${Math.random().toString(36).substr(2, 9)}`,
+        name: `${box.name} Artifact`,
+        rarity: box.tier,
+        value: box.price * (Math.random() > 0.7 ? 1.5 : 0.8),
+        timestamp: Date.now()
+      };
+      
+      setActiveReward(newReward);
     } else {
-      showError("Saldo insuficiente para adquirir esta unidade.");
+      showError("Saldo insuficiente para sincronizar esta unidade.");
     }
   };
 
   return (
     <AppLayout>
-      <div className="mb-10">
-        <h1 className="text-3xl font-bold tracking-tight">Marketplace</h1>
-        <p className="text-muted-foreground">Unidades de colecionáveis verificadas e seguras.</p>
-      </div>
-
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {MOCK_BOXES.map((box) => (
-          <BoxCard key={box.id} box={box} onPurchase={handlePurchase} />
-        ))}
-      </div>
-
-      <div className="mt-12 rounded-2xl bg-gradient-to-r from-emerald-500/10 to-blue-500/10 p-8 border border-emerald-500/20">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="max-w-md text-center md:text-left">
-            <h2 className="text-2xl font-bold mb-2">Colete & Evolua</h2>
-            <p className="text-muted-foreground text-sm">Ao adquirir unidades no Marketplace, você gera tokens de engajamento que podem ser utilizados na nossa Central de Experiências.</p>
+      <div className="flex flex-col gap-10">
+        <header className="relative py-12 px-8 rounded-3xl bg-gradient-to-br from-emerald-500/10 to-transparent border border-white/5 overflow-hidden">
+          <div className="absolute -right-20 -top-20 h-64 w-64 bg-emerald-500/10 blur-[100px]" />
+          <div className="relative z-10 max-w-2xl">
+            <h1 className="text-5xl font-black tracking-tighter mb-4 uppercase">
+              Expanda sua <span className="text-emerald-500">Rede.</span>
+            </h1>
+            <p className="text-lg text-muted-foreground font-medium">
+              Adquira unidades verificadas, sincronize seu vault e ganhe tokens de engajamento para validar novas experiências.
+            </p>
           </div>
-          <button 
-            onClick={() => window.location.href = '/tokens'}
-            className="rounded-xl bg-emerald-500 px-8 py-4 font-bold text-black hover:bg-emerald-400 transition-colors"
-          >
-            IR PARA CENTRAL DE TOKENS
-          </button>
-        </div>
-      </div>
+        </header>
 
-      <OpeningAnimation 
-        reward={activeReward} 
-        onClose={() => {
-          if (activeReward) addReward(activeReward);
-          setIsOpening(false);
-          setActiveReward(null);
-          showSuccess("Item adicionado ao seu Vault com sucesso!");
-        }} 
-      />
+        <section>
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-xl font-bold uppercase tracking-widest flex items-center gap-2">
+              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+              Unidades Disponíveis
+            </h2>
+            <div className="flex gap-2">
+              {['Common', 'Rare', 'Epic', 'Legendary'].map(t => (
+                <span key={t} className="text-[10px] font-bold px-2 py-1 rounded bg-white/5 border border-white/10 uppercase opacity-60">
+                  {t}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {BOX_REGISTRY.map((box) => (
+              <HighConversionCard key={box.id} box={box} onSelect={handleAcquire} />
+            ))}
+          </div>
+        </section>
+
+        <ImmersiveOpener 
+          reward={activeReward} 
+          onClose={() => {
+            if (activeReward) addReward(activeReward);
+            setActiveReward(null);
+          }} 
+        />
+      </div>
     </AppLayout>
   );
 };
 
-export default Index;
+export default Marketplace;
