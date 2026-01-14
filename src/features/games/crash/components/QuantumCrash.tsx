@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Rocket, Zap, History, AlertTriangle } from 'lucide-react';
+import { Rocket, Zap, History, AlertTriangle, Skull, Crosshair, RefreshCcw } from 'lucide-react';
 import { useStore } from '@/_infrastructure/state/store';
 import { showSuccess, showError } from '@/utils/toast';
 import { cn } from '@/lib/utils';
@@ -17,6 +17,13 @@ interface GameHistory {
 
 const HISTORY_LIMIT = 5;
 
+// Fases de tensão para feedback visual
+const TENSION_PHASES = {
+  STABLE: { threshold: 0, color: '#00FF9C', shadow: 'rgba(0,255,156,0.3)' },
+  HEATING: { threshold: 2.0, color: '#FFD700', shadow: 'rgba(255,215,0,0.4)' },
+  CRITICAL: { threshold: 5.0, color: '#FF0055', shadow: 'rgba(255,0,85,0.6)' },
+};
+
 const QuantumCrash = () => {
   const { balance, updateBalance } = useStore();
   
@@ -28,15 +35,18 @@ const QuantumCrash = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [payout, setPayout] = useState<number | null>(null);
 
+  // -- UX State --
+  const [tension, setTension] = useState<'STABLE' | 'HEATING' | 'CRITICAL'>('STABLE');
+  const [shakeIntensity, setShakeIntensity] = useState(0);
+  const [cashoutHovered, setCashoutHovered] = useState(false);
+
   // -- Refs de Loop e Lógica --
   const reqRef = useRef<number>();
   const startTimeRef = useRef<number>(0);
   const crashPointRef = useRef<number>(0);
   
-  // -- Refs de Renderização (Mutable para evitar Re-renders desnecessários no DOM) --
-  // Usamos estado apenas para o que precisa atualizar a UI do React (números), 
-  // mas coordenadas de alta frequência calculamos no render para garantir sincronia.
-  const [viewScale, setViewScale] = useState({ x: 10, y: 2 }); // Escala máxima atual (Tempo, Multiplicador)
+  // -- Câmera --
+  const [viewScale, setViewScale] = useState({ x: 10, y: 2 });
 
   useEffect(() => {
     return () => cancelAnimation();
@@ -56,19 +66,17 @@ const QuantumCrash = () => {
     setStatus('STARTING');
     setPayout(null);
     setMultiplier(1.00);
-    setViewScale({ x: 8, y: 2 }); // Reset da câmera
+    setViewScale({ x: 8, y: 2 });
+    setTension('STABLE');
+    setShakeIntensity(0);
     
-    // Simulação de delay de rede
     setTimeout(() => {
       setStatus('FLYING');
       startTimeRef.current = Date.now();
       
-      // Algoritmo de Crash
       const r = Math.random();
       let crash = 1.0;
-      // 3% de chance de crash instantâneo
       if (r > 0.03) {
-         // Distribuição exponencial
          crash = Math.floor(100 * Math.E ** (Math.random() * Math.log(100))) / 100;
          if (crash > 50) crash = 50; 
          if (crash < 1.1) crash = 1.1; 
@@ -81,24 +89,29 @@ const QuantumCrash = () => {
 
   const loop = () => {
     const now = Date.now();
-    // Delta Time real desde o início do voo
     const elapsedSeconds = (now - startTimeRef.current) / 1000;
     
-    // Crescimento Exponencial Padrão: M(t) = e^(k * t)
-    // k = 0.06 define a velocidade da curva. 
-    // Usamos o tempo total (elapsedSeconds) para garantir que a posição
-    // seja uma função pura do tempo, sem erros de acumulação de frames.
-    const growthRate = 0.12; 
-    const currentMult = Math.pow(Math.E, growthRate * elapsedSeconds);
+    // Crescimento Exponencial
+    const currentMult = Math.pow(Math.E, 0.12 * elapsedSeconds);
 
     setMultiplier(currentMult);
 
-    // Lógica da Câmera (Determinística)
-    // Mantemos o avião sempre visível dentro de uma "janela" segura.
-    // Se o avião passar de 80% da tela, expandimos a escala.
+    // Atualização de Tensão (Game Feel)
+    if (currentMult > TENSION_PHASES.CRITICAL.threshold) {
+      setTension('CRITICAL');
+      setShakeIntensity(2 + (currentMult * 0.1)); // Treme mais conforme sobe
+    } else if (currentMult > TENSION_PHASES.HEATING.threshold) {
+      setTension('HEATING');
+      setShakeIntensity(0.5);
+    } else {
+      setTension('STABLE');
+      setShakeIntensity(0);
+    }
+
+    // Câmera dinâmica
     setViewScale(prev => ({
-      x: Math.max(prev.x, elapsedSeconds * 1.2), // Mantém no max em ~83% da largura
-      y: Math.max(prev.y, currentMult * 1.1)     // Mantém no max em ~90% da altura
+      x: Math.max(prev.x, elapsedSeconds * 1.2),
+      y: Math.max(prev.y, currentMult * 1.1)
     }));
 
     if (currentMult >= crashPointRef.current) {
@@ -113,7 +126,9 @@ const QuantumCrash = () => {
     setStatus('CRASHED');
     setMultiplier(finalValue);
     addToHistory(finalValue);
-    showError(`Sinal perdido em ${finalValue.toFixed(2)}x`);
+    setShakeIntensity(20); // Impacto final forte
+    setTimeout(() => setShakeIntensity(0), 500); // Reduz tremor
+    // Efeito sonoro seria disparado aqui
   };
 
   const handleCashout = () => {
@@ -132,62 +147,46 @@ const QuantumCrash = () => {
     setHistory(prev => [{ multiplier: val, timestamp: Date.now() }, ...prev].slice(0, HISTORY_LIMIT));
   };
 
-  // -- Cálculos de Renderização (Executados a cada Render) --
-  
-  // 1. Determinar o tempo decorrido baseado no estado atual
-  // Se estiver voando, recalcula. Se parou (Crash/Cashout), usa o valor final travado.
+  // -- Render Calculations --
+
   const currentTime = status === 'STARTING' || status === 'IDLE' 
     ? 0 
-    : (Math.log(multiplier) / 0.12); // Inverso da exponencial para obter o tempo exato do multiplicador atual
+    : (Math.log(multiplier) / 0.12);
 
-  // 2. Mapeamento Linear Estrito (0 a 100%)
-  // X = Porcentagem do tempo atual em relação à escala X da câmera
   const xPercent = (currentTime / viewScale.x) * 100;
-  
-  // Y = Porcentagem do multiplicador atual (acima de 1.0) em relação à escala Y da câmera
-  // O "-1" é porque o gráfico começa em 1.0x, que deve ser a base (0%)
   const yPercent = ((multiplier - 1) / (viewScale.y - 1)) * 100;
-  
-  // Inverter Y para coordenadas SVG (onde 0 é topo e 100 é base)
   const svgY = 100 - yPercent;
 
-  // Clamping de segurança para renderização
   const safeX = Math.min(Math.max(xPercent, 0), 100);
   const safeY = Math.min(Math.max(svgY, 0), 100);
 
-  // 3. Construção do Gráfico
-  // Usamos Quadratic Bezier para suavizar levemente a curva visual, 
-  // mas o ponto final (safeX, safeY) é matematicamente exato.
-  const pathData = `
-    M 0 100 
-    Q ${safeX * 0.5} 100, ${safeX} ${safeY}
-  `;
-  
-  const areaData = `
-    ${pathData}
-    L ${safeX} 100
-    L 0 100
-    Z
-  `;
-
-  // Rotação baseada na inclinação da curva (Tangente)
-  // Quanto maior o Y percentual, mais inclinado o avião (até max -45deg)
+  const pathData = `M 0 100 Q ${safeX * 0.5} 100, ${safeX} ${safeY}`;
+  const areaData = `${pathData} L ${safeX} 100 L 0 100 Z`;
   const rotation = status === 'CRASHED' ? 90 : Math.max(-45, -10 - (yPercent * 0.5));
+
+  // Determina a cor atual baseada na tensão
+  const currentColor = TENSION_PHASES[tension].color;
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch h-[600px]">
       
       {/* --- Painel de Controle --- */}
-      <div className="bg-[#09090b] rounded-[32px] border border-white/5 p-8 flex flex-col justify-between shadow-2xl relative z-20">
-        <div className="space-y-8">
+      <div className="bg-[#09090b] rounded-[32px] border border-white/5 p-8 flex flex-col justify-between shadow-2xl relative z-20 overflow-hidden">
+        {/* Ambient Glow baseado na tensão */}
+        <div 
+          className="absolute inset-0 opacity-20 pointer-events-none transition-colors duration-1000"
+          style={{ background: `radial-gradient(circle at top right, ${currentColor}, transparent 70%)` }}
+        />
+
+        <div className="space-y-8 relative z-10">
           <header>
             <div className="flex items-center gap-2 mb-2">
-               <Zap className={cn("h-4 w-4", status === 'FLYING' ? "text-[#00FF9C] animate-pulse" : "text-zinc-600")} />
+               <Zap className={cn("h-4 w-4 transition-colors", status === 'FLYING' ? "animate-pulse" : "text-zinc-600")} style={{ color: status === 'FLYING' ? currentColor : undefined }} />
                <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Status do Reator</span>
             </div>
             <div className="flex items-baseline gap-2">
                <h2 className="text-4xl font-black text-white italic tracking-tighter">QUANTUM</h2>
-               <span className="text-sm font-bold text-[#00FF9C]">v2.4</span>
+               <span className="text-sm font-bold transition-colors duration-500" style={{ color: currentColor }}>v2.4</span>
             </div>
           </header>
 
@@ -216,6 +215,7 @@ const QuantumCrash = () => {
             </div>
           </div>
 
+          {/* Histórico */}
           {history.length > 0 && (
             <div className="pt-6 border-t border-white/5">
                <span className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest mb-3 block flex items-center gap-2">
@@ -235,33 +235,69 @@ const QuantumCrash = () => {
           )}
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-4 relative z-10">
           {status === 'IDLE' || status === 'CRASHED' || status === 'CASHOUT' ? (
             <button 
               onClick={startGame} 
               className="w-full h-20 bg-[#00FF9C] text-black font-black uppercase tracking-[0.2em] text-sm rounded-2xl hover:bg-[#00e68d] hover:shadow-[0_0_30px_rgba(0,255,156,0.3)] transition-all active:scale-95 flex items-center justify-center gap-3"
             >
-              <Rocket size={20} fill="currentColor" /> Iniciar Sincronia
+              <Rocket size={20} fill="currentColor" /> 
+              {status === 'CRASHED' ? 'RE-SINCRONIZAR' : 'INICIAR SINCRONIA'}
             </button>
           ) : status === 'STARTING' ? (
              <button disabled className="w-full h-20 bg-zinc-800 text-zinc-500 font-black uppercase tracking-widest rounded-2xl cursor-wait flex items-center justify-center gap-2">
                <span className="animate-pulse">Calibrando...</span>
              </button>
           ) : (
-            <button 
-              onClick={handleCashout} 
-              className="w-full h-20 bg-white text-black font-black uppercase tracking-widest rounded-2xl hover:bg-zinc-200 transition-all active:scale-95 flex flex-col items-center justify-center relative overflow-hidden group"
-            >
-              <span className="relative z-10 text-xs tracking-[0.3em] mb-1">Ejetar Carga</span>
-              <span className="relative z-10 text-2xl font-mono font-bold">${(bet * multiplier).toFixed(2)}</span>
-              <div className="absolute bottom-0 left-0 h-1 bg-red-500 w-full opacity-0 group-hover:opacity-100 transition-opacity" />
-            </button>
+            <div className="relative">
+              {/* Tooltip de Psicologia Reversa */}
+              <AnimatePresence>
+                {cashoutHovered && multiplier < 1.5 && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+                    className="absolute -top-12 left-0 right-0 text-center"
+                  >
+                    <span className="bg-[#FFD700] text-black text-[10px] font-black uppercase px-3 py-1 rounded-full shadow-lg">
+                      Sinal fraco. Arriscar mais?
+                    </span>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+              
+              <button 
+                onClick={handleCashout} 
+                onMouseEnter={() => setCashoutHovered(true)}
+                onMouseLeave={() => setCashoutHovered(false)}
+                className="w-full h-20 bg-white text-black font-black uppercase tracking-widest rounded-2xl transition-all active:scale-95 flex flex-col items-center justify-center relative overflow-hidden group hover:bg-zinc-200"
+                style={{
+                  boxShadow: tension === 'CRITICAL' ? `0 0 30px ${currentColor}` : 'none',
+                  animation: tension === 'CRITICAL' ? 'pulse 0.5s infinite' : 'none'
+                }}
+              >
+                <span className="relative z-10 text-xs tracking-[0.3em] mb-1 text-zinc-500">EJETAR AGORA</span>
+                <span className="relative z-10 text-2xl font-mono font-bold">${(bet * multiplier).toFixed(2)}</span>
+                
+                {/* Progress bar de pressão */}
+                <div className="absolute bottom-0 left-0 h-1.5 w-full bg-zinc-200">
+                  <div 
+                    className="h-full transition-all duration-100 ease-linear"
+                    style={{ 
+                      width: '100%', 
+                      backgroundColor: currentColor 
+                    }} 
+                  />
+                </div>
+              </button>
+            </div>
           )}
         </div>
       </div>
 
       {/* --- Display Gráfico --- */}
-      <div className="lg:col-span-2 bg-[#050505] rounded-[40px] border border-white/5 relative overflow-hidden flex flex-col">
+      <div 
+        className="lg:col-span-2 bg-[#050505] rounded-[40px] border border-white/5 relative overflow-hidden flex flex-col transition-transform duration-75"
+        style={{ transform: `translate(${Math.random() * shakeIntensity - shakeIntensity/2}px, ${Math.random() * shakeIntensity - shakeIntensity/2}px)` }}
+      >
         <div className="absolute inset-0 opacity-10 pointer-events-none" 
           style={{ 
             backgroundImage: 'linear-gradient(#ffffff 1px, transparent 1px), linear-gradient(90deg, #ffffff 1px, transparent 1px)', 
@@ -270,15 +306,16 @@ const QuantumCrash = () => {
           }} 
         />
         
+        {/* SVG Dinâmico */}
         <div className="relative flex-1 w-full h-full z-10">
           <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
             <defs>
               <linearGradient id="trailGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#00FF9C" stopOpacity="0.3" />
-                <stop offset="100%" stopColor="#00FF9C" stopOpacity="0" />
+                <stop offset="0%" stopColor={currentColor} stopOpacity="0.3" />
+                <stop offset="100%" stopColor={currentColor} stopOpacity="0" />
               </linearGradient>
               <filter id="glow">
-                <feGaussianBlur stdDeviation="1" result="coloredBlur"/>
+                <feGaussianBlur stdDeviation="1.5" result="coloredBlur"/>
                 <feMerge>
                     <feMergeNode in="coloredBlur"/>
                     <feMergeNode in="SourceGraphic"/>
@@ -286,31 +323,31 @@ const QuantumCrash = () => {
               </filter>
             </defs>
 
-            {/* Linhas SVG sem transition-all para evitar desync */}
             {(status === 'FLYING' || status === 'CRASHED' || status === 'CASHOUT') && (
               <>
                 <path 
                   d={areaData} 
                   fill="url(#trailGradient)" 
+                  className="transition-colors duration-300"
                 />
                 <path 
                   d={pathData} 
                   fill="none" 
-                  stroke={status === 'CRASHED' ? '#EF4444' : '#00FF9C'} 
-                  strokeWidth="0.8"
+                  stroke={status === 'CRASHED' ? '#EF4444' : currentColor} 
+                  strokeWidth="1.5"
                   filter="url(#glow)"
                   strokeLinecap="round"
+                  className="transition-colors duration-200"
                   vectorEffect="non-scaling-stroke"
                 />
               </>
             )}
           </svg>
 
-          {/* O "Drone" / Avião */}
-          {/* IMPORTANTE: Removemos transition-all para que a posição siga exatamente o JS */}
+          {/* Objeto Voador */}
           {(status === 'FLYING' || status === 'CRASHED' || status === 'CASHOUT') && (
             <div 
-              className="absolute w-8 h-8 -ml-4 -mt-4 z-20 will-change-transform"
+              className="absolute w-10 h-10 -ml-5 -mt-5 z-20 will-change-transform"
               style={{ 
                 left: `${safeX}%`, 
                 top: `${safeY}%`,
@@ -319,20 +356,27 @@ const QuantumCrash = () => {
             >
                {status === 'CRASHED' ? (
                  <div className="relative">
-                    <AlertTriangle className="text-red-500 w-8 h-8 animate-ping absolute opacity-50" />
-                    <AlertTriangle className="text-red-500 w-8 h-8" />
+                    <Skull className="text-red-500 w-12 h-12 animate-ping absolute opacity-50" />
+                    <AlertTriangle className="text-red-500 w-12 h-12 drop-shadow-[0_0_20px_rgba(239,68,68,1)]" />
                  </div>
                ) : (
                  <div className="relative">
-                    <Rocket className="text-[#00FF9C] w-8 h-8 drop-shadow-[0_0_15px_rgba(0,255,156,0.8)]" fill="#000" />
-                    <div className="absolute top-full left-1/2 -translate-x-1/2 w-1 h-8 bg-gradient-to-b from-[#00FF9C] to-transparent opacity-50 blur-sm" />
+                    <Rocket 
+                      className="w-10 h-10 drop-shadow-[0_0_15px_currentColor]" 
+                      style={{ color: currentColor }} 
+                      fill="#050505" 
+                    />
+                    <div 
+                      className="absolute top-full left-1/2 -translate-x-1/2 w-1.5 h-12 opacity-80 blur-sm transition-colors duration-300"
+                      style={{ background: `linear-gradient(to bottom, ${currentColor}, transparent)` }} 
+                    />
                  </div>
                )}
             </div>
           )}
         </div>
 
-        {/* Counter Overlay */}
+        {/* Overlay Central de Status */}
         <div className="absolute inset-0 z-30 flex flex-col items-center justify-center pointer-events-none">
           <AnimatePresence mode="wait">
             {status === 'STARTING' && (
@@ -347,17 +391,24 @@ const QuantumCrash = () => {
             )}
 
             {(status === 'FLYING' || status === 'CASHOUT') && (
-              <div className="text-center">
-                 <div className="text-7xl font-mono font-black text-white tracking-tighter drop-shadow-2xl">
-                   {multiplier.toFixed(2)}<span className="text-[#00FF9C] text-4xl">x</span>
+              <div className="text-center relative">
+                 <div 
+                   className="text-8xl font-mono font-black text-white tracking-tighter drop-shadow-2xl transition-colors duration-300"
+                   style={{ 
+                     textShadow: `0 0 ${shakeIntensity * 2}px ${currentColor}`,
+                     transform: `scale(${1 + shakeIntensity * 0.005})`
+                   }}
+                 >
+                   {multiplier.toFixed(2)}<span className="text-4xl" style={{ color: currentColor }}>x</span>
                  </div>
+                 
                  {status === 'CASHOUT' && (
                    <motion.div 
-                     initial={{ y: 10, opacity: 0 }} 
-                     animate={{ y: 0, opacity: 1 }}
-                     className="mt-2 bg-[#00FF9C]/20 border border-[#00FF9C] px-4 py-1 rounded-full text-[#00FF9C] text-xs font-black uppercase tracking-widest inline-block"
+                     initial={{ y: 20, opacity: 0, scale: 0.8 }} 
+                     animate={{ y: 0, opacity: 1, scale: 1 }}
+                     className="mt-4 bg-[#00FF9C] text-black px-6 py-2 rounded-full font-black uppercase tracking-widest inline-flex items-center gap-2 shadow-[0_0_30px_#00FF9C]"
                    >
-                     Saque Realizado
+                     <Zap size={16} fill="black" /> Saque Confirmado
                    </motion.div>
                  )}
               </div>
@@ -367,19 +418,33 @@ const QuantumCrash = () => {
                <motion.div 
                  initial={{ scale: 2, opacity: 0 }}
                  animate={{ scale: 1, opacity: 1 }}
-                 className="text-center"
+                 className="text-center bg-black/80 p-8 rounded-3xl backdrop-blur-sm border border-red-500/30"
                >
-                 <div className="text-8xl font-black text-red-500 tracking-tighter italic drop-shadow-[0_0_30px_rgba(239,68,68,0.5)]">
-                   CRASHED
+                 <div className="text-red-500 mb-2 flex justify-center">
+                    <Crosshair size={48} className="animate-spin-slow" />
                  </div>
-                 <div className="text-2xl font-mono font-bold text-white mt-2">
-                   @ {multiplier.toFixed(2)}x
+                 <div className="text-6xl font-black text-red-500 tracking-tighter italic drop-shadow-[0_0_30px_rgba(239,68,68,0.5)]">
+                   SINAL PERDIDO
+                 </div>
+                 <div className="text-xl font-mono font-bold text-zinc-400 mt-2">
+                   Crash em <span className="text-white">{multiplier.toFixed(2)}x</span>
+                 </div>
+                 <div className="mt-6 text-xs font-black uppercase tracking-[0.3em] text-zinc-500 animate-pulse">
+                   Aguardando reinicialização manual...
                  </div>
                </motion.div>
             )}
           </AnimatePresence>
         </div>
 
+        {/* Efeitos de Vinheta Crítica */}
+        <div 
+          className="absolute inset-0 pointer-events-none transition-opacity duration-300 mix-blend-overlay"
+          style={{ 
+            opacity: tension === 'CRITICAL' ? 0.3 : 0,
+            background: 'radial-gradient(circle, transparent 50%, #FF0055 100%)' 
+          }}
+        />
       </div>
     </div>
   );
