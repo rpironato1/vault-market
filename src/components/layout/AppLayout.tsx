@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { LayoutDashboard, Package, Gamepad2, Wallet, History, Settings } from 'lucide-react';
+import { LayoutDashboard, Package, Gamepad2, Wallet, History, Settings, Share2 } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { MadeWithDyad } from '@/components/made-with-dyad';
 import { useUserStore } from '../../_infrastructure/state/useUserStore';
@@ -23,7 +23,6 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <div className="flex min-h-screen bg-[#09090b] text-foreground font-sans selection:bg-emerald-500/30">
-      {/* Sidebar */}
       <aside className="w-64 border-r border-white/5 flex flex-col p-6 sticky top-0 h-screen">
         <div 
           className="mb-10 flex items-center gap-2 cursor-pointer"
@@ -51,9 +50,15 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
           />
           <NavItem 
             icon={Gamepad2} 
-            label="Central de Tokens" 
-            active={location.pathname === '/tokens'}
-            onClick={() => navigate('/tokens')}
+            label="Experiências" 
+            active={location.pathname === '/games'}
+            onClick={() => navigate('/games')}
+          />
+          <NavItem 
+            icon={Share2} 
+            label="Parceiros" 
+            active={location.pathname === '/partners'}
+            onClick={() => navigate('/partners')}
           />
           
           <div className="text-[10px] font-bold text-muted-foreground uppercase mt-6 mb-2 px-3 tracking-widest">Financeiro</div>
@@ -79,7 +84,6 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
         </div>
       </aside>
 
-      {/* Main Content */}
       <main className="flex-1 flex flex-col p-8 overflow-y-auto">
         <header className="flex justify-between items-center mb-10">
           <div className="flex-1" />
