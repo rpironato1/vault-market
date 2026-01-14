@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion, useAnimation } from 'framer-motion';
-import { Target, Clock, Lightning, Trophy, ShareNetwork } from '@phosphor-icons/react';
+import { Target, Clock, Lightning, Trophy } from '@phosphor-icons/react';
 import confetti from 'canvas-confetti';
 import { showSuccess, showError } from '@/utils/toast';
 import { useStore } from '@/_infrastructure/state/store';
@@ -10,10 +10,18 @@ import { cn } from '@/lib/utils';
 import { WheelPointer } from './WheelPointer';
 import { WheelSectors } from './WheelSectors';
 
-const SECTORS = [
+interface Sector {
+  label: string;
+  color: string;
+  value: number;
+  chance: number;
+}
+
+// Ajuste na ordem e cores para garantir que o setor 0 (50 TK) esteja na posição correta inicial
+const SECTORS: Sector[] = [
   { label: '50 TK', color: '#00FF9C', value: 50, chance: 0.3 },
   { label: '100 TK', color: '#121212', value: 100, chance: 0.2 },
-  { label: 'EMPTY', color: '#1a1a1a', value: 0, chance: 0.2 },
+  { label: '0 TK', color: '#2a1212', value: 0, chance: 0.2 }, // Vermelho escuro para indicar perda
   { label: '500 TK', color: '#FFD700', value: 500, chance: 0.1 },
   { label: '25 TK', color: '#00FF9C', value: 25, chance: 0.15 },
   { label: 'JACKPOT', color: '#FF007F', value: 2500, chance: 0.05 },
@@ -32,8 +40,9 @@ const DailyPulse = () => {
     
     setIsSpinning(true);
     setLastWin(null);
-    setWinningIndex(null); // Reset do estado de vitória
+    setWinningIndex(null); 
 
+    // 1. Sorteio probabilístico
     const totalChance = SECTORS.reduce((acc, s) => acc + s.chance, 0);
     let random = Math.random() * totalChance;
     let selectedIndex = 0;
@@ -46,20 +55,36 @@ const DailyPulse = () => {
       random -= SECTORS[i].chance;
     }
 
+    // 2. CÁLCULO DE PRECISÃO ABSOLUTA
+    // O ponteiro está em 270 graus (Topo / 12h)
+    // Precisamos rotacionar a roda para que o centro do setor sorteado fique em 270 graus
     const sectorAngle = 360 / SECTORS.length;
-    // Cálculo preciso para parar no centro da fatia
-    const stopAt = (SECTORS.length - selectedIndex) * sectorAngle - (sectorAngle / 2);
-    const newRotation = rotation + (360 * 8) + stopAt;
+    const winnerCenterAngle = (selectedIndex * sectorAngle) + (sectorAngle / 2);
     
-    setRotation(newRotation);
+    // Rotação necessária para alinhar o centro do vencedor com 270 graus
+    // 270 - winnerCenterAngle ajusta a posição. 
+    // Adicionamos múltiplos de 360 para girar no sentido horário várias vezes.
+    // Usamos uma base de 8 voltas completas (2880 graus) para o efeito visual
+    const extraSpins = 360 * 8; 
+    
+    // Fórmula Corrigida: 
+    // Queremos o ângulo resultante (rotação + winnerCenterAngle) ser congruente a 270 mod 360
+    const targetRotation = extraSpins + (270 - winnerCenterAngle);
+
+    // Acumula a rotação para não resetar visualmente
+    // Pegamos o último valor, arredondamos para o múltiplo de 360 anterior e somamos o novo alvo relativo
+    const previousRoundedRotation = Math.ceil(rotation / 360) * 360;
+    const finalRotation = previousRoundedRotation + targetRotation;
+    
+    setRotation(finalRotation);
 
     await controls.start({
-      rotate: newRotation,
+      rotate: finalRotation,
       transition: { duration: 6, ease: [0.15, 0, 0.15, 1] }
     });
 
     const reward = SECTORS[selectedIndex];
-    setWinningIndex(selectedIndex); // Ativa a pulsação do setor
+    setWinningIndex(selectedIndex); // Ativa a pulsação visual
 
     if (reward.value > 0) {
       const isJackpot = reward.label === 'JACKPOT';
@@ -74,7 +99,7 @@ const DailyPulse = () => {
       showSuccess(isJackpot ? `Protocolo ALPHA: JACKPOT ATIVADO!` : `ESTABILIZADO: +${reward.label}`);
       setLastWin(reward.label);
     } else {
-      showError("SINCRO-FALHA: Setor Vazio.");
+      showError("CICLO DE SINCRO-FALHA: Setor Vazio.");
     }
     setIsSpinning(false);
   };
@@ -132,11 +157,13 @@ const DailyPulse = () => {
         </div>
       </div>
 
-      {/* A Super Roleta */}
+      {/* A Super Roleta (Design Vegas/TV) */}
       <div className="lg:col-span-8 bg-[#050505] rounded-[60px] border border-white/5 p-16 flex items-center justify-center relative shadow-[inset_0_0_100px_rgba(0,0,0,1)] min-h-[700px]">
+        {/* Camadas de Brilho de Fundo */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,255,156,0.05),transparent)]" />
         
         <div className="relative w-[550px] h-[550px]">
+          {/* Chassis Externo com LEDs */}
           <div className="absolute inset-[-60px] rounded-full border-[20px] border-[#121212] shadow-[0_0_100px_rgba(0,0,0,0.5),inset_0_0_20px_rgba(255,255,255,0.05)]">
             {Array.from({ length: 24 }).map((_, i) => (
               <motion.div 
@@ -154,10 +181,12 @@ const DailyPulse = () => {
 
           <WheelPointer isSpinning={isSpinning} />
 
+          {/* O Corpo da Roleta */}
           <motion.div 
             animate={controls}
             className="w-full h-full relative"
           >
+            {/* Sombras de Profundidade */}
             <div className="absolute inset-0 rounded-full shadow-[inset_0_0_80px_rgba(0,0,0,0.8),0_20px_50px_rgba(0,0,0,0.5)] z-10 pointer-events-none" />
             
             <svg viewBox="0 0 100 100" className="w-full h-full overflow-visible drop-shadow-2xl">
@@ -171,6 +200,7 @@ const DailyPulse = () => {
               <circle cx="50" cy="50" r="50" fill="url(#wheelGrad)" />
               <WheelSectors sectors={SECTORS} winningIndex={winningIndex} />
               
+              {/* Pinos de Ouro (Pins) */}
               {Array.from({ length: SECTORS.length }).map((_, i) => (
                 <circle 
                   key={i} 
@@ -183,6 +213,7 @@ const DailyPulse = () => {
             </svg>
           </motion.div>
 
+          {/* O Centro - Unidade de Processamento (Core) */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
             <div className="w-40 h-40 rounded-full bg-[#121212] border-[8px] border-[#0A0A0A] flex items-center justify-center shadow-[0_0_50px_rgba(0,0,0,0.8)] relative">
                <div className="absolute inset-0 rounded-full border border-white/5 animate-[spin_10s_linear_infinite]" />
