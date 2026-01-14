@@ -1,26 +1,26 @@
 import { create } from 'zustand';
 import { MarketBox, UnboxedItem, BoxTier } from '../domain/entities';
 
-// CURADORIA DE 28 IMAGENS ÚNICAS E FUNCIONAIS
+// CURADORIA DE 28 IMAGENS ÚNICAS E FUNCIONAIS (Corrigidas)
 const UNIQUE_CURATED_IMAGES = [
   // --- STARTER TIER (Gadgets, Consoles, Neon Básico) ---
-  'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&q=80', // Console Retrô
-  'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=800&q=80', // Teclado Mecânico Neon
+  'https://images.unsplash.com/photo-1614064641938-3bbee52942c7?w=800&q=80', // [FIX] Cyber Cache (Cyberpunk Abstract)
+  'https://images.unsplash.com/photo-1563089145-599997674d42?w=800&q=80', // [FIX] Neon Vault (Neon Abstract)
   'https://images.unsplash.com/photo-1527814050087-3793815479db?w=800&q=80', // Mouse RGB
   'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=800&q=80', // Headphones Neon
   'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&q=80', // Smartwatch Tech
-  'https://images.unsplash.com/photo-1563089145-599997674d42?w=800&q=80', // Abstrato Vaporwave
-  'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&q=80', // Tech Component
+  'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&q=80', // Tech Component
+  'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=800&q=80', // Coding Screen
   'https://images.unsplash.com/photo-1614850523296-d8c1af93d400?w=800&q=80', // Fluid Neon
 
   // --- ADVANCED TIER (Hardware, Circuitos, Infraestrutura) ---
   'https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=800&q=80', // Placa Mãe Detalhe
   'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80', // Processador
   'https://images.unsplash.com/photo-1555680202-c86f0e12f086?w=800&q=80', // Cooler Fan
-  'https://images.unsplash.com/photo-1535378437327-1e8c83279326?w=800&q=80', // Robótica
-  'https://images.unsplash.com/photo-1591405351990-4726e331f141?w=800&q=80', // CPU Unit
-  'https://images.unsplash.com/photo-1519638399535-1b036603ac77?w=800&q=80', // Tech Setup
-  'https://images.unsplash.com/photo-1558494949-ef010cbdcc48?w=800&q=80', // Servidores
+  'https://images.unsplash.com/photo-1581090464777-f3220bbe1b8b?w=800&q=80', // [FIX] Lunar Gate (Industrial Arm)
+  'https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?w=800&q=80', // [FIX] Mecha Key (CPU Chip)
+  'https://images.unsplash.com/photo-1558494949-ef010cbdcc48?w=800&q=80', // [FIX] Nano Lock (Servers)
+  'https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?w=800&q=80', // Tech Lights
   'https://images.unsplash.com/photo-1563770095-2587008675ba?w=800&q=80', // Data Lines
 
   // --- ELITE TIER (Segurança, Criptografia, Abstrato Dark) ---
@@ -59,12 +59,15 @@ const generateBoxes = (): MarketBox[] => {
     else tier = 'Starter';
 
     const config = TIER_CONFIG[tier];
+    
+    // Nomes pseudo-aleatórios mas consistentes pelo índice
     const prefix = PREFIXES[i % PREFIXES.length];
     const suffix = SUFFIXES[i % SUFFIXES.length];
+    const name = `${prefix} ${suffix} unit`;
     
     return {
       id: `box-${i + 1}`,
-      name: `${prefix} ${suffix} unit`,
+      name: name,
       description: `Unidade de custódia ${tier} com ativos digitais de alta fidelidade e valor garantido.`,
       price: config.price,
       minValue: config.min,
