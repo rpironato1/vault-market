@@ -24,21 +24,25 @@ const Games = () => {
           </p>
         </header>
 
-        <Tabs defaultValue="crash" className="w-full">
+        <Tabs defaultValue="mines" className="w-full">
           <TabsList className="bg-[#121212] border border-white/5 p-2 rounded-[24px] mb-12 inline-flex overflow-x-auto max-w-full">
+            <TabsTrigger value="mines" className="data-[state=active]:bg-[#00FF9C] data-[state=active]:text-black rounded-xl px-8 py-3 gap-3 font-black uppercase text-[10px] tracking-widest transition-all">
+              <Zap size={16} fill="currentColor" /> Campo Minado
+            </TabsTrigger>
             <TabsTrigger value="crash" className="data-[state=active]:bg-[#00FF9C] data-[state=active]:text-black rounded-xl px-8 py-3 gap-3 font-black uppercase text-[10px] tracking-widest transition-all">
               <Rocket size={16} /> Quantum Crash
             </TabsTrigger>
             <TabsTrigger value="plinko" className="data-[state=active]:bg-[#00FF9C] data-[state=active]:text-black rounded-xl px-8 py-3 gap-3 font-black uppercase text-[10px] tracking-widest transition-all">
               <Database size={16} /> Gravity Plinko
             </TabsTrigger>
-            <TabsTrigger value="sync" className="data-[state=active]:bg-[#00FF9C] data-[state=active]:text-black rounded-xl px-8 py-3 gap-3 font-black uppercase text-[10px] tracking-widest transition-all">
-              <Zap size={16} fill="currentColor" /> Sincronia de Dados
-            </TabsTrigger>
             <TabsTrigger value="daily" className="data-[state=active]:bg-[#00FF9C] data-[state=active]:text-black rounded-xl px-8 py-3 gap-3 font-black uppercase text-[10px] tracking-widest transition-all">
               <Radio size={16} /> Pulso Orbital
             </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="mines" className="outline-none focus-visible:ring-0">
+            <DataSyncGame />
+          </TabsContent>
 
           <TabsContent value="crash" className="outline-none focus-visible:ring-0">
             <QuantumCrash />
@@ -46,10 +50,6 @@ const Games = () => {
 
           <TabsContent value="plinko" className="outline-none focus-visible:ring-0">
             <GravityPlinko />
-          </TabsContent>
-
-          <TabsContent value="sync" className="outline-none focus-visible:ring-0">
-            <DataSyncGame />
           </TabsContent>
           
           <TabsContent value="daily" className="outline-none focus-visible:ring-0">
