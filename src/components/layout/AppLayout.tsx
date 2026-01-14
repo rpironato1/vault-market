@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { LayoutDashboard, Package, Gamepad2, Wallet, History, Users, ArrowUpRight, ShieldCheck } from 'lucide-react';
+import { LayoutDashboard, Package, Gamepad2, Wallet, Users, ArrowUpRight, ShieldCheck } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { MadeWithDyad } from '@/components/made-with-dyad';
 import { useStore } from '../../_infrastructure/state/store';
@@ -41,8 +41,8 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
           <NavItem 
             icon={LayoutDashboard} 
             label="Marketplace" 
-            active={location.pathname === '/'} 
-            onClick={() => navigate('/')}
+            active={location.pathname === '/marketplace'} 
+            onClick={() => navigate('/marketplace')}
           />
           <NavItem 
             icon={Package} 
@@ -59,7 +59,7 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
           
           <div className="text-[10px] font-black text-zinc-600 uppercase mt-12 mb-4 px-5 tracking-[0.3em]">Rede</div>
           <NavItem icon={Users} label="Afiliados VIP" onClick={() => navigate('/partners')} active={location.pathname === '/partners'} />
-          <NavItem icon={Wallet} label="Sincronia" />
+          <NavItem icon={Wallet} label="Sincronia" onClick={() => navigate('/tokens')} active={location.pathname === '/tokens'} />
         </nav>
 
         <div className="mt-auto pt-10 flex flex-col gap-6">

@@ -1,133 +1,46 @@
 "use client";
 
-import React, { useState } from 'react';
-import AppLayout from '@/components/layout/AppLayout';
-import HighConversionCard from '../features/marketplace/components/HighConversionCard';
-import NearMissOpener from '../features/marketplace/components/NearMissOpener';
-import LiveTicker from '@/features/marketing/components/LiveTicker';
-import { MysteryBox, Reward } from '@/_core/domain/entities';
-import { useStore } from '../_infrastructure/state/store';
-import { showError } from '@/utils/toast';
-import { Lightning, TrendUp, UserCirclePlus } from '@phosphor-icons/react';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { ArrowRight, ShieldCheck } from 'lucide-react';
 
-const BOX_REGISTRY: MysteryBox[] = [
-  {
-    id: 'box-1',
-    name: 'Cyber Sentinel Unit',
-    price: 89.90,
-    tier: 'Epic',
-    description: 'Hardware criptográfico de alta fidelidade e acessos restritos de rede.',
-    imageUrl: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=400&q=80'
-  },
-  {
-    id: 'box-2',
-    name: 'Apex Liquidity Vault',
-    price: 249.00,
-    tier: 'Legendary',
-    description: 'A maior probabilidade de ativos de alta liquidez e tokens raros.',
-    imageUrl: 'https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=400&q=80'
-  },
-  {
-    id: 'box-3',
-    name: 'Core Starter Pack',
-    price: 1.00,
-    tier: 'Common',
-    description: 'Abra a Caixa do Milhão por apenas $1. Oportunidade limitada.',
-    imageUrl: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=400&q=80'
-  },
-  {
-    id: 'box-4',
-    name: 'Neural Node Box',
-    price: 45.00,
-    tier: 'Rare',
-    description: 'Aprimoramentos de rede e pacotes de dados processados.',
-    imageUrl: 'https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=400&q=80'
-  }
-];
-
-const Marketplace = () => {
-  const { balance, updateBalance, addReward } = useStore();
-  const [activeReward, setActiveReward] = useState<Reward | null>(null);
-
-  const handleAcquire = (box: MysteryBox) => {
-    if (balance >= box.price) {
-      updateBalance(-box.price);
-      const newReward: Reward = {
-        id: `rw-${Math.random().toString(36).substr(2, 9)}`,
-        name: `${box.name} Artifact`,
-        rarity: box.tier,
-        value: box.price * (Math.random() > 0.7 ? 1.5 : 0.8),
-        timestamp: Date.now()
-      };
-      setActiveReward(newReward);
-    } else {
-      showError("Saldo insuficiente. Deposite via PIX ou Crypto.");
-    }
-  };
+const Index = () => {
+  const navigate = useNavigate();
 
   return (
-    <AppLayout>
-      <div className="flex flex-col gap-12 relative">
-        <header className="relative py-24 px-12 rounded-[40px] bg-[#121212] border border-white/5 overflow-hidden shadow-2xl">
-          <div className="absolute top-0 right-0 p-8 flex flex-col items-end gap-1">
-             <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Global Payout</span>
-             <span className="text-3xl font-mono font-black text-[#00FF9C] tracking-tighter">$1.482.020,42</span>
-          </div>
-          
-          <div className="relative z-10 max-w-3xl">
-            <div className="flex items-center gap-2 mb-6">
-               <div className="h-6 w-12 rounded-full bg-[#FF007F]/10 border border-[#FF007F]/20 flex items-center justify-center">
-                  <span className="text-[9px] font-black text-[#FF007F] uppercase tracking-widest animate-pulse">Live</span>
-               </div>
-               <span className="text-xs font-bold text-zinc-400">1.240 usuários ativos agora</span>
-            </div>
-            <h1 className="text-7xl font-black tracking-tighter mb-8 uppercase text-white leading-[0.9]">
-              Abra a Caixa do <br />
-              <span className="text-[#FFD700] italic">Milhão por $1.</span>
-            </h1>
-            <div className="flex items-center gap-6">
-               <button className="h-16 px-10 rounded-2xl bg-white text-black font-black uppercase tracking-widest hover:scale-105 transition-transform flex items-center gap-3">
-                  <UserCirclePlus weight="fill" size={24} />
-                  Acesso Instantâneo
-               </button>
-               <div className="flex flex-col">
-                  <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Ticket Médio de Volta</span>
-                  <span className="text-[#00FF9C] font-black text-xl">+142%</span>
-               </div>
-            </div>
-          </div>
-          
-          <div className="absolute -bottom-20 -right-20 h-96 w-96 bg-[#00FF9C]/5 blur-[120px] rounded-full" />
-        </header>
+    <div className="min-h-screen bg-[#050505] flex flex-col items-center justify-center text-white relative overflow-hidden">
+      {/* Background Ambience */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,255,156,0.05),transparent_70%)]" />
+      <div className="absolute top-0 right-0 h-96 w-96 bg-[#00FF9C]/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-0 left-0 h-64 w-64 bg-[#FF007F]/5 blur-[100px] rounded-full pointer-events-none" />
 
-        <section>
-          <div className="flex items-center justify-between mb-12 border-b border-white/5 pb-8">
-            <div className="flex items-center gap-4">
-               <h2 className="text-2xl font-black uppercase tracking-tighter text-white">Marketplace de Oportunidades</h2>
-               <div className="h-8 w-px bg-white/10" />
-               <span className="text-xs font-bold text-zinc-500 uppercase tracking-[0.2em]">Sincronia Global</span>
-            </div>
-          </div>
+      <div className="relative z-10 text-center max-w-2xl px-6">
+        <div className="inline-flex items-center justify-center h-20 w-20 rounded-3xl bg-[#00FF9C]/10 border border-[#00FF9C]/20 mb-8 shadow-[0_0_50px_rgba(0,255,156,0.2)]">
+          <ShieldCheck size={40} className="text-[#00FF9C]" />
+        </div>
+        
+        <h1 className="text-6xl font-black tracking-tighter uppercase mb-6">
+          Vault<span className="text-[#00FF9C]">Net</span>
+        </h1>
+        
+        <p className="text-zinc-500 text-lg font-medium mb-12 leading-relaxed">
+          The decentralized asset validation protocol is currently synchronizing. <br />
+          Access the marketplace to view available units.
+        </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {BOX_REGISTRY.map((box) => (
-              <HighConversionCard key={box.id} box={box} onSelect={handleAcquire} />
-            ))}
-          </div>
-        </section>
-
-        <LiveTicker />
-
-        <NearMissOpener 
-          reward={activeReward} 
-          onClose={() => {
-            if (activeReward) addReward(activeReward);
-            setActiveReward(null);
-          }} 
-        />
+        <button 
+          onClick={() => navigate('/marketplace')}
+          className="h-14 px-8 rounded-2xl bg-[#00FF9C] text-black font-black uppercase tracking-widest hover:scale-105 transition-transform flex items-center justify-center gap-3 mx-auto hover:shadow-[0_0_30px_rgba(0,255,156,0.4)]"
+        >
+          Enter Marketplace <ArrowRight size={20} />
+        </button>
       </div>
-    </AppLayout>
+
+      <div className="absolute bottom-10 text-[10px] font-black uppercase tracking-[0.3em] text-zinc-700">
+        System Status: Nominal
+      </div>
+    </div>
   );
 };
 
-export default Marketplace;
+export default Index;
