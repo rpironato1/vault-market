@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion, useAnimation } from 'framer-motion';
-import { Target, Clock, Lightning, Trophy, ShareNetwork } from '@phosphor-icons/react';
+import { Target, Clock, Lightning, Trophy } from '@phosphor-icons/react';
 import confetti from 'canvas-confetti';
 import { showSuccess, showError } from '@/utils/toast';
 import { useStore } from '@/_infrastructure/state/store';
@@ -10,17 +10,20 @@ import { cn } from '@/lib/utils';
 import { WheelPointer } from './WheelPointer';
 import { WheelSectors } from './WheelSectors';
 
+// Configuração Balanceada e Sem "Buracos"
 const SECTORS = [
-  { label: '50 TK', color: '#00FF9C', value: 50, chance: 0.3 },
-  { label: '100 TK', color: '#121212', value: 100, chance: 0.2 },
-  { label: 'EMPTY', color: '#1a1a1a', value: 0, chance: 0.2 },
-  { label: '500 TK', color: '#FFD700', value: 500, chance: 0.1 },
-  { label: '25 TK', color: '#00FF9C', value: 25, chance: 0.15 },
-  { label: 'JACKPOT', color: '#FF007F', value: 2500, chance: 0.05 },
+  { label: '50 TK', color: '#00FF9C', value: 50, chance: 0.25 },
+  { label: '10 TK', color: '#121212', value: 10, chance: 0.3 }, // Consolação comum
+  { label: '250 TK', color: '#FFD700', value: 250, chance: 0.1 },
+  { label: '5 TK', color: '#1a1a1a', value: 5, chance: 0.3 },   // Consolação frequente
+  { label: '100 TK', color: '#00FF9C', value: 100, chance: 0.15 },
+  { label: 'JACKPOT', color: '#FF007F', value: 2500, chance: 0.01 }, // Raro
+  { label: '25 TK', color: '#121212', value: 25, chance: 0.2 },
+  { label: '500 TK', color: '#FFD700', value: 500, chance: 0.05 },
 ];
 
 const DailyPulse = () => {
-  const { updateBalance, engagementTokens } = useStore();
+  const { updateBalance } = useStore();
   const controls = useAnimation();
   const [isSpinning, setIsSpinning] = useState(false);
   const [rotation, setRotation] = useState(0);
@@ -32,8 +35,9 @@ const DailyPulse = () => {
     
     setIsSpinning(true);
     setLastWin(null);
-    setWinningIndex(null); // Reset do estado de vitória
+    setWinningIndex(null);
 
+    // 1. Sorteio Ponderado (RNG)
     const totalChance = SECTORS.reduce((acc, s) => acc + s.chance, 0);
     let random = Math.random() * totalChance;
     let selectedIndex = 0;
@@ -46,36 +50,52 @@ const DailyPulse = () => {
       random -= SECTORS[i].chance;
     }
 
-    const sectorAngle = 360 / SECTORS.length;
-    // Cálculo preciso para parar no centro da fatia
-    const stopAt = (SECTORS.length - selectedIndex) * sectorAngle - (sectorAngle / 2);
-    const newRotation = rotation + (360 * 8) + stopAt;
+    // 2. Matemática de Precisão Angular
+    // O ponteiro está fixo no TOPO (0 graus visualmente no CSS, mas o SVG desenha a partir de -90 se não ajustado).
+    // Nossa WheelSectors desenha o Indice 0 partindo do topo (0 graus) em sentido horário.
+    // O centro do setor 'i' está em: (i * angulo) + (angulo / 2).
+    // Para trazer esse centro para o topo (0), precisamos girar no sentido anti-horário essa quantidade.
+    // Como a animação CSS roda horário, calculamos: 360 - centro.
     
-    setRotation(newRotation);
+    const sectorAngle = 360 / SECTORS.length;
+    const sectorCenter = (selectedIndex * sectorAngle) + (sectorAngle / 2);
+    
+    // Adiciona um "jitter" (variação) aleatória de +/- 40% do tamanho do setor
+    // para não cair sempre no pixel exato do meio (realismo), mas garantindo que fique dentro da fatia.
+    const jitter = (Math.random() - 0.5) * (sectorAngle * 0.8);
+    
+    // Rotação alvo = Voltas completas + (360 - Onde está o centro do prêmio) + jitter
+    const spins = 5; // Número de voltas completas para suspense
+    const targetRotation = rotation + (360 * spins) + (360 - sectorCenter) + jitter;
+    
+    setRotation(targetRotation);
 
+    // 3. Execução da Física
     await controls.start({
-      rotate: newRotation,
-      transition: { duration: 6, ease: [0.15, 0, 0.15, 1] }
+      rotate: targetRotation,
+      transition: { 
+        duration: 8, // Giro mais longo e pesado
+        ease: [0.15, 0, 0.10, 1] // Curva Bezier personalizada para "peso" de cassino
+      }
     });
 
+    // 4. Feedback e Recompensa
     const reward = SECTORS[selectedIndex];
-    setWinningIndex(selectedIndex); // Ativa a pulsação do setor
+    setWinningIndex(selectedIndex);
 
-    if (reward.value > 0) {
-      const isJackpot = reward.label === 'JACKPOT';
+    const isJackpot = reward.label === 'JACKPOT' || reward.value >= 500;
       
-      confetti({ 
-        particleCount: isJackpot ? 500 : 200, 
-        spread: isJackpot ? 120 : 90, 
-        origin: { y: 0.7 }, 
-        colors: isJackpot ? ['#FFD700', '#FF007F', '#00FF9C', '#FFFFFF'] : ['#00FF9C', '#FFD700', '#FF007F'] 
-      });
+    confetti({ 
+      particleCount: isJackpot ? 400 : 100, 
+      spread: isJackpot ? 100 : 70, 
+      origin: { y: 0.7 }, 
+      colors: isJackpot ? ['#FFD700', '#FF007F', '#FFFFFF'] : ['#00FF9C', '#FFFFFF'] 
+    });
 
-      showSuccess(isJackpot ? `Protocolo ALPHA: JACKPOT ATIVADO!` : `ESTABILIZADO: +${reward.label}`);
-      setLastWin(reward.label);
-    } else {
-      showError("SINCRO-FALHA: Setor Vazio.");
-    }
+    showSuccess(isJackpot ? `JACKPOT CONFIRMADO: ${reward.label}` : `Sincronia: +${reward.label}`);
+    setLastWin(reward.label);
+    
+    // updateBalance(reward.value); // Descomentar se quiser creditar real
     setIsSpinning(false);
   };
 
@@ -88,7 +108,7 @@ const DailyPulse = () => {
           <header className="mb-10">
             <div className="flex items-center gap-3 mb-2">
               <Lightning weight="fill" className="text-[#00FF9C]" size={20} />
-              <span className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.4em]">Reactor Core v.02</span>
+              <span className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.4em]">Reactor Core v.03</span>
             </div>
             <h2 className="text-4xl font-black text-white uppercase tracking-tighter italic">Orbital Pulse</h2>
           </header>
@@ -96,8 +116,10 @@ const DailyPulse = () => {
           <div className="space-y-4 mb-10">
             <div className="p-6 rounded-3xl bg-white/[0.02] border border-white/5 flex justify-between items-center">
               <div>
-                <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-1">Último Ganho</p>
-                <p className="text-2xl font-mono font-black text-[#FFD700]">{lastWin || 'NONE'}</p>
+                <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-1">Resultado da Sincronia</p>
+                <p className={cn("text-2xl font-mono font-black", lastWin?.includes('JACKPOT') ? "text-[#FF007F]" : "text-[#FFD700]")}>
+                  {lastWin || 'Aguardando...'}
+                </p>
               </div>
               <Trophy weight="duotone" size={32} className="text-[#FFD700]" />
             </div>
@@ -113,20 +135,20 @@ const DailyPulse = () => {
                 : "bg-white text-black hover:bg-[#00FF9C] hover:shadow-[0_0_50px_rgba(0,255,156,0.4)] active:scale-95"
             )}
           >
-            <span>{isSpinning ? 'Synchronizing...' : 'Engage Pulse'}</span>
+            <span>{isSpinning ? 'CALCULATING...' : 'ENGAGE PULSE'}</span>
             {!isSpinning && <span className="text-[8px] font-mono opacity-60">Consumo: 1 Daily Credit</span>}
           </button>
         </div>
 
         <div className="bg-[#0A0A0A] rounded-[40px] border border-white/5 p-8">
            <div className="flex items-center justify-between mb-4">
-              <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Network Load</span>
-              <span className="text-[#00FF9C] font-mono text-xs">98.4% Stable</span>
+              <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Precision Lock</span>
+              <span className="text-[#00FF9C] font-mono text-xs">Calibrated</span>
            </div>
            <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
               <motion.div 
-                animate={{ width: isSpinning ? '100%' : '60%' }}
-                className="h-full bg-gradient-to-r from-[#00FF9C] to-white" 
+                animate={{ width: isSpinning ? '100%' : '100%' }}
+                className={cn("h-full", isSpinning ? "bg-[#00FF9C]" : "bg-zinc-700")} 
               />
            </div>
         </div>
@@ -137,6 +159,7 @@ const DailyPulse = () => {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,255,156,0.05),transparent)]" />
         
         <div className="relative w-[550px] h-[550px]">
+          {/* Chassis Externo com LEDs */}
           <div className="absolute inset-[-60px] rounded-full border-[20px] border-[#121212] shadow-[0_0_100px_rgba(0,0,0,0.5),inset_0_0_20px_rgba(255,255,255,0.05)]">
             {Array.from({ length: 24 }).map((_, i) => (
               <motion.div 
@@ -154,10 +177,13 @@ const DailyPulse = () => {
 
           <WheelPointer isSpinning={isSpinning} />
 
+          {/* O Corpo da Roleta */}
           <motion.div 
             animate={controls}
             className="w-full h-full relative"
+            style={{ rotate: rotation }} // Garante que a rotação seja aplicada via style para persistência visual
           >
+            {/* Sombras de Profundidade */}
             <div className="absolute inset-0 rounded-full shadow-[inset_0_0_80px_rgba(0,0,0,0.8),0_20px_50px_rgba(0,0,0,0.5)] z-10 pointer-events-none" />
             
             <svg viewBox="0 0 100 100" className="w-full h-full overflow-visible drop-shadow-2xl">
@@ -171,6 +197,7 @@ const DailyPulse = () => {
               <circle cx="50" cy="50" r="50" fill="url(#wheelGrad)" />
               <WheelSectors sectors={SECTORS} winningIndex={winningIndex} />
               
+              {/* Pinos de Ouro (Pins) */}
               {Array.from({ length: SECTORS.length }).map((_, i) => (
                 <circle 
                   key={i} 
@@ -183,6 +210,7 @@ const DailyPulse = () => {
             </svg>
           </motion.div>
 
+          {/* O Centro - Unidade de Processamento (Core) */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
             <div className="w-40 h-40 rounded-full bg-[#121212] border-[8px] border-[#0A0A0A] flex items-center justify-center shadow-[0_0_50px_rgba(0,0,0,0.8)] relative">
                <div className="absolute inset-0 rounded-full border border-white/5 animate-[spin_10s_linear_infinite]" />
