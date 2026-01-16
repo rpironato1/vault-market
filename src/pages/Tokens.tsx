@@ -1,6 +1,5 @@
 "use client";
 
-import React from 'react';
 import AppLayout from '@/components/layout/AppLayout';
 import { useStore } from '@infra/state/store';
 import { Lightning, Trophy, GameController, ArrowUpRight, Coins } from '@phosphor-icons/react';

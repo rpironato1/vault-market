@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import AppLayout from '@/components/layout/AppLayout';
 import { BalanceCards } from '../components/BalanceCards';
 import { ActionShortcuts } from '../components/ActionShortcuts';

@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { LinkedWallet } from '../../domain/entities';
 import { Wallet, Plus, Trash, CheckCircle, Star } from 'lucide-react';
-import { ISettingsGateway } from '../../domain/gateway';
 import { MockSettingsGateway } from '../../infrastructure/mock.gateway';
 import { showSuccess, showError } from '@/utils/toast';
 import { cn } from '@/lib/utils';

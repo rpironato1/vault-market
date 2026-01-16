@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import AppLayout from '@/components/layout/AppLayout';
 import { WithdrawalForm } from '../components/WithdrawalForm';
 import { WithdrawalHistory } from '../components/WithdrawalHistory';

@@ -1,4 +1,3 @@
-import React from 'react';
 import { VaultCoinTransaction } from '../../domain/entities';
 import { ArrowDownLeft, ArrowUpRight, ShoppingBag, Gamepad2, Users, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';

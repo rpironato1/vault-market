@@ -1,4 +1,3 @@
-import React from 'react';
 import { PendingAction } from '../../domain/entities';
 import { Check, X, AlertTriangle } from 'lucide-react';
 import { showSuccess } from '@/utils/toast';

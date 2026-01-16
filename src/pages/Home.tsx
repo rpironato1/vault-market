@@ -1,11 +1,10 @@
 "use client";
 
-import React from 'react';
 import LandingLayout from '@/components/layout/LandingLayout';
 import { HeroMarketplace } from '@/features/landing-marketplace/components/HeroMarketplace';
 import { BoxGrid } from '@/features/landing-marketplace/components/BoxGrid';
 import { RewardModal } from '@/features/landing-marketplace/components/RewardModal';
-import { GiftCardSection } from '@/features/gift-cards/components/GiftCardSection'; // Nova importação
+import { GiftCardSection } from '@/features/gift-cards/components/GiftCardSection';
 import { CreditCard, ShieldCheck, GameController } from '@phosphor-icons/react';
 
 const FeatureItem = ({ icon: Icon, title, desc }: any) => (

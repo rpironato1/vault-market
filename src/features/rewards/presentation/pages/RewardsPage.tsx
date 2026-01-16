@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import AppLayout from '@/components/layout/AppLayout';
 import { RewardStats } from '../components/RewardStats';
 import { RewardsLedger } from '../components/RewardsLedger';

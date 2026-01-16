@@ -1,6 +1,5 @@
 "use client";
 
-import React from 'react';
 import AppLayout from '@/components/layout/AppLayout';
 import DataSyncGame from '@/features/games/mines/components/DataSyncGame';
 import DailyPulse from '@/features/games/wheel/components/DailyPulse';

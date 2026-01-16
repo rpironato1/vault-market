@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Database, Coins, ArrowDown, Volume2, VolumeX } from 'lucide-react';
 import { useStore } from '@infra/state/store';

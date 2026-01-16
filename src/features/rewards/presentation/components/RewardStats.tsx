@@ -1,4 +1,3 @@
-import React from 'react';
 import { Trophy, Lock, CheckCircle, Wallet } from '@phosphor-icons/react';
 import { RewardBalance } from '../../domain/entities';
 import { useNavigate } from 'react-router-dom';

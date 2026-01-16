@@ -1,15 +1,11 @@
 "use client";
 
-import React from 'react';
 import AppLayout from '@/components/layout/AppLayout';
 import { Users, Crown, Rocket, ChartLineUp, Copy, Share } from '@phosphor-icons/react';
-import { useStore } from '../_infrastructure/state/store';
 import { showSuccess } from '@/utils/toast';
 import { cn } from '@/lib/utils';
 
 const Partners = () => {
-  const { engagementTokens } = useStore();
-  
   const copyLink = () => {
     navigator.clipboard.writeText("https://vaultnet.io/ref/commander1");
     showSuccess("Link de Expansão copiado!");

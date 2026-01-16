@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trophy, ChartLineUp } from '@phosphor-icons/react';
+import { Trophy } from '@phosphor-icons/react';
 
 const WINNERS = [
   { user: "r***9", prize: "500 USDT", box: "Cyber Box" },

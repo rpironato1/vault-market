@@ -1,4 +1,3 @@
-import React from 'react';
 import { ActivityItem } from '../../domain/entities';
 import { Clock, TrendingUp, TrendingDown, ShoppingBag } from 'lucide-react';
 import { cn } from '@/lib/utils';

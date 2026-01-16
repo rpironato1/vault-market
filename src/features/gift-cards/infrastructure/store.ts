@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { GiftBoxTier, GiftReward, GIFT_TIERS, SUPPORTED_BRANDS } from '../domain/entities';
+import { GiftReward, GIFT_TIERS, SUPPORTED_BRANDS } from '../domain/entities';
 import { useStore } from '@infra/state/store';
 
 interface GiftCardState {

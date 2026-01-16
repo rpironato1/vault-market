@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import AppLayout from '@/components/layout/AppLayout';
 import HighConversionCard from '../features/marketplace/components/HighConversionCard';
 import NearMissOpener from '../features/marketplace/components/NearMissOpener';
@@ -8,7 +8,7 @@ import LiveTicker from '@/features/marketing/components/LiveTicker';
 import { MysteryBox, Reward } from '@core/domain/entities';
 import { useStore } from '@infra/state/store';
 import { showError } from '@/utils/toast';
-import { Lightning, TrendUp, UserCirclePlus } from '@phosphor-icons/react';
+import { UserCirclePlus } from '@phosphor-icons/react';
 
 const BOX_REGISTRY: MysteryBox[] = [
   {

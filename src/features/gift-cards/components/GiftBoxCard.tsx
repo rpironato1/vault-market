@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { Gift, Tag } from 'lucide-react';
 import { Coins } from '@phosphor-icons/react';

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Gift, Copy } from 'lucide-react';
 import { Coins, CheckCircle } from '@phosphor-icons/react';

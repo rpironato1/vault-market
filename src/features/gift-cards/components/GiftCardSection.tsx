@@ -1,10 +1,9 @@
-import React from 'react';
 import { Ticket, Info } from '@phosphor-icons/react';
 import { GiftBoxCard } from './GiftBoxCard';
 import { GiftRevealModal } from './GiftRevealModal';
 import { GIFT_TIERS } from '../domain/entities';
 import { useGiftCardStore } from '../infrastructure/store';
-import { useStore } from '@/_infrastructure/state/store';
+import { useStore } from '@infra/state/store';
 import { showSuccess, showError } from '@/utils/toast';
 
 export const GiftCardSection = () => {

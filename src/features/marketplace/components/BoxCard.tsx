@@ -1,65 +1,93 @@
 "use client";
 
-import React from 'react';
 import { motion } from 'framer-motion';
-import { Package, TrendingUp, Info } from 'lucide-react';
-import { MysteryBox } from '@core/domain/types';
+import { Package, Info, TrendUp } from '@phosphor-icons/react';
+import { MarketBox, BoxTier } from '../domain/entities';
+import { Tier } from '@core/domain/entities';
 import { cn } from '@/lib/utils';
+import { useStore } from '@infra/state/store';
+import { showSuccess, showError } from '@/utils/toast';
 
-interface BoxCardProps {
-  box: MysteryBox;
-  onPurchase: (id: string) => void;
-}
-
-const BoxCard = ({ box, onPurchase }: BoxCardProps) => {
-  const tierColors = {
-    Common: "border-slate-700 hover:border-slate-500 text-slate-400",
-    Rare: "border-blue-900/50 hover:border-blue-500 text-blue-400",
-    Epic: "border-purple-900/50 hover:border-purple-500 text-purple-400",
-    Legendary: "border-amber-900/50 hover:border-amber-500 text-amber-400",
-  };
-
+const BoxCard = ({ box, onPurchase }: { box: MarketBox; onPurchase: (box: MarketBox) => void }) => {
+  const isPrestige = box.tier === 'Prestige';
+  
   return (
     <motion.div 
-      whileHover={{ y: -4 }}
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-50px" }}
+      whileHover={{ y: -5 }}
       className={cn(
-        "group relative flex flex-col overflow-hidden rounded-xl border bg-card/50 backdrop-blur-sm transition-all duration-300",
-        tierColors[box.tier]
+        "group relative flex flex-col bg-[#121212] border rounded-2xl overflow-hidden transition-all duration-300 h-full",
+        isPrestige ? "border-[#FFD700]/30 shadow-[0_0_20px_rgba(255,215,0,0.05)]" : "border-white/5 hover:border-white/10"
       )}
     >
-      <div className="aspect-square overflow-hidden bg-gradient-to-b from-transparent to-black/20">
-        <img 
-          src={box.imageUrl} 
-          alt={box.name}
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-        />
-        <div className="absolute top-3 right-3 flex gap-2">
-          <span className="flex items-center gap-1 rounded-full bg-black/60 px-2 py-1 text-[10px] font-mono tracking-tighter backdrop-blur-md">
-            <TrendingUp size={10} className="text-emerald-400" />
-            HIGH VALUE
-          </span>
+      {box.isHot && (
+        <div className="absolute top-3 left-3 z-10 bg-[#FF007F] text-white text-[9px] font-black uppercase px-2 py-1 rounded-sm tracking-widest shadow-lg">
+          Hot Offer
         </div>
+      )}
+
+      <div className="relative aspect-[4/3] bg-zinc-900 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-t from-[#121212] via-transparent to-transparent z-10" />
+        <img 
+          src={box.coverImage} 
+          alt={box.name}
+          loading="lazy"
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-80 group-hover:opacity-100"
+        />
       </div>
 
-      <div className="flex flex-col p-4">
-        <div className="mb-1 flex items-center justify-between">
-          <span className="text-[10px] font-bold uppercase tracking-widest opacity-60">{box.tier} ASSET</span>
-          <Info size={14} className="cursor-help opacity-40 hover:opacity-100" />
-        </div>
-        <h3 className="mb-2 text-lg font-semibold tracking-tight text-foreground">{box.name}</h3>
-        
-        <div className="mt-4 flex items-center justify-between border-t border-white/5 pt-4">
+      <div className="flex flex-col p-5 flex-1 relative z-20 -mt-10">
+        <div className="flex items-start justify-between mb-3">
           <div className="flex flex-col">
-            <span className="text-[10px] font-medium text-muted-foreground uppercase">Valor de Aquisição</span>
-            <span className="font-mono text-lg font-bold text-emerald-400">${box.price.toFixed(2)}</span>
+            <span className={cn("text-[9px] font-black uppercase tracking-[0.2em] mb-1", isPrestige ? "text-[#FFD700]" : "text-zinc-500")}>
+              {box.tier} Tier
+            </span>
+            <h3 className="text-lg md:text-xl font-bold text-white leading-tight">{box.name}</h3>
           </div>
-          <button 
-            onClick={() => onPurchase(box.id)}
-            className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-all hover:bg-primary/90 active:scale-95"
-          >
-            <Package size={16} />
-            ADQUIRIR
-          </button>
+          <div className="bg-black/40 backdrop-blur-md border border-white/10 rounded-lg p-2">
+            <Package size={20} className={isPrestige ? "text-[#FFD700]" : "text-white"} />
+          </div>
+        </div>
+
+        <p className="text-xs text-zinc-400 font-medium mb-6 line-clamp-2 leading-relaxed">
+          {box.description}
+        </p>
+
+        <div className="mt-auto space-y-4">
+          <div className="grid grid-cols-2 gap-2 bg-white/[0.02] p-3 rounded-xl border border-white/5">
+            <div className="flex flex-col">
+              <span className="text-[8px] font-bold text-zinc-600 uppercase">Min. Value</span>
+              <span className="text-xs font-mono font-bold text-zinc-300">${box.minValue.toFixed(2)}</span>
+            </div>
+            <div className="flex flex-col items-end">
+              <span className="text-[8px] font-bold text-zinc-600 uppercase">Max. Potential</span>
+              <span className="text-xs font-mono font-bold text-[#00FF9C]">${box.maxValue.toFixed(2)}</span>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex flex-col">
+               <span className="text-[9px] font-bold text-zinc-500 uppercase line-through opacity-50">
+                 ${(box.price * 1.2).toFixed(2)}
+               </span>
+               <span className="text-xl font-mono font-black text-white">
+                 ${box.price.toFixed(2)}
+               </span>
+            </div>
+            <button 
+              onClick={() => onPurchase(box)}
+              className={cn(
+                "h-10 px-5 rounded-lg font-bold text-xs uppercase tracking-widest flex items-center gap-2 transition-all active:scale-95",
+                isPrestige 
+                  ? "bg-[#FFD700] text-black hover:bg-[#ffe033]" 
+                  : "bg-white text-black hover:bg-zinc-200"
+              )}
+            >
+              Comprar <TrendUp weight="bold" />
+            </button>
+          </div>
         </div>
       </div>
     </motion.div>

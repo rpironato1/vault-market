@@ -1,4 +1,3 @@
-import React from 'react';
 import { AdminStats } from '../../domain/entities';
 import { Users, Coins, AlertOctagon, Wallet } from 'lucide-react';
 

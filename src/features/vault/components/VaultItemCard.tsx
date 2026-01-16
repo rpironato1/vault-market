@@ -1,30 +1,29 @@
 "use client";
 
-import React from 'react';
 import { motion } from 'framer-motion';
 import { ShieldCheck, Cpu, HardDrive } from '@phosphor-icons/react';
-import { Reward } from '@core/domain/types';
+import { Reward } from '@core/domain/entities';
 import { cn } from '@/lib/utils';
 
 interface Props {
   item: Reward;
 }
 
-const VaultItemCard = ({ item }: Props) => {
-  const rarityColors = {
-    Common: "text-zinc-500 border-zinc-500/20",
-    Rare: "text-blue-400 border-blue-400/20",
-    Epic: "text-purple-400 border-purple-400/20",
-    Legendary: "text-[#FFD700] border-[#FFD700]/30 shadow-[0_0_15px_rgba(255,215,0,0.1)]",
-  };
+const rarityColors = {
+  Common: "text-zinc-500 border-zinc-500/20",
+  Rare: "text-blue-400 border-blue-400/20",
+  Epic: "text-purple-400 border-purple-400/20",
+  Legendary: "text-[#FFD700] border-[#FFD700]/30 shadow-[0_0_15px_rgba(255,215,0,0.1)]",
+};
 
+const VaultItemCard = ({ item }: Props) => {
   return (
     <motion.div 
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       className={cn(
         "group relative bg-[#121212] border rounded-2xl p-5 overflow-hidden transition-all hover:bg-[#181818]",
-        rarityColors[item.rarity] || rarityColors.Common
+        rarityColors[item.rarity as keyof typeof rarityColors] || rarityColors.Common
       )}
     >
       <div className="flex justify-between items-start mb-6">

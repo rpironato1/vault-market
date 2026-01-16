@@ -1,4 +1,3 @@
-import React from 'react';
 import { Copy, Share2 } from 'lucide-react';
 import { showSuccess } from '@/utils/toast';
 

@@ -1,11 +1,10 @@
 "use client";
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion, useAnimation } from 'framer-motion';
-import { Target, Clock, Lightning, Trophy } from '@phosphor-icons/react';
+import { Target, Lightning, Trophy } from '@phosphor-icons/react';
 import confetti from 'canvas-confetti';
-import { showSuccess, showError } from '@/utils/toast';
-import { useStore } from '@infra/state/store';
+import { showSuccess } from '@/utils/toast';
 import { cn } from '@/lib/utils';
 import { WheelPointer } from './WheelPointer';
 import { WheelSectors } from './WheelSectors';
@@ -23,7 +22,6 @@ const SECTORS = [
 ];
 
 const DailyPulse = () => {
-  const { engagementTokens, spendTokens } = useStore(); // Usando tokens
   const controls = useAnimation();
   const [isSpinning, setIsSpinning] = useState(false);
   const [rotation, setRotation] = useState(0);
@@ -32,9 +30,6 @@ const DailyPulse = () => {
 
   const spin = async () => {
     if (isSpinning) return;
-    
-    // Custo simbólico para girar a roda diária (ou grátis 1x/dia em lógica real)
-    const cost = 0; 
     
     setIsSpinning(true);
     setLastWin(null);

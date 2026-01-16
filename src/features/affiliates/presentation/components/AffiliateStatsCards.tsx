@@ -1,4 +1,3 @@
-import React from 'react';
 import { AffiliateStats } from '../../domain/entities';
 import { Users, UserPlus, Coins, Crown } from 'lucide-react';
 

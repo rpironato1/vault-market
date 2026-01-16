@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import AppLayout from '@/components/layout/AppLayout';
 import { BalanceHeader } from '../components/BalanceHeader';
 import { TransactionHistory } from '../components/TransactionHistory';

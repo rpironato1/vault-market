@@ -1,5 +1,3 @@
-import { Reward } from './entities';
-
 export interface ProvablyFairResult {
   serverSeed: string;
   clientSeed: string;

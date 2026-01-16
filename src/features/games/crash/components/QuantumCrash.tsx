@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Rocket, Zap, History, AlertTriangle, Skull, Crosshair } from 'lucide-react';
 import { useStore } from '@infra/state/store';

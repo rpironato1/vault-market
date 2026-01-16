@@ -1,8 +1,6 @@
-import React from 'react';
 import { Zap, Lock } from 'lucide-react';
 import { Trophy } from '@phosphor-icons/react';
 import { DashboardBalances } from '../../domain/entities';
-import { cn } from '@/lib/utils';
 
 interface BalanceCardsProps {
   balances: DashboardBalances | null;

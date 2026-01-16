@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkle, ShieldCheck, ArrowRight } from '@phosphor-icons/react';
 import confetti from 'canvas-confetti';

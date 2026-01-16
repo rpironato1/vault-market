@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import AppLayout from '@/components/layout/AppLayout';
 import { ProfileSection } from '../components/ProfileSection';
 import { WalletManager } from '../components/WalletManager';

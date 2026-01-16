@@ -1,7 +1,5 @@
-import React from 'react';
 import { WithdrawalRequest } from '../../domain/entities';
 import { CheckCircle, Clock, XCircle, ArrowSquareOut } from '@phosphor-icons/react';
-import { cn } from '@/lib/utils';
 
 interface Props {
   requests: WithdrawalRequest[];

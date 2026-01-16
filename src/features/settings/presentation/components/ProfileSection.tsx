@@ -1,4 +1,3 @@
-import React from 'react';
 import { UserProfile } from '../../domain/entities';
 import { User, ShieldCheck, Calendar } from 'lucide-react';
 

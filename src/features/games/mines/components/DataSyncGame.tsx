@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bomb, Diamond, ShieldCheck, Play, StopCircle, AlertTriangle, RefreshCcw } from 'lucide-react'; 
+import { Bomb, Diamond, ShieldCheck, Play, StopCircle, AlertTriangle } from 'lucide-react'; 
 import { showSuccess, showError } from '@/utils/toast';
 import { useStore } from '@infra/state/store';
 import { cn } from '@/lib/utils';
@@ -10,7 +10,6 @@ import { cn } from '@/lib/utils';
 const GRID_SIZE = 25;
 const MINES_OPTIONS = [1, 3, 5, 10, 15];
 
-// Frases ajustadas para contexto de mineração de dados/sincronia
 const RISK_MESSAGES = [
   "Sinal estável. Continuar extração?",
   "Padrão de dados promissor identificado.",
@@ -20,24 +19,19 @@ const RISK_MESSAGES = [
 ];
 
 const DataSyncGame = () => {
-  const { engagementTokens, spendTokens } = useStore(); // Usando tokens, não balance (USDT)
+  const { engagementTokens, spendTokens } = useStore(); 
   
-  // Game State
   const [isPlaying, setIsPlaying] = useState(false);
   const [isGameOver, setIsGameOver] = useState(false);
-  const [gameResult, setGameResult] = useState<'WIN' | 'LOSS' | null>(null);
   
-  // Logic State
   const [grid, setGrid] = useState<('IDLE' | 'SAFE' | 'MINE')[]>(new Array(GRID_SIZE).fill('IDLE'));
   const [mineLocations, setMineLocations] = useState<number[]>([]);
   const [revealedCount, setRevealedCount] = useState(0);
   
-  // UI/UX State
   const [shakeGrid, setShakeGrid] = useState(false);
   const [showCashoutHint, setShowCashoutHint] = useState(false);
   const [hintMessage, setHintMessage] = useState("");
   
-  // Inputs
   const [bet, setBet] = useState(10);
   const [minesCount, setMinesCount] = useState(3);
   const [multiplier, setMultiplier] = useState(1.0);
@@ -62,7 +56,6 @@ const DataSyncGame = () => {
 
     setIsPlaying(true);
     setIsGameOver(false);
-    setGameResult(null);
     setGrid(new Array(GRID_SIZE).fill('IDLE'));
     setRevealedCount(0);
     setMultiplier(1.0);
@@ -80,7 +73,7 @@ const DataSyncGame = () => {
     if (!isPlaying || isGameOver || grid[index] !== 'IDLE') return;
 
     if (mineLocations.includes(index)) {
-      handleGameOver(index);
+      handleGameOver();
     } else {
       const nextMult = calculateNextMultiplier(revealedCount, minesCount);
       setMultiplier(nextMult);
@@ -98,11 +91,10 @@ const DataSyncGame = () => {
     }
   };
 
-  const handleGameOver = (triggerIndex: number) => {
+  const handleGameOver = () => {
     setIsPlaying(false);
     setIsGameOver(true);
-    setGameResult('LOSS');
-    setShakeGrid(true); // Aciona o tremor
+    setShakeGrid(true); 
     setTimeout(() => setShakeGrid(false), 500);
 
     showError("FALHA DE SINCRONIA: Dados Corrompidos.");
@@ -115,11 +107,8 @@ const DataSyncGame = () => {
   const cashOut = (finalMult = multiplier) => {
     setIsPlaying(false);
     setIsGameOver(true);
-    setGameResult('WIN');
     
-    // Aqui seria a chamada ao backend para creditar USDT (Reward)
-    // Por enquanto, apenas feedback visual
-    const rewardValue = (bet * finalMult) * 0.1; // Ex: 10 coins -> $1 (ratio simulado)
+    const rewardValue = (bet * finalMult) * 0.1; 
     
     showSuccess(`Sincronia Concluída! Recompensa gerada: $${rewardValue.toFixed(2)} USDT`);
     
@@ -142,7 +131,6 @@ const DataSyncGame = () => {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start min-h-[600px]">
-      {/* Control Panel */}
       <div className="lg:col-span-4 bg-[#09090b] rounded-xl border border-white/10 p-6 flex flex-col gap-6 h-full shadow-xl relative z-20">
         <header className="mb-2">
           <div className="flex items-center gap-2 mb-2 opacity-50">
@@ -253,7 +241,6 @@ const DataSyncGame = () => {
         </div>
       </div>
 
-      {/* Grid Interface */}
       <motion.div 
         animate={shakeGrid ? { x: [-5, 5, -5, 5, 0] } : {}}
         transition={{ duration: 0.4 }}
