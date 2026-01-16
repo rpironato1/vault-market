@@ -111,3 +111,16 @@
 - Suite de testes automatizados mínima de regressão (estratégica, não massiva)
 - Playwright (sem MCP) opcional como pipeline
 - CI/CD best practices completas
+ 
+---
+
+## Backlog transversal (sem fase fixa)
+- Alinhar nomenclatura: "Vault Market" vs "VaultNet Protocol".
+- Compliance/antifraude como epic (regras, KYC/AML quando necessario).
+- Observabilidade (correlation IDs, logs, alarmes).
+- Contratos OpenAPI + Zod versionados.
+
+## Dependencias e riscos
+- Indexacao on-chain e reorgs exigem idempotencia forte.
+- Payout USDT requer gestao segura de chaves e auditoria.
+- Risco regulatorio: fluxo compra -> jogo -> premio.
