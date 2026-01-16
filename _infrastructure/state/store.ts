@@ -3,35 +3,28 @@ import { persist } from 'zustand/middleware';
 import { UserAccount, Reward } from '@core/domain/entities';
 
 interface UserState extends UserAccount {
-  addReward: (reward: Reward) => void;
-  updateBalance: (amount: number) => void;
-  spendTokens: (amount: number) => boolean;
+  // Actions agora são apenas "Setters"
+  setBalance: (balance: number) => void;
+  setTokens: (tokens: number) => void;
+  addVaultItem: (item: Reward) => void;
+  
+  // Helpers de UI (não alteram estado crítico)
+  isAuthenticated: boolean;
+  setAuthenticated: (auth: boolean) => void;
 }
 
 export const useStore = create<UserState>()(
   persist(
-    (set, get) => ({
-      balance: 1500.00,
-      engagementTokens: 5000,
+    (set) => ({
+      balance: 1500.00, // USDT
+      engagementTokens: 5000, // VaultCoins
       vaultItems: [],
-      
-      addReward: (reward) => set((state: UserState) => ({
-        vaultItems: [reward, ...state.vaultItems],
-        engagementTokens: state.engagementTokens + 150 // Recompensa por engajamento
-      })),
+      isAuthenticated: false,
 
-      updateBalance: (amount) => set((state: UserState) => ({
-        balance: state.balance + amount
-      })),
-
-      spendTokens: (amount) => {
-        const { engagementTokens } = get();
-        if (engagementTokens >= amount) {
-          set((state: UserState) => ({ engagementTokens: state.engagementTokens - amount }));
-          return true;
-        }
-        return false;
-      }
+      setBalance: (balance) => set({ balance }),
+      setTokens: (engagementTokens) => set({ engagementTokens }),
+      addVaultItem: (item) => set((state) => ({ vaultItems: [item, ...state.vaultItems] })),
+      setAuthenticated: (isAuthenticated) => set({ isAuthenticated }),
     }),
     { name: 'vault-market-storage' }
   )

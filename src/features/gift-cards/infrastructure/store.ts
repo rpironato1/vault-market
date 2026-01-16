@@ -28,7 +28,8 @@ export const useGiftCardStore = create<GiftCardState>((set) => ({
     
     await new Promise(resolve => setTimeout(resolve, 2000));
 
-    globalStore.updateBalance(-tier.price);
+    // Refatorado: updateBalance -> setBalance
+    globalStore.setBalance(globalStore.balance - tier.price);
 
     const luckFactor = Math.random() * 0.5;
     const totalMultiplier = tier.guaranteedMinMultiplier + luckFactor;
@@ -51,7 +52,8 @@ export const useGiftCardStore = create<GiftCardState>((set) => ({
       engagementTokens: state.engagementTokens + (coinValue * 10)
     }));
 
-    globalStore.addReward({
+    // Refatorado: addReward -> addVaultItem
+    globalStore.addVaultItem({
       id: `gc-${Math.random().toString(36).substr(2, 9)}`,
       name: `Gift Card ${reward.brand}`,
       rarity: 'Rare',

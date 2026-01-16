@@ -2,130 +2,112 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bomb, Diamond, ShieldCheck, Play, StopCircle, AlertTriangle } from 'lucide-react'; 
+import { Bomb, Diamond, ShieldCheck, Play, StopCircle } from 'lucide-react'; 
 import { showSuccess, showError } from '@/utils/toast';
-import { useStore } from '@infra/state/store';
+import { useStore } from '@infra/state/store'; // Importando store refatorada
+import { MockBackend } from '@infra/api/mock-backend'; // Backend simulado
 import { cn } from '@/lib/utils';
 
 const GRID_SIZE = 25;
 const MINES_OPTIONS = [1, 3, 5, 10, 15];
 
-const RISK_MESSAGES = [
-  "Sinal estável. Continuar extração?",
-  "Padrão de dados promissor identificado.",
-  "Risco de corrupção baixo. Prosseguir?",
-  "Latência de rede otimizada.",
-  "Sincronização parcial completa."
-];
-
 const DataSyncGame = () => {
-  const { engagementTokens, spendTokens } = useStore(); 
+  // Store apenas para leitura e sync
+  const { engagementTokens, setTokens } = useStore(); 
   
   const [isPlaying, setIsPlaying] = useState(false);
   const [isGameOver, setIsGameOver] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   
+  // Grid é apenas visual agora
   const [grid, setGrid] = useState<('IDLE' | 'SAFE' | 'MINE')[]>(new Array(GRID_SIZE).fill('IDLE'));
-  const [mineLocations, setMineLocations] = useState<number[]>([]);
-  const [revealedCount, setRevealedCount] = useState(0);
-  
-  const [shakeGrid, setShakeGrid] = useState(false);
-  const [showCashoutHint, setShowCashoutHint] = useState(false);
-  const [hintMessage, setHintMessage] = useState("");
+  const [gameId, setGameId] = useState<string | null>(null);
   
   const [bet, setBet] = useState(10);
   const [minesCount, setMinesCount] = useState(3);
-  const [multiplier, setMultiplier] = useState(1.0);
+  const [currentMultiplier, setCurrentMultiplier] = useState(1.0);
+  const [potentialWin, setPotentialWin] = useState(0);
 
-  const calculateNextMultiplier = (currentRevealed: number, totalMines: number) => {
-    const totalSpots = GRID_SIZE - currentRevealed;
-    const safeSpots = GRID_SIZE - totalMines - currentRevealed;
-    const houseEdge = 0.99;
-    const probability = safeSpots / totalSpots;
-    if (probability <= 0) return multiplier;
-    return multiplier * (1 / probability) * houseEdge;
-  };
-
-  const startGame = () => {
+  const startGame = async () => {
     if (engagementTokens < bet) {
-      showError("VaultCoins insuficientes. Adquira ativos no Marketplace.");
+      showError("VaultCoins insuficientes.");
       return;
     }
 
-    const spent = spendTokens(bet);
-    if (!spent) return;
-
-    setIsPlaying(true);
-    setIsGameOver(false);
-    setGrid(new Array(GRID_SIZE).fill('IDLE'));
-    setRevealedCount(0);
-    setMultiplier(1.0);
-    setShakeGrid(false);
-    
-    const newMines: number[] = [];
-    while (newMines.length < minesCount) {
-      const pos = Math.floor(Math.random() * GRID_SIZE);
-      if (!newMines.includes(pos)) newMines.push(pos);
-    }
-    setMineLocations(newMines);
-  };
-
-  const handleTileClick = (index: number) => {
-    if (!isPlaying || isGameOver || grid[index] !== 'IDLE') return;
-
-    if (mineLocations.includes(index)) {
-      handleGameOver();
-    } else {
-      const nextMult = calculateNextMultiplier(revealedCount, minesCount);
-      setMultiplier(nextMult);
-      setRevealedCount(prev => prev + 1);
+    setIsLoading(true);
+    try {
+      // Chamada ao Backend para iniciar sessão
+      const session = await MockBackend.startMines(bet, minesCount);
       
-      setGrid(prev => {
-        const next = [...prev];
-        next[index] = 'SAFE';
-        return next;
-      });
-
-      if (revealedCount + 1 === GRID_SIZE - minesCount) {
-        cashOut(nextMult);
-      }
+      // Sincroniza saldo retornado pelo servidor
+      setTokens(session.balanceAfterWager);
+      setGameId(session.gameId);
+      
+      // Reset UI
+      setGrid(new Array(GRID_SIZE).fill('IDLE'));
+      setCurrentMultiplier(1.0);
+      setPotentialWin(bet);
+      setIsPlaying(true);
+      setIsGameOver(false);
+      
+    } catch (e) {
+      showError("Erro ao iniciar sessão.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleGameOver = () => {
-    setIsPlaying(false);
-    setIsGameOver(true);
-    setShakeGrid(true); 
-    setTimeout(() => setShakeGrid(false), 500);
+  const handleTileClick = async (index: number) => {
+    if (!isPlaying || isGameOver || isLoading || grid[index] !== 'IDLE' || !gameId) return;
 
-    showError("FALHA DE SINCRONIA: Dados Corrompidos.");
-
-    setGrid(prev => prev.map((_, idx) => 
-      mineLocations.includes(idx) ? 'MINE' : (prev[idx] === 'SAFE' ? 'SAFE' : 'IDLE')
-    ));
+    // setIsLoading(true); // Opcional: feedback visual de loading em cada clique
+    try {
+      const result = await MockBackend.revealMines(gameId, index);
+      
+      if (result.status === 'MINE') {
+        // Game Over
+        setGrid(prev => {
+          const next = [...prev];
+          next[index] = 'MINE';
+          return next;
+        });
+        setIsGameOver(true);
+        setIsPlaying(false);
+        showError("FALHA DE SINCRONIA: Dados Corrompidos.");
+      } else {
+        // Safe
+        setGrid(prev => {
+          const next = [...prev];
+          next[index] = 'SAFE';
+          return next;
+        });
+        setCurrentMultiplier(result.currentMultiplier);
+        setPotentialWin(result.potentialReward);
+      }
+    } catch (e) {
+      showError("Erro de comunicação com o servidor.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const cashOut = (finalMult = multiplier) => {
-    setIsPlaying(false);
-    setIsGameOver(true);
+  const cashOut = async () => {
+    if (!gameId || isGameOver) return;
     
-    const rewardValue = (bet * finalMult) * 0.1; 
-    
-    showSuccess(`Sincronia Concluída! Recompensa gerada: $${rewardValue.toFixed(2)} USDT`);
-    
-    setGrid(prev => prev.map((status, idx) => 
-      mineLocations.includes(idx) ? 'IDLE' : status
-    ));
-  };
-
-  const handleCashoutHover = (isHovering: boolean) => {
-    if (!isPlaying) return;
-    
-    if (isHovering && multiplier < 1.5) {
-      const randomMsg = RISK_MESSAGES[Math.floor(Math.random() * RISK_MESSAGES.length)];
-      setHintMessage(randomMsg);
-      setShowCashoutHint(true);
-    } else {
-      setShowCashoutHint(false);
+    setIsLoading(true);
+    try {
+      const result = await MockBackend.cashoutMines(gameId);
+      
+      setTokens(result.newBalance); // Sync final
+      
+      showSuccess(`Sincronia Concluída! +${result.totalPayout} VC`);
+      setIsPlaying(false);
+      setIsGameOver(true);
+      
+    } catch (e) {
+      showError("Erro ao realizar cashout.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -148,8 +130,8 @@ const DataSyncGame = () => {
                 type="number" 
                 value={bet}
                 onChange={(e) => setBet(Number(e.target.value))}
-                disabled={isPlaying}
-                className="w-full bg-[#121212] border border-white/10 rounded-lg h-12 pl-4 pr-4 font-mono text-sm text-white focus:border-[#00FF9C] focus:ring-1 focus:ring-[#00FF9C]/20 outline-none transition-all disabled:opacity-50"
+                disabled={isPlaying || isLoading}
+                className="w-full bg-[#121212] border border-white/10 rounded-lg h-12 pl-4 pr-4 font-mono text-sm text-white focus:border-[#00FF9C] outline-none disabled:opacity-50"
               />
             </div>
             <div className="grid grid-cols-4 gap-2">
@@ -157,7 +139,7 @@ const DataSyncGame = () => {
                 <button
                   key={val}
                   onClick={() => !isPlaying && setBet(val)}
-                  disabled={isPlaying}
+                  disabled={isPlaying || isLoading}
                   className="h-8 rounded-md bg-white/5 hover:bg-white/10 text-[10px] font-mono text-zinc-400 transition-colors disabled:opacity-30"
                 >
                   {val}
@@ -173,12 +155,12 @@ const DataSyncGame = () => {
                 <button
                   key={count}
                   onClick={() => !isPlaying && setMinesCount(count)}
-                  disabled={isPlaying}
+                  disabled={isPlaying || isLoading}
                   className={cn(
-                    "h-10 rounded-lg border text-xs font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed",
+                    "h-10 rounded-lg border text-xs font-bold transition-all disabled:opacity-50",
                     minesCount === count 
                       ? "bg-[#00FF9C]/10 border-[#00FF9C] text-[#00FF9C]" 
-                      : "bg-[#121212] border-white/5 text-zinc-500 hover:border-white/20 hover:text-zinc-300"
+                      : "bg-[#121212] border-white/5 text-zinc-500 hover:border-white/20"
                   )}
                 >
                   {count}
@@ -190,62 +172,41 @@ const DataSyncGame = () => {
 
         <div className="mt-auto pt-6 border-t border-white/5 space-y-4">
           <div className="flex justify-between items-end">
-             <span className="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">Eficiência Atual</span>
+             <span className="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">Eficiência</span>
              <span className={cn("text-3xl font-mono font-bold tracking-tighter", isPlaying ? "text-[#00FF9C]" : "text-zinc-600")}>
-               {multiplier.toFixed(2)}x
+               {currentMultiplier.toFixed(2)}x
              </span>
           </div>
           <div className="flex justify-between items-end">
-             <span className="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">Retorno Potencial</span>
+             <span className="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">Acumulado</span>
              <span className={cn("text-lg font-mono font-medium", isPlaying ? "text-white" : "text-zinc-600")}>
-               {(bet * multiplier).toFixed(0)} VC
+               {potentialWin.toFixed(0)} VC
              </span>
           </div>
         </div>
 
-        <div className="relative">
-          <AnimatePresence>
-            {showCashoutHint && (
-              <motion.div 
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 10 }}
-                className="absolute -top-16 left-0 right-0 bg-[#FFD700] text-black p-3 rounded-lg shadow-lg z-30 pointer-events-none"
-              >
-                <div className="flex items-center gap-2">
-                  <AlertTriangle size={16} fill="black" className="shrink-0" />
-                  <p className="text-[10px] font-black uppercase leading-tight">{hintMessage}</p>
-                </div>
-                <div className="absolute bottom-[-6px] left-1/2 -translate-x-1/2 w-3 h-3 bg-[#FFD700] rotate-45" />
-              </motion.div>
-            )}
-          </AnimatePresence>
-
+        <div>
           {!isPlaying ? (
             <button 
               onClick={startGame}
-              className="w-full bg-[#00FF9C] text-black h-14 rounded-lg font-bold text-sm uppercase tracking-widest hover:bg-[#00e68d] active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(0,255,156,0.1)]"
+              disabled={isLoading}
+              className="w-full bg-[#00FF9C] text-black h-14 rounded-lg font-bold text-sm uppercase tracking-widest hover:bg-[#00e68d] active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(0,255,156,0.1)] disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Play size={16} fill="currentColor" /> Iniciar Validação
+              {isLoading ? 'Iniciando...' : <><Play size={16} fill="currentColor" /> Iniciar Validação</>}
             </button>
           ) : (
             <button 
-              onClick={() => cashOut()}
-              onMouseEnter={() => handleCashoutHover(true)}
-              onMouseLeave={() => handleCashoutHover(false)}
-              className="w-full bg-white text-black h-14 rounded-lg font-bold text-sm uppercase tracking-widest hover:bg-zinc-200 active:scale-[0.98] transition-all flex items-center justify-center gap-2 relative overflow-hidden"
+              onClick={cashOut}
+              disabled={isLoading || isGameOver}
+              className="w-full bg-white text-black h-14 rounded-lg font-bold text-sm uppercase tracking-widest hover:bg-zinc-200 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
             >
-              <StopCircle size={18} /> Consolidar Dados
+              {isLoading ? 'Processando...' : <><StopCircle size={18} /> Consolidar Dados</>}
             </button>
           )}
         </div>
       </div>
 
-      <motion.div 
-        animate={shakeGrid ? { x: [-5, 5, -5, 5, 0] } : {}}
-        transition={{ duration: 0.4 }}
-        className="lg:col-span-8 h-full bg-[#050505] rounded-xl border border-white/5 p-8 flex flex-col items-center justify-center relative overflow-hidden group"
-      >
+      <div className="lg:col-span-8 h-full bg-[#050505] rounded-xl border border-white/5 p-8 flex flex-col items-center justify-center relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.03),transparent_70%)] pointer-events-none" />
         
         <div className="grid grid-cols-5 gap-3 w-full max-w-[500px] aspect-square relative z-10">
@@ -255,7 +216,7 @@ const DataSyncGame = () => {
               whileHover={status === 'IDLE' && isPlaying ? { scale: 1.02, backgroundColor: 'rgba(255,255,255,0.08)' } : {}}
               whileTap={status === 'IDLE' && isPlaying ? { scale: 0.96 } : {}}
               onClick={() => handleTileClick(i)}
-              disabled={!isPlaying && status === 'IDLE'}
+              disabled={!isPlaying || status !== 'IDLE'}
               className={cn(
                 "relative rounded-lg flex items-center justify-center transition-all duration-200 border",
                 status === 'IDLE' && "bg-[#121212] border-white/5 cursor-pointer disabled:cursor-default",
@@ -288,7 +249,7 @@ const DataSyncGame = () => {
             </motion.button>
           ))}
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 };

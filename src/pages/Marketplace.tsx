@@ -46,12 +46,12 @@ const BOX_REGISTRY: MysteryBox[] = [
 ];
 
 const Marketplace = () => {
-  const { balance, updateBalance, addReward } = useStore();
+  const { balance, setBalance, addVaultItem } = useStore();
   const [activeReward, setActiveReward] = useState<Reward | null>(null);
 
   const handleAcquire = (box: MysteryBox) => {
     if (balance >= box.price) {
-      updateBalance(-box.price);
+      setBalance(balance - box.price);
       const newReward: Reward = {
         id: `rw-${Math.random().toString(36).substr(2, 9)}`,
         name: `${box.name} Artifact`,
@@ -121,7 +121,7 @@ const Marketplace = () => {
         <NearMissOpener 
           reward={activeReward} 
           onClose={() => {
-            if (activeReward) addReward(activeReward);
+            if (activeReward) addVaultItem(activeReward);
             setActiveReward(null);
           }} 
         />

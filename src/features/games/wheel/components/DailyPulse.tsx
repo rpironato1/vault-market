@@ -2,26 +2,29 @@
 
 import { useState } from 'react';
 import { motion, useAnimation } from 'framer-motion';
-import { Target, Lightning, Trophy } from '@phosphor-icons/react';
+import { Lightning, Trophy } from '@phosphor-icons/react';
 import confetti from 'canvas-confetti';
-import { showSuccess } from '@/utils/toast';
+import { showSuccess, showError } from '@/utils/toast';
 import { cn } from '@/lib/utils';
 import { WheelPointer } from './WheelPointer';
 import { WheelSectors } from './WheelSectors';
+import { MockBackend } from '@infra/api/mock-backend';
+import { useStore } from '@infra/state/store';
 
-// Configuração Balanceada e Sem "Buracos"
+// A UI precisa saber os setores para desenhar, mas a lógica de escolha saiu.
 const SECTORS = [
-  { label: '50 VC', color: '#00FF9C', value: 50, chance: 0.25 },
-  { label: '10 VC', color: '#121212', value: 10, chance: 0.3 }, 
-  { label: '250 VC', color: '#FFD700', value: 250, chance: 0.1 },
-  { label: '5 VC', color: '#1a1a1a', value: 5, chance: 0.3 },   
-  { label: '100 VC', color: '#00FF9C', value: 100, chance: 0.15 },
-  { label: 'JACKPOT', color: '#FF007F', value: 2500, chance: 0.01 }, // Jackpot
-  { label: '25 VC', color: '#121212', value: 25, chance: 0.2 },
-  { label: '500 VC', color: '#FFD700', value: 500, chance: 0.05 },
+  { label: '50 VC', color: '#00FF9C', value: 50 },
+  { label: '10 VC', color: '#121212', value: 10 }, 
+  { label: '250 VC', color: '#FFD700', value: 250 },
+  { label: '5 VC', color: '#1a1a1a', value: 5 },   
+  { label: '100 VC', color: '#00FF9C', value: 100 },
+  { label: 'JACKPOT', color: '#FF007F', value: 2500 },
+  { label: '25 VC', color: '#121212', value: 25 },
+  { label: '500 VC', color: '#FFD700', value: 500 },
 ];
 
 const DailyPulse = () => {
+  const { setTokens } = useStore();
   const controls = useAnimation();
   const [isSpinning, setIsSpinning] = useState(false);
   const [rotation, setRotation] = useState(0);
@@ -35,54 +38,54 @@ const DailyPulse = () => {
     setLastWin(null);
     setWinningIndex(null);
 
-    // 1. Sorteio Ponderado (RNG)
-    const totalChance = SECTORS.reduce((acc, s) => acc + s.chance, 0);
-    let random = Math.random() * totalChance;
-    let selectedIndex = 0;
-    
-    for (let i = 0; i < SECTORS.length; i++) {
-      if (random < SECTORS[i].chance) { 
-        selectedIndex = i; 
-        break; 
-      }
-      random -= SECTORS[i].chance;
-    }
-
-    const sectorAngle = 360 / SECTORS.length;
-    const sectorCenter = (selectedIndex * sectorAngle) + (sectorAngle / 2);
-    const jitter = (Math.random() - 0.5) * (sectorAngle * 0.8);
-    
-    const spins = 5; 
-    const targetRotation = rotation + (360 * spins) + (360 - sectorCenter) + jitter;
-    
-    setRotation(targetRotation);
-
-    // 3. Execução da Física
-    await controls.start({
-      rotate: targetRotation,
-      transition: { 
-        duration: 8, 
-        ease: [0.15, 0, 0.10, 1] 
-      }
-    });
-
-    // 4. Feedback e Recompensa
-    const reward = SECTORS[selectedIndex];
-    setWinningIndex(selectedIndex);
-
-    const isJackpot = reward.label === 'JACKPOT' || reward.value >= 500;
+    try {
+      // 1. Solicita resultado ao Servidor
+      const result = await MockBackend.spinWheel();
       
-    confetti({ 
-      particleCount: isJackpot ? 400 : 100, 
-      spread: isJackpot ? 100 : 70, 
-      origin: { y: 0.7 }, 
-      colors: isJackpot ? ['#FFD700', '#FF007F', '#FFFFFF'] : ['#00FF9C', '#FFFFFF'] 
-    });
+      // 2. Calcula rotação visual baseada no resultado do servidor
+      const sectorAngle = 360 / SECTORS.length;
+      // Ajuste fino para cair no meio do setor
+      const sectorCenter = (result.winningIndex * sectorAngle) + (sectorAngle / 2);
+      // Adiciona um pouco de "jitter" visual inofensivo
+      const jitter = (Math.random() - 0.5) * (sectorAngle * 0.5); 
+      
+      const spins = 5; 
+      // Importante: A rotação deve inverter para alinhar o ponteiro (que está no topo/bottom)
+      // Se o ponteiro está no topo (0 graus), precisamos rotacionar o tabuleiro para trazer o setor até lá.
+      const targetRotation = rotation + (360 * spins) + (360 - sectorCenter) + jitter;
+      
+      setRotation(targetRotation);
 
-    showSuccess(isJackpot ? `JACKPOT CONFIRMADO: ${reward.label}` : `Sincronia: +${reward.label}`);
-    setLastWin(reward.label);
-    
-    setIsSpinning(false);
+      // 3. Execução da Animação
+      await controls.start({
+        rotate: targetRotation,
+        transition: { 
+          duration: 6, // Rápido para UX fluida
+          ease: [0.15, 0, 0.10, 1] 
+        }
+      });
+
+      // 4. Feedback e Sync
+      setWinningIndex(result.winningIndex);
+      setTokens(result.newBalance); // Sync saldo real
+
+      const isJackpot = result.isJackpot;
+        
+      confetti({ 
+        particleCount: isJackpot ? 400 : 100, 
+        spread: isJackpot ? 100 : 70, 
+        origin: { y: 0.7 }, 
+        colors: isJackpot ? ['#FFD700', '#FF007F', '#FFFFFF'] : ['#00FF9C', '#FFFFFF'] 
+      });
+
+      showSuccess(isJackpot ? `JACKPOT CONFIRMADO: ${result.rewardLabel}` : `Sincronia: +${result.rewardLabel}`);
+      setLastWin(result.rewardLabel);
+      
+    } catch (e) {
+      showError("Erro de comunicação com o servidor.");
+    } finally {
+      setIsSpinning(false);
+    }
   };
 
   return (
@@ -124,19 +127,6 @@ const DailyPulse = () => {
             <span>{isSpinning ? 'CALCULATING...' : 'ENGAGE PULSE'}</span>
             {!isSpinning && <span className="text-[8px] font-mono opacity-60">Sincronia Diária Gratuita</span>}
           </button>
-        </div>
-
-        <div className="bg-[#0A0A0A] rounded-[40px] border border-white/5 p-8">
-           <div className="flex items-center justify-between mb-4">
-              <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Precision Lock</span>
-              <span className="text-[#00FF9C] font-mono text-xs">Calibrated</span>
-           </div>
-           <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-              <motion.div 
-                animate={{ width: isSpinning ? '100%' : '100%' }}
-                className={cn("h-full", isSpinning ? "bg-[#00FF9C]" : "bg-zinc-700")} 
-              />
-           </div>
         </div>
       </div>
 
@@ -195,16 +185,6 @@ const DailyPulse = () => {
               ))}
             </svg>
           </motion.div>
-
-          {/* O Centro - Unidade de Processamento (Core) */}
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
-            <div className="w-40 h-40 rounded-full bg-[#121212] border-[8px] border-[#0A0A0A] flex items-center justify-center shadow-[0_0_50px_rgba(0,0,0,0.8)] relative">
-               <div className="absolute inset-0 rounded-full border border-white/5 animate-[spin_10s_linear_infinite]" />
-               <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#00FF9C]/20 to-transparent flex items-center justify-center border border-[#00FF9C]/30">
-                  <Target size={48} weight="duotone" className="text-[#00FF9C] animate-pulse" />
-               </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>

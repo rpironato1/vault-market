@@ -44,7 +44,7 @@ interface ActiveBall {
 }
 
 const GravityPlinko = () => {
-  const { engagementTokens, spendTokens } = useStore(); // Usando tokens (VaultCoins)
+  const { engagementTokens, setTokens } = useStore(); // Usando tokens (VaultCoins)
   const canvasRef = useRef<HTMLCanvasElement>(null);
   
   // -- Game State --
@@ -297,8 +297,8 @@ const GravityPlinko = () => {
       return;
     }
     
-    const spent = spendTokens(bet);
-    if (!spent) return;
+    // Refatorado: spendTokens -> setTokens
+    setTokens(engagementTokens - bet);
 
     const path: number[] = [];
     

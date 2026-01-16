@@ -24,7 +24,7 @@ const TENSION_PHASES = {
 };
 
 const QuantumCrash = () => {
-  const { engagementTokens, spendTokens } = useStore(); // Correção: usar tokens
+  const { engagementTokens, setTokens } = useStore();
   
   // -- Game State --
   const [status, setStatus] = useState<GameStatus>('IDLE');
@@ -58,8 +58,7 @@ const QuantumCrash = () => {
       return;
     }
 
-    const spent = spendTokens(bet);
-    if (!spent) return;
+    setTokens(engagementTokens - bet);
 
     setStatus('STARTING');
     setMultiplier(1.00);
