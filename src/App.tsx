@@ -18,6 +18,7 @@ import RewardsPage from "./features/rewards/presentation/pages/RewardsPage";
 import WithdrawalPage from "./features/withdrawals/presentation/pages/WithdrawalPage";
 import SettingsPage from "./features/settings/presentation/pages/SettingsPage";
 import AffiliatesPage from "./features/affiliates/presentation/pages/AffiliatesPage";
+import AdminDashboardPage from "./features/admin/presentation/pages/AdminDashboardPage";
 
 const queryClient = new QueryClient();
 
@@ -25,6 +26,13 @@ const queryClient = new QueryClient();
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   // Em uma implementação real, verificamos o auth.user aqui
   return <>{children}</>;
+};
+
+// ProtectedAdminRoute simplificado (simulando acesso admin)
+const ProtectedAdminRoute = ({ children }: { children: React.ReactNode }) => {
+  // Mock check: em prod, verificar auth.user.role === 'ADMIN'
+  const isAdmin = true; 
+  return isAdmin ? <>{children}</> : <Navigate to="/app" />;
 };
 
 const App = () => (
@@ -39,7 +47,7 @@ const App = () => (
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           
-          {/* Rotas Protegidas */}
+          {/* Rotas Protegidas (App) */}
           <Route path="/app" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
           <Route path="/app/coins" element={<ProtectedRoute><VaultCoinsPage /></ProtectedRoute>} />
           <Route path="/app/rewards" element={<ProtectedRoute><RewardsPage /></ProtectedRoute>} />
@@ -47,7 +55,10 @@ const App = () => (
           <Route path="/app/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
           <Route path="/app/affiliates" element={<ProtectedRoute><AffiliatesPage /></ProtectedRoute>} />
           
-          {/* Features Legadas/Existentes (Futuramente movidas para sub-rotas de /app) */}
+          {/* Rotas Protegidas (Admin) */}
+          <Route path="/admin" element={<ProtectedAdminRoute><AdminDashboardPage /></ProtectedAdminRoute>} />
+          
+          {/* Features Legadas/Existentes */}
           <Route path="/marketplace" element={<ProtectedRoute><Marketplace /></ProtectedRoute>} />
           <Route path="/vault" element={<ProtectedRoute><Vault /></ProtectedRoute>} />
           <Route path="/tokens" element={<ProtectedRoute><Tokens /></ProtectedRoute>} />
