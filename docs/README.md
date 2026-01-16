@@ -7,13 +7,15 @@
 
 Recomendação de leitura (ordem):
 
-1. `PRD.md` — visão do produto, requisitos e regras de negócio.
-2. `ARCHITECTURE_BASE.md` — arquitetura base (modular/hexagonal/SCS) e decisões técnicas.
-3. `UI/00-UI-OVERVIEW.md` — design system, navegação, padrões de UX.
-4. `UI/*` — specs por tela (rotas, estados, componentes, dados, eventos).
-5. `REFACTOR_ALIGN.md` — plano para alinhar o código atual com a arquitetura base (antes de evoluir features).
-6. `ROADMAP.md` — roadmap por fases + critérios de aceite.
-7. `AGENT_PROMPTS.md` — prompts prontos por etapa para execução por agente.
+1. `PRD.md` - visao do produto, requisitos e regras de negocio.
+2. `ARCHITECTURE_BASE.md` - arquitetura base (modular/hexagonal/SCS) e decisoes tecnicas.
+3. `UI/00-UI-OVERVIEW.md` - design system, navegacao, padroes de UX.
+4. `UI/*` - specs por tela (rotas, estados, componentes, dados, eventos).
+5. `REFACTOR_ALIGN.md` - plano para alinhar o codigo atual com a arquitetura base (antes de evoluir features).
+6. `RULES.md` - regras de negocio e padroes tecnicos.
+7. `WORKFLOWS.md` - fluxos de trabalho e validacao.
+8. `ROADMAP.md` - roadmap por fases + criterios de aceite.
+9. `AGENT_PROMPTS.md` - prompts prontos por etapa para execucao por agente.
 
 ## Notas importantes (alinhadas com o seu contexto)
 
@@ -32,3 +34,4 @@ Recomendação de leitura (ordem):
   - SEC-xxx (Security / Anti-fraude)
   - OBS-xxx (Observabilidade)
 - Sempre que possível: contratos e schemas (Zod/OpenAPI) antes da implementação.
+

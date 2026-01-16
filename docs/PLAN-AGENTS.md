@@ -4,7 +4,7 @@ Data: 2026-01-16
 Status: Em execucao
 
 ## Objetivo
-Gerar AGENTS.md (arquivo mestre) e documentacao complementar (RULES.md, WORKFLOWS.md, ROADMAP.md),
+Gerar AGENTS.md (arquivo mestre) e documentacao complementar (docs/RULES.md, docs/WORKFLOWS.md, docs/ROADMAP.md),
 com base em todo o conteudo de /docs e nas referencias oficiais da OpenAI Codex.
 
 ## Escopo e fontes (resumo)
@@ -37,7 +37,7 @@ Fontes externas (OpenAI Codex):
 graph TD
   PM[docs/pm-po-scrum/*] --> PRD[docs/PRD.md]
   PM --> ROAD[docs/ROADMAP.md]
-  PRD --> RULES[RULES.md]
+  PRD --> RULES[docs/RULES.md]
   ARCH[docs/ARCHITECTURE_BASE.md] --> RULES
   UI[docs/UI/*] --> RULES
   REFA[docs/REFACTOR_ALIGN.md] --> RULES
@@ -45,8 +45,8 @@ graph TD
   ROOT[README.md + README.agents.md + AI_RULES.md + package.json] --> RULES
   OPENAI[OpenAI Codex docs] --> AG[AGENTS.md]
   RULES --> AG
-  WORK[WORKFLOWS.md] --> AG
-  ROAD[ROADMAP.md] --> AG
+  WORK[docs/WORKFLOWS.md] --> AG
+  ROAD[docs/ROADMAP.md] --> AG
   PRD --> WORK
   ARCH --> WORK
   ROAD --> WORK
@@ -71,9 +71,9 @@ flowchart TD
 1. Consolidar insumos e padroes do repo (docs + raiz).
 2. Consolidar diretrizes oficiais da OpenAI Codex para AGENTS.md e prompting.
 3. Definir estrutura do AGENTS.md (system message + secoes obrigatorias).
-4. Redigir RULES.md consolidando regras tecnicas e de negocio.
-5. Redigir WORKFLOWS.md (dev flow + operacionais do produto).
-6. Redigir ROADMAP.md consolidando fases e backlog por prioridade.
+4. Redigir docs/RULES.md consolidando regras tecnicas e de negocio.
+5. Redigir docs/WORKFLOWS.md (dev flow + operacionais do produto).
+6. Redigir docs/ROADMAP.md consolidando fases e backlog por prioridade.
 7. Validar referencias cruzadas, coerencia e linguagem (pt-BR, ASCII).
 8. Registrar pendencias de definicao e perguntas ao usuario.
 
@@ -85,33 +85,34 @@ Diff esperado:
 Milestone 2 - Documentos mestres criados
 Diff esperado:
 - +AGENTS.md
-- +RULES.md
-- +WORKFLOWS.md
-- +ROADMAP.md
+- +docs/RULES.md
+- +docs/WORKFLOWS.md
+- +docs/ROADMAP.md
 
 Milestone 3 - Ajustes finais
 Diff esperado:
-- Revisoes em AGENTS.md, RULES.md, WORKFLOWS.md, ROADMAP.md (se necessario)
+- Revisoes em AGENTS.md, docs/RULES.md, docs/WORKFLOWS.md, docs/ROADMAP.md (se necessario)
 
 ## Checklist de regras inegociaveis (aplicacao)
 - [x] Graph of Thoughts usado (neste arquivo).
 - [x] Fluxograma usado (neste arquivo).
 - [x] Padroes do projeto checados (docs/ + README/AI_RULES/README.agents).
 - [x] Context7 consultado no planejamento (registro no log de execucao).
-- [x] SOLID/CRUD considerados (em RULES.md quando aplicavel).
-- [x] Proibido any (registrado em RULES.md).
-- [x] Somente design tokens (registrado em RULES.md).
-- [x] Responsivo (registrado em RULES.md).
-- [x] Nao simplificar/regredir (registrado em RULES.md).
-- [x] Edge functions por funcionalidade + limites (registrado em RULES.md).
-- [x] Modularizacao > 300 linhas (registrado em RULES.md).
-- [x] Zero erros/warnings build/lint/typecheck (registrado em WORKFLOWS.md).
-- [x] Playwright MCP manual (registrado em WORKFLOWS.md; aplicavel quando ha UI/fluxo).
-- [x] Migrations obrigatorias + rollback para SQL (registrado em RULES.md).
-- [x] Sem solucao temporaria (registrado em RULES.md).
+- [x] SOLID/CRUD considerados (em docs/RULES.md quando aplicavel).
+- [x] Proibido any (registrado em docs/RULES.md).
+- [x] Somente design tokens (registrado em docs/RULES.md).
+- [x] Responsivo (registrado em docs/RULES.md).
+- [x] Nao simplificar/regredir (registrado em docs/RULES.md).
+- [x] Edge functions por funcionalidade + limites (registrado em docs/RULES.md).
+- [x] Modularizacao > 300 linhas (registrado em docs/RULES.md).
+- [x] Zero erros/warnings build/lint/typecheck (registrado em docs/WORKFLOWS.md).
+- [x] Playwright MCP manual (registrado em docs/WORKFLOWS.md; aplicavel quando ha UI/fluxo).
+- [x] Migrations obrigatorias + rollback para SQL (registrado em docs/RULES.md).
+- [x] Sem solucao temporaria (registrado em docs/RULES.md).
 - [x] Perguntas de clarificacao listadas (ver secoes finais).
 
 ## Pendencias / duvidas a confirmar
 1. Resolvido: documentacao complementar em /docs.
 2. Resolvido: trunk-based + feature flags.
 3. Resolvido (provisorio): nome padrao "Vault Market".
+

@@ -12,10 +12,11 @@ import Games from "./pages/Games";
 import NotFound from "./pages/NotFound";
 import LoginPage from "./features/auth/presentation/pages/LoginPage";
 import RegisterPage from "./features/auth/presentation/pages/RegisterPage";
+import DashboardPage from "./features/dashboard/presentation/pages/DashboardPage";
 
 const queryClient = new QueryClient();
 
-// ProtectedRoute simplificado (pode ser expandido com useAuthStore futuramente)
+// ProtectedRoute simplificado
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   // Em uma implementação real, verificamos o auth.user aqui
   return <>{children}</>;
@@ -33,7 +34,10 @@ const App = () => (
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           
-          {/* Rotas Protegidas (Conceitualmente) */}
+          {/* Rotas Protegidas */}
+          <Route path="/app" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
+          
+          {/* Features Legadas/Existentes (Futuramente movidas para sub-rotas de /app) */}
           <Route path="/marketplace" element={<ProtectedRoute><Marketplace /></ProtectedRoute>} />
           <Route path="/vault" element={<ProtectedRoute><Vault /></ProtectedRoute>} />
           <Route path="/tokens" element={<ProtectedRoute><Tokens /></ProtectedRoute>} />

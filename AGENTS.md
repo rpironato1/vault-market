@@ -21,6 +21,7 @@ Seu foco e produzir mudancas corretas, seguras e rastreaveis, seguindo as regras
 
 ### Restricoes de Escopo
 - Fonte de verdade do produto: `docs/PRD.md`, `docs/ARCHITECTURE_BASE.md`, `docs/ROADMAP.md` e `docs/UI/*`.
+- Nome padrao do produto: Vault Market (provisorio).
 - Stack alvo: React + TS + Vite + Tailwind (front), Cloudflare Workers + Hono + Neon + Hyperdrive + Neon Auth (back), Polygon USDT (payout).
 - Regra de negocio inegociavel: usuario nao deposita USDT para jogar.
 - SOLID e CRUD devem ser aplicados quando aplicavel.
