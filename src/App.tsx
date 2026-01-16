@@ -13,6 +13,7 @@ import NotFound from "./pages/NotFound";
 import LoginPage from "./features/auth/presentation/pages/LoginPage";
 import RegisterPage from "./features/auth/presentation/pages/RegisterPage";
 import DashboardPage from "./features/dashboard/presentation/pages/DashboardPage";
+import VaultCoinsPage from "./features/vaultcoins/presentation/pages/VaultCoinsPage";
 
 const queryClient = new QueryClient();
 
@@ -36,6 +37,7 @@ const App = () => (
           
           {/* Rotas Protegidas */}
           <Route path="/app" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
+          <Route path="/app/coins" element={<ProtectedRoute><VaultCoinsPage /></ProtectedRoute>} />
           
           {/* Features Legadas/Existentes (Futuramente movidas para sub-rotas de /app) */}
           <Route path="/marketplace" element={<ProtectedRoute><Marketplace /></ProtectedRoute>} />
