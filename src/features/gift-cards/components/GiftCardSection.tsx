@@ -12,7 +12,7 @@ export const GiftCardSection = () => {
 
   const handlePurchase = async (tier: typeof GIFT_TIERS[0]) => {
     if (balance < tier.price) {
-      showError("Saldo insuficiente para esta caixa.");
+      showError("Saldo USDT insuficiente. Recarregue sua carteira Polygon.");
       return;
     }
     

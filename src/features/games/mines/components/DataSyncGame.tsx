@@ -7,19 +7,19 @@ import { showSuccess, showError } from '@/utils/toast';
 import { useStore } from '@infra/state/store'; // Importando store refatorada
 import { MockBackend } from '@infra/api/mock-backend'; // Backend simulado
 import { cn } from '@/lib/utils';
+import { useNavigate } from 'react-router-dom';
 
 const GRID_SIZE = 25;
 const MINES_OPTIONS = [1, 3, 5, 10, 15];
 
 const DataSyncGame = () => {
-  // Store apenas para leitura e sync
   const { engagementTokens, setTokens } = useStore(); 
+  const navigate = useNavigate();
   
   const [isPlaying, setIsPlaying] = useState(false);
   const [isGameOver, setIsGameOver] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   
-  // Grid é apenas visual agora
   const [grid, setGrid] = useState<('IDLE' | 'SAFE' | 'MINE')[]>(new Array(GRID_SIZE).fill('IDLE'));
   const [gameId, setGameId] = useState<string | null>(null);
   
@@ -30,20 +30,18 @@ const DataSyncGame = () => {
 
   const startGame = async () => {
     if (engagementTokens < bet) {
-      showError("VaultCoins insuficientes.");
+      showError("Você não possui VaultCoins suficientes. Compre NFTs para ganhar VaultCoins.");
+      setTimeout(() => navigate('/marketplace'), 2000);
       return;
     }
 
     setIsLoading(true);
     try {
-      // Chamada ao Backend para iniciar sessão
       const session = await MockBackend.startMines(bet, minesCount);
       
-      // Sincroniza saldo retornado pelo servidor
       setTokens(session.balanceAfterWager);
       setGameId(session.gameId);
       
-      // Reset UI
       setGrid(new Array(GRID_SIZE).fill('IDLE'));
       setCurrentMultiplier(1.0);
       setPotentialWin(bet);
@@ -60,12 +58,10 @@ const DataSyncGame = () => {
   const handleTileClick = async (index: number) => {
     if (!isPlaying || isGameOver || isLoading || grid[index] !== 'IDLE' || !gameId) return;
 
-    // setIsLoading(true); // Opcional: feedback visual de loading em cada clique
     try {
       const result = await MockBackend.revealMines(gameId, index);
       
       if (result.status === 'MINE') {
-        // Game Over
         setGrid(prev => {
           const next = [...prev];
           next[index] = 'MINE';
@@ -75,7 +71,6 @@ const DataSyncGame = () => {
         setIsPlaying(false);
         showError("FALHA DE SINCRONIA: Dados Corrompidos.");
       } else {
-        // Safe
         setGrid(prev => {
           const next = [...prev];
           next[index] = 'SAFE';
@@ -98,7 +93,7 @@ const DataSyncGame = () => {
     try {
       const result = await MockBackend.cashoutMines(gameId);
       
-      setTokens(result.newBalance); // Sync final
+      setTokens(result.newBalance); 
       
       showSuccess(`Sincronia Concluída! +${result.totalPayout} VC`);
       setIsPlaying(false);

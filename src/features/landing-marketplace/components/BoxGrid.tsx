@@ -101,20 +101,13 @@ export const BoxGrid = () => {
 
   const handlePurchase = async (box: MarketBox) => {
     if (balance < box.price) {
-      showError("Saldo insuficiente para esta operação.");
+      showError("Saldo USDT insuficiente. Recarregue sua carteira Polygon.");
       return;
     }
 
     try {
-      // Agora o backend calcula tudo e retorna o novo saldo
-      // Precisamos obter o novo saldo do MockBackend, que está sendo gerenciado lá
-      // O purchaseBox da store já chama o backend
       const reward = await purchaseBox(box.id);
       
-      // O MockBackend.purchaseBox retorna newBalance, mas a store do marketplace só retorna o item
-      // Precisamos atualizar a store do marketplace para retornar o saldo ou chamar o backend para sync
-      // Para manter simples, vamos fazer um sync manual aqui ou ajustar a store do marketplace
-      // Ajuste rápido: assumir que o purchaseBox atualizou o backend e nós precisamos syncar o front
       const { MockBackend } = await import('@infra/api/mock-backend');
       const balances = await MockBackend.getBalances();
       setBalance(balances.usdt);

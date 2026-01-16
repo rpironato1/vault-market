@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { LayoutDashboard, Package, Gamepad2, Wallet, Users, ArrowUpRight, ShieldCheck } from 'lucide-react';
+import { LayoutDashboard, Package, Gamepad2, Wallet, Users, ShieldCheck, ShoppingBag } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { MadeWithDyad } from '@/components/made-with-dyad';
 import { useStore } from '@infra/state/store';
@@ -99,9 +99,12 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
                <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Disponível p/ Saque</span>
                <span className="font-mono text-3xl font-black text-[#00FF9C] tracking-tighter tabular-nums">${balance.toFixed(2)}</span>
             </div>
-            <button className="h-14 px-8 rounded-2xl bg-[#00FF9C]/10 border border-[#00FF9C]/20 flex items-center gap-3 hover:bg-[#00FF9C]/20 transition-all group">
-               <span className="text-xs font-black text-[#00FF9C] tracking-widest uppercase">Depositar</span>
-               <ArrowUpRight size={20} className="text-[#00FF9C] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+            <button 
+              onClick={() => navigate('/marketplace')}
+              className="h-14 px-8 rounded-2xl bg-[#00FF9C]/10 border border-[#00FF9C]/20 flex items-center gap-3 hover:bg-[#00FF9C]/20 transition-all group"
+            >
+               <span className="text-xs font-black text-[#00FF9C] tracking-widest uppercase">Adquirir Ativos</span>
+               <ShoppingBag size={20} className="text-[#00FF9C] group-hover:scale-110 transition-transform" />
             </button>
           </div>
         </header>

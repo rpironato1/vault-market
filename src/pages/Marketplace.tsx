@@ -61,7 +61,7 @@ const Marketplace = () => {
       };
       setActiveReward(newReward);
     } else {
-      showError("Saldo insuficiente. Deposite via PIX ou Crypto.");
+      showError("Saldo USDT insuficiente. Recarregue sua carteira Polygon.");
     }
   };
 

@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { Database, Coins, ArrowDown, Volume2, VolumeX } from 'lucide-react';
 import { useStore } from '@infra/state/store';
 import { showSuccess, showError } from '@/utils/toast';
+import { useNavigate } from 'react-router-dom';
 
 // --- CONFIGURAÇÃO FÍSICA E VISUAL ---
 const ROWS = 12; 
@@ -44,15 +45,14 @@ interface ActiveBall {
 }
 
 const GravityPlinko = () => {
-  const { engagementTokens, setTokens } = useStore(); // Usando tokens (VaultCoins)
+  const { engagementTokens, setTokens } = useStore();
+  const navigate = useNavigate();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   
-  // -- Game State --
-  const [bet, setBet] = useState(10); // "Bet" aqui é alocação interna de tokens
+  const [bet, setBet] = useState(10);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [lastWin, setLastWin] = useState<number | null>(null);
   
-  // -- Physics State --
   const ballsRef = useRef<ActiveBall[]>([]);
   const particlesRef = useRef<Particle[]>([]);
   const pinsRef = useRef<Map<string, number>>(new Map());
@@ -229,7 +229,6 @@ const GravityPlinko = () => {
         
         if (multiplier >= 1) {
           showSuccess(`+${win.toFixed(0)} VC`);
-          // Em um jogo real, aqui creditaria no estado global ou API
           setLastWin(win);
         }
 
@@ -293,11 +292,11 @@ const GravityPlinko = () => {
 
   const dropBall = () => {
     if (engagementTokens < bet) {
-      showError("VaultCoins insuficientes.");
+      showError("Você não possui VaultCoins suficientes. Compre NFTs para ganhar VaultCoins.");
+      setTimeout(() => navigate('/marketplace'), 2000);
       return;
     }
     
-    // Refatorado: spendTokens -> setTokens
     setTokens(engagementTokens - bet);
 
     const path: number[] = [];
