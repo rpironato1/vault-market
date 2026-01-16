@@ -36,21 +36,21 @@ const BoxCard = ({ box, onPurchase }: BoxCardProps) => {
         <div className="absolute top-3 right-3 flex gap-2">
           <span className="flex items-center gap-1 rounded-full bg-black/60 px-2 py-1 text-[10px] font-mono tracking-tighter backdrop-blur-md">
             <TrendingUp size={10} className="text-emerald-400" />
-            +12% VALUE
+            HIGH VALUE
           </span>
         </div>
       </div>
 
       <div className="flex flex-col p-4">
         <div className="mb-1 flex items-center justify-between">
-          <span className="text-[10px] font-bold uppercase tracking-widest opacity-60">{box.tier} UNIT</span>
+          <span className="text-[10px] font-bold uppercase tracking-widest opacity-60">{box.tier} ASSET</span>
           <Info size={14} className="cursor-help opacity-40 hover:opacity-100" />
         </div>
         <h3 className="mb-2 text-lg font-semibold tracking-tight text-foreground">{box.name}</h3>
         
         <div className="mt-4 flex items-center justify-between border-t border-white/5 pt-4">
           <div className="flex flex-col">
-            <span className="text-[10px] font-medium text-muted-foreground uppercase">Price</span>
+            <span className="text-[10px] font-medium text-muted-foreground uppercase">Valor de Aquisição</span>
             <span className="font-mono text-lg font-bold text-emerald-400">${box.price.toFixed(2)}</span>
           </div>
           <button 

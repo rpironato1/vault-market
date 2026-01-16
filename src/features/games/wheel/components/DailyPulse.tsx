@@ -12,18 +12,18 @@ import { WheelSectors } from './WheelSectors';
 
 // Configuração Balanceada e Sem "Buracos"
 const SECTORS = [
-  { label: '50 TK', color: '#00FF9C', value: 50, chance: 0.25 },
-  { label: '10 TK', color: '#121212', value: 10, chance: 0.3 }, // Consolação comum
-  { label: '250 TK', color: '#FFD700', value: 250, chance: 0.1 },
-  { label: '5 TK', color: '#1a1a1a', value: 5, chance: 0.3 },   // Consolação frequente
-  { label: '100 TK', color: '#00FF9C', value: 100, chance: 0.15 },
-  { label: 'JACKPOT', color: '#FF007F', value: 2500, chance: 0.01 }, // Raro
-  { label: '25 TK', color: '#121212', value: 25, chance: 0.2 },
-  { label: '500 TK', color: '#FFD700', value: 500, chance: 0.05 },
+  { label: '50 VC', color: '#00FF9C', value: 50, chance: 0.25 },
+  { label: '10 VC', color: '#121212', value: 10, chance: 0.3 }, 
+  { label: '250 VC', color: '#FFD700', value: 250, chance: 0.1 },
+  { label: '5 VC', color: '#1a1a1a', value: 5, chance: 0.3 },   
+  { label: '100 VC', color: '#00FF9C', value: 100, chance: 0.15 },
+  { label: 'JACKPOT', color: '#FF007F', value: 2500, chance: 0.01 }, // Jackpot
+  { label: '25 VC', color: '#121212', value: 25, chance: 0.2 },
+  { label: '500 VC', color: '#FFD700', value: 500, chance: 0.05 },
 ];
 
 const DailyPulse = () => {
-  const { updateBalance } = useStore();
+  const { engagementTokens, spendTokens } = useStore(); // Usando tokens
   const controls = useAnimation();
   const [isSpinning, setIsSpinning] = useState(false);
   const [rotation, setRotation] = useState(0);
@@ -32,6 +32,9 @@ const DailyPulse = () => {
 
   const spin = async () => {
     if (isSpinning) return;
+    
+    // Custo simbólico para girar a roda diária (ou grátis 1x/dia em lógica real)
+    const cost = 0; 
     
     setIsSpinning(true);
     setLastWin(null);
@@ -50,22 +53,11 @@ const DailyPulse = () => {
       random -= SECTORS[i].chance;
     }
 
-    // 2. Matemática de Precisão Angular
-    // O ponteiro está fixo no TOPO (0 graus visualmente no CSS, mas o SVG desenha a partir de -90 se não ajustado).
-    // Nossa WheelSectors desenha o Indice 0 partindo do topo (0 graus) em sentido horário.
-    // O centro do setor 'i' está em: (i * angulo) + (angulo / 2).
-    // Para trazer esse centro para o topo (0), precisamos girar no sentido anti-horário essa quantidade.
-    // Como a animação CSS roda horário, calculamos: 360 - centro.
-    
     const sectorAngle = 360 / SECTORS.length;
     const sectorCenter = (selectedIndex * sectorAngle) + (sectorAngle / 2);
-    
-    // Adiciona um "jitter" (variação) aleatória de +/- 40% do tamanho do setor
-    // para não cair sempre no pixel exato do meio (realismo), mas garantindo que fique dentro da fatia.
     const jitter = (Math.random() - 0.5) * (sectorAngle * 0.8);
     
-    // Rotação alvo = Voltas completas + (360 - Onde está o centro do prêmio) + jitter
-    const spins = 5; // Número de voltas completas para suspense
+    const spins = 5; 
     const targetRotation = rotation + (360 * spins) + (360 - sectorCenter) + jitter;
     
     setRotation(targetRotation);
@@ -74,8 +66,8 @@ const DailyPulse = () => {
     await controls.start({
       rotate: targetRotation,
       transition: { 
-        duration: 8, // Giro mais longo e pesado
-        ease: [0.15, 0, 0.10, 1] // Curva Bezier personalizada para "peso" de cassino
+        duration: 8, 
+        ease: [0.15, 0, 0.10, 1] 
       }
     });
 
@@ -95,7 +87,6 @@ const DailyPulse = () => {
     showSuccess(isJackpot ? `JACKPOT CONFIRMADO: ${reward.label}` : `Sincronia: +${reward.label}`);
     setLastWin(reward.label);
     
-    // updateBalance(reward.value); // Descomentar se quiser creditar real
     setIsSpinning(false);
   };
 
@@ -136,7 +127,7 @@ const DailyPulse = () => {
             )}
           >
             <span>{isSpinning ? 'CALCULATING...' : 'ENGAGE PULSE'}</span>
-            {!isSpinning && <span className="text-[8px] font-mono opacity-60">Consumo: 1 Daily Credit</span>}
+            {!isSpinning && <span className="text-[8px] font-mono opacity-60">Sincronia Diária Gratuita</span>}
           </button>
         </div>
 
@@ -181,7 +172,7 @@ const DailyPulse = () => {
           <motion.div 
             animate={controls}
             className="w-full h-full relative"
-            style={{ rotate: rotation }} // Garante que a rotação seja aplicada via style para persistência visual
+            style={{ rotate: rotation }} 
           >
             {/* Sombras de Profundidade */}
             <div className="absolute inset-0 rounded-full shadow-[inset_0_0_80px_rgba(0,0,0,0.8),0_20px_50px_rgba(0,0,0,0.5)] z-10 pointer-events-none" />

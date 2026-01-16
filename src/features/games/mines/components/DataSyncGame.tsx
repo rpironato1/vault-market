@@ -10,17 +10,17 @@ import { cn } from '@/lib/utils';
 const GRID_SIZE = 25;
 const MINES_OPTIONS = [1, 3, 5, 10, 15];
 
-// Frases provocativas para o momento do saque (Hover)
+// Frases ajustadas para contexto de mineração de dados/sincronia
 const RISK_MESSAGES = [
-  "Lucro marginal detectado. Continuar?",
-  "Apenas isso? O padrão indica mais diamantes.",
-  "Sinal fraco. Arrisque para amplificar.",
-  "Potencial da rede subutilizado.",
-  "Vai parar agora? A sorte está ativa."
+  "Sinal estável. Continuar extração?",
+  "Padrão de dados promissor identificado.",
+  "Risco de corrupção baixo. Prosseguir?",
+  "Latência de rede otimizada.",
+  "Sincronização parcial completa."
 ];
 
 const DataSyncGame = () => {
-  const { balance, updateBalance } = useStore();
+  const { engagementTokens, spendTokens } = useStore(); // Usando tokens, não balance (USDT)
   
   // Game State
   const [isPlaying, setIsPlaying] = useState(false);
@@ -52,12 +52,14 @@ const DataSyncGame = () => {
   };
 
   const startGame = () => {
-    if (balance < bet) {
-      showError("Saldo insuficiente para iniciar.");
+    if (engagementTokens < bet) {
+      showError("VaultCoins insuficientes. Adquira ativos no Marketplace.");
       return;
     }
 
-    updateBalance(-bet);
+    const spent = spendTokens(bet);
+    if (!spent) return;
+
     setIsPlaying(true);
     setIsGameOver(false);
     setGameResult(null);
@@ -103,8 +105,7 @@ const DataSyncGame = () => {
     setShakeGrid(true); // Aciona o tremor
     setTimeout(() => setShakeGrid(false), 500);
 
-    // Efeito sonoro visual (Flash vermelho na tela inteira poderia ser agressivo demais, focamos no grid)
-    showError("FALHA CRÍTICA: Mina Detonada.");
+    showError("FALHA DE SINCRONIA: Dados Corrompidos.");
 
     setGrid(prev => prev.map((_, idx) => 
       mineLocations.includes(idx) ? 'MINE' : (prev[idx] === 'SAFE' ? 'SAFE' : 'IDLE')
@@ -115,16 +116,18 @@ const DataSyncGame = () => {
     setIsPlaying(false);
     setIsGameOver(true);
     setGameResult('WIN');
-    const win = bet * finalMult;
-    updateBalance(win);
-    showSuccess(`Sincronia Bem-sucedida! +$${win.toFixed(2)}`);
+    
+    // Aqui seria a chamada ao backend para creditar USDT (Reward)
+    // Por enquanto, apenas feedback visual
+    const rewardValue = (bet * finalMult) * 0.1; // Ex: 10 coins -> $1 (ratio simulado)
+    
+    showSuccess(`Sincronia Concluída! Recompensa gerada: $${rewardValue.toFixed(2)} USDT`);
     
     setGrid(prev => prev.map((status, idx) => 
       mineLocations.includes(idx) ? 'IDLE' : status
     ));
   };
 
-  // Lógica de "Hover Trap" para o botão de Cashout
   const handleCashoutHover = (isHovering: boolean) => {
     if (!isPlaying) return;
     
@@ -146,12 +149,12 @@ const DataSyncGame = () => {
             <ShieldCheck size={14} />
             <span className="text-[10px] font-mono uppercase tracking-widest">Protocolo de Segurança</span>
           </div>
-          <h2 className="text-2xl font-bold text-white tracking-tight">Campo Minado</h2>
+          <h2 className="text-2xl font-bold text-white tracking-tight">Validação de Blocos</h2>
         </header>
 
         <div className="space-y-6">
           <div className="space-y-2">
-            <label className="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">Aposta (USDT)</label>
+            <label className="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">Alocação (VaultCoins)</label>
             <div className="relative group">
               <input 
                 type="number" 
@@ -176,7 +179,7 @@ const DataSyncGame = () => {
           </div>
 
           <div className="space-y-2">
-            <label className="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">Densidade de Minas</label>
+            <label className="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">Complexidade (Minas)</label>
             <div className="grid grid-cols-5 gap-2">
               {MINES_OPTIONS.map(count => (
                 <button
@@ -199,21 +202,20 @@ const DataSyncGame = () => {
 
         <div className="mt-auto pt-6 border-t border-white/5 space-y-4">
           <div className="flex justify-between items-end">
-             <span className="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">Próximo Multiplicador</span>
+             <span className="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">Eficiência Atual</span>
              <span className={cn("text-3xl font-mono font-bold tracking-tighter", isPlaying ? "text-[#00FF9C]" : "text-zinc-600")}>
                {multiplier.toFixed(2)}x
              </span>
           </div>
           <div className="flex justify-between items-end">
-             <span className="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">Lucro Potencial</span>
+             <span className="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">Retorno Potencial</span>
              <span className={cn("text-lg font-mono font-medium", isPlaying ? "text-white" : "text-zinc-600")}>
-               ${(bet * multiplier).toFixed(2)}
+               {(bet * multiplier).toFixed(0)} VC
              </span>
           </div>
         </div>
 
         <div className="relative">
-          {/* Tooltip de Incentivo ao Risco */}
           <AnimatePresence>
             {showCashoutHint && (
               <motion.div 
@@ -236,7 +238,7 @@ const DataSyncGame = () => {
               onClick={startGame}
               className="w-full bg-[#00FF9C] text-black h-14 rounded-lg font-bold text-sm uppercase tracking-widest hover:bg-[#00e68d] active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(0,255,156,0.1)]"
             >
-              <Play size={16} fill="currentColor" /> Iniciar Rodada
+              <Play size={16} fill="currentColor" /> Iniciar Validação
             </button>
           ) : (
             <button 
@@ -245,7 +247,7 @@ const DataSyncGame = () => {
               onMouseLeave={() => handleCashoutHover(false)}
               className="w-full bg-white text-black h-14 rounded-lg font-bold text-sm uppercase tracking-widest hover:bg-zinc-200 active:scale-[0.98] transition-all flex items-center justify-center gap-2 relative overflow-hidden"
             >
-              <StopCircle size={18} /> Encerrar (Saque)
+              <StopCircle size={18} /> Consolidar Dados
             </button>
           )}
         </div>
@@ -259,36 +261,6 @@ const DataSyncGame = () => {
       >
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.03),transparent_70%)] pointer-events-none" />
         
-        {/* Overlay de Reengajamento (Loss) */}
-        <AnimatePresence>
-          {isGameOver && gameResult === 'LOSS' && (
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0 }}
-              className="absolute inset-0 z-40 bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center p-8 text-center"
-            >
-              <motion.div 
-                initial={{ y: 20 }}
-                animate={{ y: 0 }}
-                className="max-w-md w-full bg-[#121212] border border-red-500/30 rounded-2xl p-8 shadow-[0_0_50px_rgba(239,68,68,0.2)]"
-              >
-                <AlertTriangle size={48} className="text-red-500 mx-auto mb-4" />
-                <h3 className="text-2xl font-black text-white uppercase tracking-tighter mb-2">Conexão Perdida</h3>
-                <p className="text-zinc-400 text-sm mb-8 font-medium">
-                  A mina interrompeu a sincronia. O próximo padrão tem 87% de chance de sucesso estatístico.
-                </p>
-                <button 
-                  onClick={startGame}
-                  className="w-full h-14 bg-red-600 hover:bg-red-500 text-white rounded-xl font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-all hover:shadow-[0_0_30px_rgba(220,38,38,0.4)]"
-                >
-                  <RefreshCcw size={18} /> Retomar Imediatamente
-                </button>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
         <div className="grid grid-cols-5 gap-3 w-full max-w-[500px] aspect-square relative z-10">
           {grid.map((status, i) => (
             <motion.button

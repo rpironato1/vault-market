@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Rocket, Zap, History, AlertTriangle, Skull, Crosshair, RefreshCcw } from 'lucide-react';
+import { Rocket, Zap, History, AlertTriangle, Skull, Crosshair } from 'lucide-react';
 import { useStore } from '@/_infrastructure/state/store';
 import { showSuccess, showError } from '@/utils/toast';
 import { cn } from '@/lib/utils';
@@ -17,7 +17,6 @@ interface GameHistory {
 
 const HISTORY_LIMIT = 5;
 
-// Fases de tensão para feedback visual
 const TENSION_PHASES = {
   STABLE: { threshold: 0, color: '#00FF9C', shadow: 'rgba(0,255,156,0.3)' },
   HEATING: { threshold: 2.0, color: '#FFD700', shadow: 'rgba(255,215,0,0.4)' },
@@ -25,27 +24,24 @@ const TENSION_PHASES = {
 };
 
 const QuantumCrash = () => {
-  const { balance, updateBalance } = useStore();
+  const { engagementTokens, spendTokens } = useStore(); // Correção: usar tokens
   
   // -- Game State --
   const [status, setStatus] = useState<GameStatus>('IDLE');
   const [multiplier, setMultiplier] = useState(1.00);
   const [bet, setBet] = useState(10);
   const [history, setHistory] = useState<GameHistory[]>([]);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [payout, setPayout] = useState<number | null>(null);
-
+  
   // -- UX State --
   const [tension, setTension] = useState<'STABLE' | 'HEATING' | 'CRITICAL'>('STABLE');
   const [shakeIntensity, setShakeIntensity] = useState(0);
   const [cashoutHovered, setCashoutHovered] = useState(false);
 
-  // -- Refs de Loop e Lógica --
+  // -- Refs --
   const reqRef = useRef<number>();
   const startTimeRef = useRef<number>(0);
   const crashPointRef = useRef<number>(0);
   
-  // -- Câmera --
   const [viewScale, setViewScale] = useState({ x: 10, y: 2 });
 
   useEffect(() => {
@@ -57,14 +53,15 @@ const QuantumCrash = () => {
   };
 
   const startGame = () => {
-    if (balance < bet) {
-      showError("Saldo insuficiente para iniciar sincronia.");
+    if (engagementTokens < bet) {
+      showError("VaultCoins insuficientes. Adquira ativos no Marketplace.");
       return;
     }
 
-    updateBalance(-bet);
+    const spent = spendTokens(bet);
+    if (!spent) return;
+
     setStatus('STARTING');
-    setPayout(null);
     setMultiplier(1.00);
     setViewScale({ x: 8, y: 2 });
     setTension('STABLE');
@@ -91,15 +88,13 @@ const QuantumCrash = () => {
     const now = Date.now();
     const elapsedSeconds = (now - startTimeRef.current) / 1000;
     
-    // Crescimento Exponencial
     const currentMult = Math.pow(Math.E, 0.12 * elapsedSeconds);
 
     setMultiplier(currentMult);
 
-    // Atualização de Tensão (Game Feel)
     if (currentMult > TENSION_PHASES.CRITICAL.threshold) {
       setTension('CRITICAL');
-      setShakeIntensity(2 + (currentMult * 0.1)); // Treme mais conforme sobe
+      setShakeIntensity(2 + (currentMult * 0.1));
     } else if (currentMult > TENSION_PHASES.HEATING.threshold) {
       setTension('HEATING');
       setShakeIntensity(0.5);
@@ -108,7 +103,6 @@ const QuantumCrash = () => {
       setShakeIntensity(0);
     }
 
-    // Câmera dinâmica
     setViewScale(prev => ({
       x: Math.max(prev.x, elapsedSeconds * 1.2),
       y: Math.max(prev.y, currentMult * 1.1)
@@ -126,9 +120,8 @@ const QuantumCrash = () => {
     setStatus('CRASHED');
     setMultiplier(finalValue);
     addToHistory(finalValue);
-    setShakeIntensity(20); // Impacto final forte
-    setTimeout(() => setShakeIntensity(0), 500); // Reduz tremor
-    // Efeito sonoro seria disparado aqui
+    setShakeIntensity(20);
+    setTimeout(() => setShakeIntensity(0), 500);
   };
 
   const handleCashout = () => {
@@ -136,19 +129,18 @@ const QuantumCrash = () => {
     cancelAnimation();
     
     const winAmount = bet * multiplier;
-    updateBalance(winAmount);
-    setPayout(winAmount);
+    // Em produção, isso chamaria API para creditar Reward
+    // Por enquanto, apenas feedback visual
     setStatus('CASHOUT');
     addToHistory(multiplier);
-    showSuccess(`Sincronia encerrada: +$${winAmount.toFixed(2)}`);
+    showSuccess(`Sincronia encerrada: +${winAmount.toFixed(0)} VC (Simulado)`);
   };
 
   const addToHistory = (val: number) => {
     setHistory(prev => [{ multiplier: val, timestamp: Date.now() }, ...prev].slice(0, HISTORY_LIMIT));
   };
 
-  // -- Render Calculations --
-
+  // Render logic...
   const currentTime = status === 'STARTING' || status === 'IDLE' 
     ? 0 
     : (Math.log(multiplier) / 0.12);
@@ -163,16 +155,13 @@ const QuantumCrash = () => {
   const pathData = `M 0 100 Q ${safeX * 0.5} 100, ${safeX} ${safeY}`;
   const areaData = `${pathData} L ${safeX} 100 L 0 100 Z`;
   const rotation = status === 'CRASHED' ? 90 : Math.max(-45, -10 - (yPercent * 0.5));
-
-  // Determina a cor atual baseada na tensão
   const currentColor = TENSION_PHASES[tension].color;
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch h-[600px]">
       
-      {/* --- Painel de Controle --- */}
+      {/* Control Panel */}
       <div className="bg-[#09090b] rounded-[32px] border border-white/5 p-8 flex flex-col justify-between shadow-2xl relative z-20 overflow-hidden">
-        {/* Ambient Glow baseado na tensão */}
         <div 
           className="absolute inset-0 opacity-20 pointer-events-none transition-colors duration-1000"
           style={{ background: `radial-gradient(circle at top right, ${currentColor}, transparent 70%)` }}
@@ -191,7 +180,7 @@ const QuantumCrash = () => {
           </header>
 
           <div className="space-y-4">
-            <label className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider block">Carga de Entrada (USDT)</label>
+            <label className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider block">Alocação (VaultCoins)</label>
             <div className="relative">
               <input 
                 type="number" 
@@ -215,7 +204,7 @@ const QuantumCrash = () => {
             </div>
           </div>
 
-          {/* Histórico */}
+          {/* History */}
           {history.length > 0 && (
             <div className="pt-6 border-t border-white/5">
                <span className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest mb-3 block flex items-center gap-2">
@@ -250,7 +239,6 @@ const QuantumCrash = () => {
              </button>
           ) : (
             <div className="relative">
-              {/* Tooltip de Psicologia Reversa */}
               <AnimatePresence>
                 {cashoutHovered && multiplier < 1.5 && (
                   <motion.div 
@@ -258,7 +246,7 @@ const QuantumCrash = () => {
                     className="absolute -top-12 left-0 right-0 text-center"
                   >
                     <span className="bg-[#FFD700] text-black text-[10px] font-black uppercase px-3 py-1 rounded-full shadow-lg">
-                      Sinal fraco. Arriscar mais?
+                      Sinal fraco. Manter link?
                     </span>
                   </motion.div>
                 )}
@@ -274,10 +262,9 @@ const QuantumCrash = () => {
                   animation: tension === 'CRITICAL' ? 'pulse 0.5s infinite' : 'none'
                 }}
               >
-                <span className="relative z-10 text-xs tracking-[0.3em] mb-1 text-zinc-500">EJETAR AGORA</span>
-                <span className="relative z-10 text-2xl font-mono font-bold">${(bet * multiplier).toFixed(2)}</span>
+                <span className="relative z-10 text-xs tracking-[0.3em] mb-1 text-zinc-500">DESCONECTAR</span>
+                <span className="relative z-10 text-2xl font-mono font-bold">{(bet * multiplier).toFixed(0)} VC</span>
                 
-                {/* Progress bar de pressão */}
                 <div className="absolute bottom-0 left-0 h-1.5 w-full bg-zinc-200">
                   <div 
                     className="h-full transition-all duration-100 ease-linear"
@@ -293,7 +280,7 @@ const QuantumCrash = () => {
         </div>
       </div>
 
-      {/* --- Display Gráfico --- */}
+      {/* Display */}
       <div 
         className="lg:col-span-2 bg-[#050505] rounded-[40px] border border-white/5 relative overflow-hidden flex flex-col transition-transform duration-75"
         style={{ transform: `translate(${Math.random() * shakeIntensity - shakeIntensity/2}px, ${Math.random() * shakeIntensity - shakeIntensity/2}px)` }}
@@ -306,7 +293,6 @@ const QuantumCrash = () => {
           }} 
         />
         
-        {/* SVG Dinâmico */}
         <div className="relative flex-1 w-full h-full z-10">
           <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
             <defs>
@@ -344,7 +330,6 @@ const QuantumCrash = () => {
             )}
           </svg>
 
-          {/* Objeto Voador */}
           {(status === 'FLYING' || status === 'CRASHED' || status === 'CASHOUT') && (
             <div 
               className="absolute w-10 h-10 -ml-5 -mt-5 z-20 will-change-transform"
@@ -376,7 +361,6 @@ const QuantumCrash = () => {
           )}
         </div>
 
-        {/* Overlay Central de Status */}
         <div className="absolute inset-0 z-30 flex flex-col items-center justify-center pointer-events-none">
           <AnimatePresence mode="wait">
             {status === 'STARTING' && (
@@ -437,7 +421,6 @@ const QuantumCrash = () => {
           </AnimatePresence>
         </div>
 
-        {/* Efeitos de Vinheta Crítica */}
         <div 
           className="absolute inset-0 pointer-events-none transition-opacity duration-300 mix-blend-overlay"
           style={{ 
