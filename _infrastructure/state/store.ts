@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { UserAccount, Reward } from '../../_core/domain/entities';
+import { UserAccount, Reward } from '@core/domain/entities';
 
 interface UserState extends UserAccount {
   addReward: (reward: Reward) => void;
@@ -15,19 +15,19 @@ export const useStore = create<UserState>()(
       engagementTokens: 5000,
       vaultItems: [],
       
-      addReward: (reward) => set((state) => ({
+      addReward: (reward) => set((state: UserState) => ({
         vaultItems: [reward, ...state.vaultItems],
         engagementTokens: state.engagementTokens + 150 // Recompensa por engajamento
       })),
 
-      updateBalance: (amount) => set((state) => ({
+      updateBalance: (amount) => set((state: UserState) => ({
         balance: state.balance + amount
       })),
 
       spendTokens: (amount) => {
         const { engagementTokens } = get();
         if (engagementTokens >= amount) {
-          set({ engagementTokens: engagementTokens - amount });
+          set((state: UserState) => ({ engagementTokens: state.engagementTokens - amount }));
           return true;
         }
         return false;

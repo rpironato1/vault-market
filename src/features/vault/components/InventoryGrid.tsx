@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Reward } from '@/_core/domain/types';
+import { Reward } from '@core/domain/types';
 import { ShieldCheck, Tag, ExternalLink } from 'lucide-react';
 
 interface InventoryGridProps {

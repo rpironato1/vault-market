@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkle, ShieldCheck, ArrowRight } from '@phosphor-icons/react';
 import confetti from 'canvas-confetti';
-import { Reward } from '../../../_core/domain/entities';
+import { Reward } from '@core/domain/entities';
 
 interface Props {
   reward: Reward | null;

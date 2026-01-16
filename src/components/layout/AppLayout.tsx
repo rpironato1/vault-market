@@ -4,7 +4,7 @@ import React from 'react';
 import { LayoutDashboard, Package, Gamepad2, Wallet, Users, ArrowUpRight, ShieldCheck } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { MadeWithDyad } from '@/components/made-with-dyad';
-import { useStore } from '../../_infrastructure/state/store';
+import { useStore } from '@infra/state/store';
 
 const NavItem = ({ icon: Icon, label, active = false, onClick }: { icon: any, label: string, active?: boolean, onClick?: () => void }) => (
   <div 

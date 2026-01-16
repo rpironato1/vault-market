@@ -1,9 +1,7 @@
 "use client";
 
-import React from 'react';
 import { motion } from 'framer-motion';
-import { Cube, Info } from '@phosphor-icons/react';
-import { MysteryBox } from '../../../_core/domain/entities';
+import { MysteryBox } from '@core/domain/entities';
 import { cn } from '@/lib/utils';
 
 interface Props {
@@ -11,21 +9,21 @@ interface Props {
   onSelect: (box: MysteryBox) => void;
 }
 
-const HighConversionCard = ({ box, onSelect }: Props) => {
-  const tierStyles = {
-    Common: "border-white/10 hover:border-white/30",
-    Rare: "border-blue-500/30 hover:border-blue-500/60",
-    Epic: "border-purple-500/30 hover:border-purple-500/60",
-    Legendary: "border-emerald-500/30 hover:border-emerald-500/70 shadow-[0_0_30px_rgba(16,185,129,0.1)]",
-  };
+const tierStyles = {
+  Common: "border-white/10 hover:border-white/30",
+  Rare: "border-blue-500/30 hover:border-blue-500/60",
+  Epic: "border-purple-500/30 hover:border-purple-500/60",
+  Legendary: "border-emerald-500/30 hover:border-emerald-500/70 shadow-[0_0_30px_rgba(16,185,129,0.1)]",
+};
 
+const HighConversionCard = ({ box, onSelect }: Props) => {
   return (
     <motion.div 
       whileHover={{ y: -8 }}
       onClick={() => onSelect(box)}
       className={cn(
         "group relative cursor-pointer overflow-hidden rounded-2xl border bg-[#121214] p-5 transition-all duration-500",
-        tierStyles[box.tier]
+        tierStyles[box.tier as keyof typeof tierStyles]
       )}
     >
       <div className="relative aspect-square mb-6 overflow-hidden rounded-xl bg-zinc-900">

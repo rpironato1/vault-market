@@ -1,13 +1,12 @@
 "use client";
 
-import React from 'react';
 import { motion } from 'framer-motion';
 import { Package, Info, TrendUp } from '@phosphor-icons/react';
 import { useMarketplaceStore } from '../infrastructure/store';
 import { MarketBox, BoxTier } from '../domain/entities';
-import { Tier } from '@/_core/domain/entities';
+import { Tier } from '@core/domain/entities';
 import { cn } from '@/lib/utils';
-import { useStore } from '@/_infrastructure/state/store';
+import { useStore } from '@infra/state/store';
 import { showSuccess, showError } from '@/utils/toast';
 
 const BoxCard = ({ box, onPurchase }: { box: MarketBox; onPurchase: (box: MarketBox) => void }) => {

@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Bomb, Diamond, ShieldCheck, Play, StopCircle, AlertTriangle, RefreshCcw } from 'lucide-react'; 
 import { showSuccess, showError } from '@/utils/toast';
-import { useStore } from '@/_infrastructure/state/store';
+import { useStore } from '@infra/state/store';
 import { cn } from '@/lib/utils';
 
 const GRID_SIZE = 25;

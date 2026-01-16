@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Database, Coins, ArrowDown, Volume2, VolumeX } from 'lucide-react';
-import { useStore } from '@/_infrastructure/state/store';
+import { useStore } from '@infra/state/store';
 import { showSuccess, showError } from '@/utils/toast';
 
 // --- CONFIGURAÇÃO FÍSICA E VISUAL ---

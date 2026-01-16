@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Rocket, Zap, History, AlertTriangle, Skull, Crosshair } from 'lucide-react';
-import { useStore } from '@/_infrastructure/state/store';
+import { useStore } from '@infra/state/store';
 import { showSuccess, showError } from '@/utils/toast';
 import { cn } from '@/lib/utils';
 

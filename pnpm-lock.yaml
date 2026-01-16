@@ -98,6 +98,9 @@ importers:
       '@tanstack/react-query':
         specifier: ^5.56.2
         version: 5.74.4(react@18.3.1)
+      '@types/canvas-confetti':
+        specifier: ^1.9.0
+        version: 1.9.0
       canvas-confetti:
         specifier: ^1.9.4
         version: 1.9.4
@@ -1327,6 +1330,9 @@ packages:
     resolution: {integrity: sha512-mAbxw60d4ffQ4qmRYfkO1xzRBPUEf/72Dgo3qqea0J66nIKuDTLEqQt0ku++SDFlMGMnB6uKDnEG1xD/TDse4Q==}
     peerDependencies:
       react: ^18 || ^19
+
+  '@types/canvas-confetti@1.9.0':
+    resolution: {integrity: sha512-aBGj/dULrimR1XDZLtG9JwxX1b4HPRF6CX9Yfwh3NvstZEm1ZL7RBnel4keCPSqs1ANRu1u2Aoz9R+VmtjYuTg==}
 
   '@types/d3-array@3.2.1':
     resolution: {integrity: sha512-Y2Jn2idRrLzUfAKV2LyRImR+y4oa2AntrgID95SHJxuMUrkNXmanDSed71sRNZysveJVt1hLLemQZIady0FpEg==}
@@ -3536,6 +3542,8 @@ snapshots:
     dependencies:
       '@tanstack/query-core': 5.74.4
       react: 18.3.1
+
+  '@types/canvas-confetti@1.9.0': {}
 
   '@types/d3-array@3.2.1': {}
 

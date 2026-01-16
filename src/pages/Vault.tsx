@@ -2,7 +2,7 @@
 
 import React from 'react';
 import AppLayout from '@/components/layout/AppLayout';
-import { useStore } from '@/_infrastructure/state/store';
+import { useStore } from '@infra/state/store';
 import VaultItemCard from '@/features/vault/components/VaultItemCard';
 import { HardDrive, MagnifyingGlass, Funnel } from '@phosphor-icons/react';
 

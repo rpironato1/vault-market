@@ -3,7 +3,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ShieldCheck, Cpu, HardDrive } from '@phosphor-icons/react';
-import { Reward } from '@/_core/domain/types';
+import { Reward } from '@core/domain/types';
 import { cn } from '@/lib/utils';
 
 interface Props {

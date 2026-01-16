@@ -1,4 +1,3 @@
-import React from 'react';
 import { ShieldCheck, ArrowRight, Star } from '@phosphor-icons/react';
 import { motion } from 'framer-motion';
 

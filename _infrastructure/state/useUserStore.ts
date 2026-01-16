@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from 'react';
-import { Reward } from '@/_core/domain/types';
+import { Reward } from '@core/domain/entities';
 
 // Singleton-like hook for demo purposes
 let balance = 1245.80;

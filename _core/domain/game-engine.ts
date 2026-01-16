@@ -1,5 +1,3 @@
-"use client";
-
 import { Reward } from './entities';
 
 export interface ProvablyFairResult {

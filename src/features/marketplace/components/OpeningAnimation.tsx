@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, CheckCircle2, RotateCcw } from 'lucide-react';
-import { Reward } from '@/_core/domain/types';
+import { Reward } from '@core/domain/types';
 
 interface OpeningAnimationProps {
   reward: Reward | null;

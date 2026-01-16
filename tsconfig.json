@@ -7,13 +7,10 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
-    },
-    "noImplicitAny": false,
-    "noUnusedParameters": false,
-    "skipLibCheck": true,
-    "allowJs": true,
-    "noUnusedLocals": false,
-    "strictNullChecks": false
-  }
+      "@/*": ["./src/*"],
+      "@core/*": ["./_core/*"],
+      "@infra/*": ["./_infrastructure/*"]
+    }
+  },
+  "include": ["src", "_core", "_infrastructure"]
 }

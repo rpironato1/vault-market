@@ -3,7 +3,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Package, TrendingUp, Info } from 'lucide-react';
-import { MysteryBox } from '@/_core/domain/types';
+import { MysteryBox } from '@core/domain/types';
 import { cn } from '@/lib/utils';
 
 interface BoxCardProps {

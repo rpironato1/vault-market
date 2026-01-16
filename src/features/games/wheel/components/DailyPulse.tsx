@@ -5,7 +5,7 @@ import { motion, useAnimation } from 'framer-motion';
 import { Target, Clock, Lightning, Trophy } from '@phosphor-icons/react';
 import confetti from 'canvas-confetti';
 import { showSuccess, showError } from '@/utils/toast';
-import { useStore } from '@/_infrastructure/state/store';
+import { useStore } from '@infra/state/store';
 import { cn } from '@/lib/utils';
 import { WheelPointer } from './WheelPointer';
 import { WheelSectors } from './WheelSectors';
