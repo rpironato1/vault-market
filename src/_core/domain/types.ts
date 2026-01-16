@@ -13,9 +13,10 @@ export interface MysteryBox {
 export interface Reward {
   id: string;
   name: string;
-  rarity: string;
+  rarity: 'Common' | 'Rare' | 'Epic' | 'Legendary';
   value: number;
-  type: 'ITEM' | 'TOKEN' | 'GIFT_CARD';
+  type?: 'ITEM' | 'TOKEN' | 'GIFT_CARD';
+  timestamp?: number;
 }
 
 export interface UserVault {

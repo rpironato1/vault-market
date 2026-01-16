@@ -2,8 +2,8 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ShieldCheck, Cpu, HardDrive, ShareNetwork } from '@phosphor-icons/react';
-import { Reward } from '../../../_core/domain/entities';
+import { ShieldCheck, Cpu, HardDrive } from '@phosphor-icons/react';
+import { Reward } from '@/_core/domain/types';
 import { cn } from '@/lib/utils';
 
 interface Props {
@@ -24,7 +24,7 @@ const VaultItemCard = ({ item }: Props) => {
       animate={{ opacity: 1, y: 0 }}
       className={cn(
         "group relative bg-[#121212] border rounded-2xl p-5 overflow-hidden transition-all hover:bg-[#181818]",
-        rarityColors[item.rarity]
+        rarityColors[item.rarity] || rarityColors.Common
       )}
     >
       <div className="flex justify-between items-start mb-6">
@@ -33,12 +33,12 @@ const VaultItemCard = ({ item }: Props) => {
         </div>
         <div className="flex flex-col items-end">
           <span className="text-[8px] font-black uppercase tracking-[0.2em] opacity-50">Hash ID</span>
-          <span className="font-mono text-[9px] text-white">0x{item.id.toUpperCase()}</span>
+          <span className="font-mono text-[9px] text-white">0x{item.id.substring(0, 8).toUpperCase()}</span>
         </div>
       </div>
 
       <div className="mb-6">
-        <h3 className="text-white font-black text-lg tracking-tighter uppercase leading-tight mb-1">
+        <h3 className="text-white font-black text-lg tracking-tighter uppercase leading-tight mb-1 truncate">
           {item.name}
         </h3>
         <div className="flex items-center gap-2">
@@ -49,16 +49,17 @@ const VaultItemCard = ({ item }: Props) => {
 
       <div className="flex items-center justify-between pt-4 border-t border-white/5">
         <div className="flex flex-col">
-          <span className="text-[8px] font-black uppercase tracking-widest opacity-40 text-zinc-400">Valor de Resgate</span>
-          <span className="text-[#00FF9C] font-mono font-black text-md">${item.value.toFixed(2)}</span>
+          <span className="text-[8px] font-black uppercase tracking-widest opacity-40 text-zinc-400">Valor de Base</span>
+          <span className="text-emerald-500 font-mono font-black text-md">${item.value.toFixed(2)}</span>
         </div>
-        <button className="h-8 px-4 rounded-lg bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-widest text-white hover:bg-white/10 transition-all">
-          Sincronizar
-        </button>
+        <div className="flex items-center gap-1 text-[9px] font-bold text-zinc-500 bg-white/5 px-2 py-1 rounded">
+          <ShieldCheck size={12} />
+          <span>CUSTODY</span>
+        </div>
       </div>
       
       {/* Scanline effect on hover */}
-      <div className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-10 transition-opacity bg-gradient-to-b from-[#00FF9C] via-transparent to-transparent h-1 w-full animate-[scan_2s_linear_infinite]" />
+      <div className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-10 transition-opacity bg-gradient-to-b from-emerald-500 via-transparent to-transparent h-1 w-full animate-[scan_2s_linear_infinite]" />
     </motion.div>
   );
 };

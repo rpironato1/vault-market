@@ -2,7 +2,7 @@
 
 import React from 'react';
 import AppLayout from '@/components/layout/AppLayout';
-import { useStore } from '../_infrastructure/state/store';
+import { useStore } from '@/_infrastructure/state/store';
 import { Lightning, Trophy, GameController, ArrowUpRight, Coins } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 
@@ -17,7 +17,7 @@ const ExperienceCard = ({ title, description, icon: Icon, reward, locked = false
       </div>
       <div className="text-right">
         <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Incentivo</span>
-        <p className="text-emerald-400 font-mono text-lg font-bold">+{reward} TK</p>
+        <p className="text-emerald-400 font-mono text-lg font-bold">+{reward} VC</p>
       </div>
     </div>
     <h3 className="text-xl font-bold mb-3 tracking-tight uppercase text-white">{title}</h3>
@@ -33,15 +33,16 @@ const Tokens = () => {
 
   return (
     <AppLayout>
-      <div className="flex flex-col gap-10">
+      <div className="flex flex-col gap-10 max-w-7xl mx-auto">
         <header>
           <div className="flex items-center gap-3 mb-3">
             <Coins weight="fill" className="text-emerald-500 h-6 w-6" />
-            <span className="text-[11px] font-black text-emerald-500 uppercase tracking-[0.3em]">Protocolo de Valor</span>
+            <span className="text-[11px] font-black text-emerald-500 uppercase tracking-[0.3em]">Protocolo de Utilidade</span>
           </div>
-          <h1 className="text-4xl font-black tracking-tighter uppercase mb-4 text-white">Central de Tokens</h1>
+          <h1 className="text-4xl font-black tracking-tighter uppercase mb-4 text-white">Central VaultCoins</h1>
           <p className="text-zinc-400 text-lg max-w-xl font-medium leading-relaxed">
-            Utilize seus Tokens de Engajamento para desbloquear novas camadas de utilidade e prioridade na rede.
+            VaultCoins (VC) são tokens de utilidade obtidos exclusivamente na compra de NFTs. 
+            Utilize seu saldo para participar de experiências e validar a rede.
           </p>
         </header>
 
@@ -53,16 +54,16 @@ const Tokens = () => {
               <span className="text-7xl font-mono font-black tracking-tighter text-white">
                 {engagementTokens.toLocaleString()}
               </span>
-              <span className="text-2xl font-black text-emerald-500 italic uppercase">TK</span>
+              <span className="text-2xl font-black text-emerald-500 italic uppercase">VC</span>
             </div>
           </div>
           
           <div className="rounded-3xl border border-white/10 bg-[#121214] p-10 flex flex-col justify-center">
-            <span className="text-[11px] font-black text-zinc-500 uppercase tracking-widest mb-6">Próximo Milestone</span>
+            <span className="text-[11px] font-black text-zinc-500 uppercase tracking-widest mb-6">Status da Conta</span>
             <div className="h-3 w-full bg-zinc-800 rounded-full mb-6 overflow-hidden border border-white/5">
               <div className="h-full bg-emerald-500 w-[65%] shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
             </div>
-            <p className="text-xs font-bold text-zinc-300">Atingir 10.000 TK para Nível 2</p>
+            <p className="text-xs font-bold text-zinc-300">Conta Verificada - Nível 1</p>
           </div>
         </div>
 
@@ -74,22 +75,21 @@ const Tokens = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <ExperienceCard 
               title="Validação de Setores"
-              description="Analise e valide a integridade de setores de rede para ganhar tokens de utilidade."
+              description="Analise e valide a integridade de setores de rede (Mines) para ganhar tokens de utilidade."
               icon={Lightning}
               reward="50"
             />
             <ExperienceCard 
               title="Ciclo de Sincronia"
-              description="Participe dos ciclos diários de sincronização global do vault."
+              description="Participe dos ciclos diários de sincronização global (Wheel) para bônus."
               icon={Trophy}
               reward="120"
             />
             <ExperienceCard 
               title="Teste de Agilidade"
-              description="Protocolos experimentais de resposta rápida para usuários avançados."
+              description="Protocolos experimentais de resposta rápida (Crash/Plinko)."
               icon={GameController}
               reward="200"
-              locked={true}
             />
           </div>
         </section>
