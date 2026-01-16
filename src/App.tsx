@@ -17,6 +17,7 @@ import VaultCoinsPage from "./features/vaultcoins/presentation/pages/VaultCoinsP
 import RewardsPage from "./features/rewards/presentation/pages/RewardsPage";
 import WithdrawalPage from "./features/withdrawals/presentation/pages/WithdrawalPage";
 import SettingsPage from "./features/settings/presentation/pages/SettingsPage";
+import AffiliatesPage from "./features/affiliates/presentation/pages/AffiliatesPage";
 
 const queryClient = new QueryClient();
 
@@ -44,6 +45,7 @@ const App = () => (
           <Route path="/app/rewards" element={<ProtectedRoute><RewardsPage /></ProtectedRoute>} />
           <Route path="/app/withdrawals" element={<ProtectedRoute><WithdrawalPage /></ProtectedRoute>} />
           <Route path="/app/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
+          <Route path="/app/affiliates" element={<ProtectedRoute><AffiliatesPage /></ProtectedRoute>} />
           
           {/* Features Legadas/Existentes (Futuramente movidas para sub-rotas de /app) */}
           <Route path="/marketplace" element={<ProtectedRoute><Marketplace /></ProtectedRoute>} />
