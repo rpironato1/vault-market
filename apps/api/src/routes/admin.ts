@@ -1,4 +1,4 @@
-import { OpenAPIHono, createRoute, z } from '@hono/zod-openapi';
+import { OpenAPIHono, createRoute } from '@hono/zod-openapi';
 import { AdminDashboardResponseSchema } from '../../../packages/contracts/admin';
 
 export const adminRoute = new OpenAPIHono();

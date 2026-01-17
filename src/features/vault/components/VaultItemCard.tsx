@@ -9,7 +9,7 @@ interface Props {
   item: Reward;
 }
 
-const rarityColors = {
+const rarityColors: Record<string, string> = {
   Common: "text-zinc-500 border-zinc-500/20",
   Rare: "text-blue-400 border-blue-400/20",
   Epic: "text-purple-400 border-purple-400/20",

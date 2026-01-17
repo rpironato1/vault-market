@@ -11,7 +11,7 @@ interface BoxCardProps {
 }
 
 const BoxCard = ({ box, onPurchase }: BoxCardProps) => {
-  const tierColors = {
+  const tierColors: Record<string, string> = {
     Common: "border-slate-700 hover:border-slate-500 text-slate-400",
     Rare: "border-blue-900/50 hover:border-blue-500 text-blue-400",
     Epic: "border-purple-900/50 hover:border-purple-500 text-purple-400",
