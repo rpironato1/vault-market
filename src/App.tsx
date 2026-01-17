@@ -4,7 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
-// Imports de Páginas "Containers" (Legado/Composições)
+// Imports de Páginas "Containers"
 import Home from "./pages/Home";
 import Marketplace from "./pages/Marketplace";
 import Vault from "./pages/Vault";
@@ -21,19 +21,20 @@ import { RewardsPage } from "./features/rewards";
 import { WithdrawalPage } from "./features/withdrawals";
 import { SettingsPage } from "./features/settings";
 import { AffiliatesPage } from "./features/affiliates";
-import { AdminDashboardPage } from "./features/admin";
+import { 
+  AdminDashboardPage, 
+  AdminWithdrawalsPage, 
+  AdminUsersPage, 
+  AdminLivePage 
+} from "./features/admin";
 
 const queryClient = new QueryClient();
 
-// ProtectedRoute simplificado
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  // Em uma implementação real, verificamos o auth.user aqui
   return <>{children}</>;
 };
 
-// ProtectedAdminRoute simplificado
 const ProtectedAdminRoute = ({ children }: { children: React.ReactNode }) => {
-  // Mock check: em prod, verificar auth.user.role === 'ADMIN'
   const isAdmin = true; 
   return isAdmin ? <>{children}</> : <Navigate to="/app" />;
 };
@@ -60,6 +61,9 @@ const App = () => (
           
           {/* Rotas Protegidas (Admin) */}
           <Route path="/admin" element={<ProtectedAdminRoute><AdminDashboardPage /></ProtectedAdminRoute>} />
+          <Route path="/admin/withdrawals" element={<ProtectedAdminRoute><AdminWithdrawalsPage /></ProtectedAdminRoute>} />
+          <Route path="/admin/users" element={<ProtectedAdminRoute><AdminUsersPage /></ProtectedAdminRoute>} />
+          <Route path="/admin/live" element={<ProtectedAdminRoute><AdminLivePage /></ProtectedAdminRoute>} />
           
           {/* Features Legadas/Existentes */}
           <Route path="/marketplace" element={<ProtectedRoute><Marketplace /></ProtectedRoute>} />
