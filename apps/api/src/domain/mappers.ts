@@ -1,5 +1,5 @@
-import { Product } from '../../../packages/contracts/catalog';
-import { Order } from '../../../packages/contracts/orders';
+import { Product } from '@contracts/catalog';
+import { Order } from '@contracts/orders';
 import { InferSelectModel } from 'drizzle-orm';
 import { products, orders } from '../infrastructure/db/schema';
 

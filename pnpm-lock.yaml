@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@hono/swagger-ui':
+        specifier: ^0.5.3
+        version: 0.5.3(hono@4.11.4)
       '@hono/zod-openapi':
         specifier: ^1.2.0
         version: 1.2.0(hono@4.11.4)(zod@3.24.3)
@@ -792,6 +795,11 @@ packages:
 
   '@floating-ui/utils@0.2.9':
     resolution: {integrity: sha512-MDWhGtE+eHw5JW7lq4qhc5yRLS11ERl1c7Z6Xd0a58DozHES6EnNNwUWbMiG4J9Cgj053Bhk8zvlhFYKVhULwg==}
+
+  '@hono/swagger-ui@0.5.3':
+    resolution: {integrity: sha512-Hn90DOOJ62ICJQplQvCDVpi9Jcn6EhtRaiffyJIS53wA5RmRLtMCDQGVc0bor8vQD7JIwpkweWjs+3cycp+IvA==}
+    peerDependencies:
+      hono: '>=4.0.0'
 
   '@hono/zod-openapi@1.2.0':
     resolution: {integrity: sha512-KDfHqv/Wy4elVseZXgokbHxeWuqBL+AZfqsOMpEihBMUsk/fJ+bLIi3Sf70JFVpt1Ihui8RasYrInozt7ZBDIA==}
@@ -3478,6 +3486,10 @@ snapshots:
       react-dom: 18.3.1(react@18.3.1)
 
   '@floating-ui/utils@0.2.9': {}
+
+  '@hono/swagger-ui@0.5.3(hono@4.11.4)':
+    dependencies:
+      hono: 4.11.4
 
   '@hono/zod-openapi@1.2.0(hono@4.11.4)(zod@3.24.3)':
     dependencies:

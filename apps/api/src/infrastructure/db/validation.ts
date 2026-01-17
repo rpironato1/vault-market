@@ -3,7 +3,6 @@ import {
   products, 
   orders, 
   vaultCoinLedger, 
-  prizeLedger, 
   withdrawalRequests, 
   users 
 } from './schema';
