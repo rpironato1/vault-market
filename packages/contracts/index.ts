@@ -4,3 +4,6 @@ export * from './orders';
 export * from './balances';
 export * from './games';
 export * from './rewards';
+export * from './admin';
+export * from './affiliates';
+export * from './vaultcoins';

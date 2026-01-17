@@ -5,25 +5,29 @@ import type {
   Order, 
   UserBalance, 
   GameSession, 
-  WithdrawalRequest 
+  WithdrawalRequest,
+  AdminDashboardResponse,
+  VaultCoinsWalletResponse,
+  AffiliateDataResponse
 } from '@contracts/index';
 
-// Este arquivo serve como um SDK interno para o frontend,
-// garantindo que todas as chamadas respeitem os contratos Zod definidos.
+// Este SDK atua como uma ponte tipada.
+// Se o backend mudar o contrato, o frontend quebra no build time (desejável).
 
 export const api = {
   auth: {
-    // login e register seriam implementados aqui
+    // login e register implementados no módulo auth
   },
   catalog: {
     list: () => http.get<CatalogResponse>('/catalog'),
-    get: (id: string) => http.get<any>(`/catalog/${id}`), // Tipar corretamente Product
+    get: (id: string) => http.get<any>(`/catalog/${id}`),
   },
   orders: {
     create: (data: CreateOrderDTO) => http.post<Order>('/orders', data),
   },
   wallet: {
     balance: () => http.get<UserBalance>('/me/balances'),
+    vaultCoins: () => http.get<VaultCoinsWalletResponse>('/me/vaultcoins'),
   },
   games: {
     session: (id: string) => http.get<GameSession>(`/games/sessions/${id}`),
@@ -31,5 +35,12 @@ export const api = {
   rewards: {
     withdraw: (amount: number, address: string) => 
       http.post<WithdrawalRequest>('/withdrawals', { amount, walletAddress: address }),
+  },
+  admin: {
+    dashboard: () => http.get<AdminDashboardResponse>('/admin/dashboard'),
+    // Outros métodos admin...
+  },
+  affiliates: {
+    data: () => http.get<AffiliateDataResponse>('/affiliates/me'),
   }
 };
