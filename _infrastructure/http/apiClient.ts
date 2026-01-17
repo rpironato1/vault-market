@@ -40,8 +40,6 @@ apiClient.interceptors.response.use(
     return response;
   },
   async (error: AxiosError) => {
-    const originalRequest = error.config;
-
     // 1. Normalização de Erros
     if (!error.response) {
       // Erro de rede / offline
