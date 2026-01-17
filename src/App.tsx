@@ -3,6 +3,8 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+
+// Imports de Páginas "Containers" (Legado/Composições)
 import Home from "./pages/Home";
 import Marketplace from "./pages/Marketplace";
 import Vault from "./pages/Vault";
@@ -10,15 +12,16 @@ import Tokens from "./pages/Tokens";
 import Partners from "./pages/Partners";
 import Games from "./pages/Games";
 import NotFound from "./pages/NotFound";
-import LoginPage from "./features/auth/presentation/pages/LoginPage";
-import RegisterPage from "./features/auth/presentation/pages/RegisterPage";
-import DashboardPage from "./features/dashboard/presentation/pages/DashboardPage";
-import VaultCoinsPage from "./features/vaultcoins/presentation/pages/VaultCoinsPage";
-import RewardsPage from "./features/rewards/presentation/pages/RewardsPage";
-import WithdrawalPage from "./features/withdrawals/presentation/pages/WithdrawalPage";
-import SettingsPage from "./features/settings/presentation/pages/SettingsPage";
-import AffiliatesPage from "./features/affiliates/presentation/pages/AffiliatesPage";
-import AdminDashboardPage from "./features/admin/presentation/pages/AdminDashboardPage";
+
+// Imports via API Pública de Features (SCS)
+import { LoginPage, RegisterPage } from "./features/auth";
+import { DashboardPage } from "./features/dashboard";
+import { VaultCoinsPage } from "./features/vaultcoins";
+import { RewardsPage } from "./features/rewards";
+import { WithdrawalPage } from "./features/withdrawals";
+import { SettingsPage } from "./features/settings";
+import { AffiliatesPage } from "./features/affiliates";
+import { AdminDashboardPage } from "./features/admin";
 
 const queryClient = new QueryClient();
 
@@ -28,7 +31,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
-// ProtectedAdminRoute simplificado (simulando acesso admin)
+// ProtectedAdminRoute simplificado
 const ProtectedAdminRoute = ({ children }: { children: React.ReactNode }) => {
   // Mock check: em prod, verificar auth.user.role === 'ADMIN'
   const isAdmin = true; 

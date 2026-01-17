@@ -1,0 +1,1 @@
+export { default as LiveTicker } from './components/LiveTicker';

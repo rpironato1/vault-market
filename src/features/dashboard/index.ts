@@ -1,0 +1,1 @@
+export { default as DashboardPage } from './presentation/pages/DashboardPage';

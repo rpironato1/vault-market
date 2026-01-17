@@ -1,10 +1,7 @@
 "use client";
 
 import AppLayout from '@/components/layout/AppLayout';
-import DataSyncGame from '@/features/games/mines/components/DataSyncGame';
-import DailyPulse from '@/features/games/wheel/components/DailyPulse';
-import QuantumCrash from '@/features/games/crash/components/QuantumCrash';
-import GravityPlinko from '@/features/games/plinko/components/GravityPlinko';
+import { DataSyncGame, DailyPulse, QuantumCrash, GravityPlinko } from '@/features/games';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Zap, Radio, Rocket, Database, Info } from 'lucide-react';
 

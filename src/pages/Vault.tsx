@@ -2,7 +2,7 @@
 
 import AppLayout from '@/components/layout/AppLayout';
 import { useStore } from '@infra/state/store';
-import VaultItemCard from '@/features/vault/components/VaultItemCard';
+import { VaultItemCard } from '@/features/vault';
 import { HardDrive, MagnifyingGlass, Funnel } from '@phosphor-icons/react';
 
 const Vault = () => {

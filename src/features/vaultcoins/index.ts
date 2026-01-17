@@ -1,0 +1,1 @@
+export { default as VaultCoinsPage } from './presentation/pages/VaultCoinsPage';

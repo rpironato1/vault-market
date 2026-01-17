@@ -1,0 +1,1 @@
+export { default as WithdrawalPage } from './presentation/pages/WithdrawalPage';

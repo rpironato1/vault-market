@@ -1,0 +1,1 @@
+export { default as AffiliatesPage } from './presentation/pages/AffiliatesPage';

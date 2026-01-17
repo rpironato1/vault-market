@@ -2,9 +2,8 @@
 
 import { useState } from 'react';
 import AppLayout from '@/components/layout/AppLayout';
-import HighConversionCard from '../features/marketplace/components/HighConversionCard';
-import NearMissOpener from '../features/marketplace/components/NearMissOpener';
-import LiveTicker from '@/features/marketing/components/LiveTicker';
+import { HighConversionCard, NearMissOpener } from '@/features/marketplace';
+import { LiveTicker } from '@/features/marketing';
 import { MysteryBox, Reward } from '@core/domain/entities';
 import { useStore } from '@infra/state/store';
 import { showError } from '@/utils/toast';

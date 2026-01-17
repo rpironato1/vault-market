@@ -1,0 +1,1 @@
+export { default as RewardsPage } from './presentation/pages/RewardsPage';
