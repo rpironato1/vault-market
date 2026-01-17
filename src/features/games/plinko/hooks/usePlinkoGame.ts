@@ -8,7 +8,7 @@ import { useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '@infra/state/store';
 import { showSuccess, showError } from '@/utils/toast';
-import type { ActiveBall, Particle, CanvasDimensions, PlinkoGameRefs } from '../domain/types';
+import type { ActiveBall, Particle, CanvasDimensions } from '../domain/types';
 import {
   ROWS,
   MULTIPLIERS,

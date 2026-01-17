@@ -1,10 +1,11 @@
 import { http } from '@infra/http/apiClient';
-import type { 
-  CatalogResponse, 
-  CreateOrderDTO, 
-  Order, 
-  UserBalance, 
-  GameSession, 
+import type {
+  CatalogResponse,
+  Product,
+  CreateOrderDTO,
+  Order,
+  UserBalance,
+  GameSession,
   WithdrawalRequest,
   AdminDashboardResponse,
   VaultCoinsWalletResponse,
@@ -20,7 +21,7 @@ export const api = {
   },
   catalog: {
     list: () => http.get<CatalogResponse>('/catalog'),
-    get: (id: string) => http.get<any>(`/catalog/${id}`),
+    get: (id: string) => http.get<Product>(`/catalog/${id}`),
   },
   orders: {
     create: (data: CreateOrderDTO) => http.post<Order>('/orders', data),
