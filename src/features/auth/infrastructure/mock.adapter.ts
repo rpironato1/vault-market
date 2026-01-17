@@ -16,7 +16,7 @@ export class MockAuthAdapter implements IAuthService {
       id: 'usr_' + Math.random().toString(36).substr(2, 9),
       email,
       name: email.split('@')[0],
-      avatarUrl: undefined
+      role: 'USER'
     };
   }
 
@@ -26,7 +26,7 @@ export class MockAuthAdapter implements IAuthService {
       id: 'goog_' + Math.random().toString(36).substr(2, 9),
       email: 'user@gmail.com',
       name: 'Google User',
-      avatarUrl: 'https://github.com/shadcn.png'
+      role: 'USER'
     };
   }
 
@@ -44,6 +44,7 @@ export class MockAuthAdapter implements IAuthService {
       id: 'usr_' + Math.random().toString(36).substr(2, 9),
       email,
       name: 'Novo Usuário',
+      role: 'USER'
     };
   }
 

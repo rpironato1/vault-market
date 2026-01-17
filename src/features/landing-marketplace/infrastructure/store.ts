@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { MarketBox, UnboxedItem, BoxTier } from '../domain/entities';
 import { MockBackend } from '@infra/api/mock-backend';
 
-// CURADORIA E CONFIGURAÇÃO (Mantida a lista estática para exibição, mas a lógica de compra saiu)
+// CURADORIA E CONFIGURAÇÃO
 const UNIQUE_CURATED_IMAGES = [
   'https://images.unsplash.com/photo-1614064641938-3bbee52942c7?w=800&q=80',
   'https://images.unsplash.com/photo-1563089145-599997674d42?w=800&q=80',
@@ -35,10 +35,10 @@ const UNIQUE_CURATED_IMAGES = [
 ];
 
 const TIER_CONFIG: Record<BoxTier, { price: number; min: number; max: number }> = {
-  Starter: { price: 4.90, min: 5.00, max: 15.00 },
-  Advanced: { price: 19.90, min: 21.00, max: 50.00 },
-  Elite: { price: 49.90, min: 55.00, max: 200.00 },
-  Prestige: { price: 99.90, min: 110.00, max: 1000.00 }
+  Common: { price: 4.90, min: 5.00, max: 15.00 },
+  Rare: { price: 19.90, min: 21.00, max: 50.00 },
+  Epic: { price: 49.90, min: 55.00, max: 200.00 },
+  Legendary: { price: 99.90, min: 110.00, max: 1000.00 }
 };
 
 const PREFIXES = ['Cyber', 'Neon', 'Quantum', 'Void', 'Apex', 'Flux', 'Neural', 'Cosmic', 'Hyper', 'Data', 'Solar', 'Lunar', 'Mecha', 'Nano'];
@@ -46,11 +46,11 @@ const SUFFIXES = ['Cache', 'Vault', 'Node', 'Fragment', 'Core', 'Matrix', 'Pod',
 
 const generateBoxes = (): MarketBox[] => {
   return UNIQUE_CURATED_IMAGES.map((imageUrl, i) => {
-    let tier: BoxTier = 'Starter';
-    if (i >= 22) tier = 'Prestige';
-    else if (i >= 16) tier = 'Elite';
-    else if (i >= 8) tier = 'Advanced';
-    else tier = 'Starter';
+    let tier: BoxTier = 'Common';
+    if (i >= 22) tier = 'Legendary';
+    else if (i >= 16) tier = 'Epic';
+    else if (i >= 8) tier = 'Rare';
+    else tier = 'Common';
 
     const config = TIER_CONFIG[tier];
     
@@ -62,11 +62,11 @@ const generateBoxes = (): MarketBox[] => {
       id: `box-${i + 1}`,
       name: name,
       description: `Unidade de custódia ${tier} com ativos digitais de alta fidelidade e valor garantido.`,
-      price: config.price,
-      minValue: config.min,
-      maxValue: config.max,
+      priceUsdt: config.price, // Alterado de price para priceUsdt conforme contrato
+      bonusVaultCoins: 0, // Adicionado conforme contrato (mock)
+      stock: 100, // Adicionado conforme contrato (mock)
+      imageUrl: imageUrl, // Alterado de coverImage para imageUrl conforme contrato
       tier: tier,
-      coverImage: imageUrl,
       isHot: i === 0 || i === 11 || i === 22 || i === 27
     };
   });
@@ -95,7 +95,7 @@ export const useMarketplaceStore = create<MarketplaceState>((set, get) => ({
 
     try {
       // Chama o backend para processar a compra
-      const result = await MockBackend.purchaseBox(boxId, box.price);
+      const result = await MockBackend.purchaseBox(boxId, box.priceUsdt);
       
       const reward: UnboxedItem = {
         id: result.reward.id,

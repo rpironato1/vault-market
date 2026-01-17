@@ -10,8 +10,15 @@ import { useStore } from '@infra/state/store';
 import { showSuccess, showError } from '@/utils/toast';
 
 const BoxCard = ({ box, onPurchase }: { box: MarketBox; onPurchase: (box: MarketBox) => void }) => {
-  const isPrestige = box.tier === 'Prestige';
+  const isPrestige = box.tier === 'Legendary'; // Atualizado de Prestige para Legendary conforme contrato
   
+  // Valores calculados para exibição (mocked based on tiers)
+  // Em uma API real, isso viria do backend, mas o contrato ProductSchema não tem min/max value explícito,
+  // então calculamos na UI para display ou deveríamos estender o contrato.
+  // Vamos manter simples:
+  const minValue = box.priceUsdt * 1.1;
+  const maxValue = box.priceUsdt * 5;
+
   return (
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
@@ -32,7 +39,7 @@ const BoxCard = ({ box, onPurchase }: { box: MarketBox; onPurchase: (box: Market
       <div className="relative aspect-[4/3] bg-zinc-900 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-t from-[#121212] via-transparent to-transparent z-10" />
         <img 
-          src={box.coverImage} 
+          src={box.imageUrl} 
           alt={box.name}
           loading="lazy"
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-80 group-hover:opacity-100"
@@ -60,21 +67,21 @@ const BoxCard = ({ box, onPurchase }: { box: MarketBox; onPurchase: (box: Market
           <div className="grid grid-cols-2 gap-2 bg-white/[0.02] p-3 rounded-xl border border-white/5">
             <div className="flex flex-col">
               <span className="text-[8px] font-bold text-zinc-600 uppercase">Min. Value</span>
-              <span className="text-xs font-mono font-bold text-zinc-300">${box.minValue.toFixed(2)}</span>
+              <span className="text-xs font-mono font-bold text-zinc-300">${minValue.toFixed(2)}</span>
             </div>
             <div className="flex flex-col items-end">
               <span className="text-[8px] font-bold text-zinc-600 uppercase">Max. Potential</span>
-              <span className="text-xs font-mono font-bold text-[#00FF9C]">${box.maxValue.toFixed(2)}</span>
+              <span className="text-xs font-mono font-bold text-[#00FF9C]">${maxValue.toFixed(2)}</span>
             </div>
           </div>
 
           <div className="flex items-center justify-between gap-4">
             <div className="flex flex-col">
                <span className="text-[9px] font-bold text-zinc-500 uppercase line-through opacity-50">
-                 ${(box.price * 1.2).toFixed(2)}
+                 ${(box.priceUsdt * 1.2).toFixed(2)}
                </span>
                <span className="text-xl font-mono font-black text-white">
-                 ${box.price.toFixed(2)}
+                 ${box.priceUsdt.toFixed(2)}
                </span>
             </div>
             <button 
@@ -100,7 +107,7 @@ export const BoxGrid = () => {
   const { balance, setBalance, addVaultItem } = useStore();
 
   const handlePurchase = async (box: MarketBox) => {
-    if (balance < box.price) {
+    if (balance < box.priceUsdt) {
       showError("Saldo USDT insuficiente. Recarregue sua carteira Polygon.");
       return;
     }
@@ -113,10 +120,10 @@ export const BoxGrid = () => {
       setBalance(balances.usdt);
       
       const tierMapping: Record<BoxTier, Tier> = {
-        'Starter': 'Common',
-        'Advanced': 'Rare',
-        'Elite': 'Epic',
-        'Prestige': 'Legendary'
+        'Common': 'Common',
+        'Rare': 'Rare',
+        'Epic': 'Epic',
+        'Legendary': 'Legendary'
       };
 
       addVaultItem({
