@@ -78,7 +78,7 @@ const AdminLivePage = () => {
           </div>
         </div>
 
-        <div className="flex-1 bg-[#050505] border border-white/10 rounded-xl overflow-hidden flex flex-col font-mono text-xs shadow-2xl relative">
+        <div className="flex-1 bg-surface-black border border-white/10 rounded-xl overflow-hidden flex flex-col font-mono text-xs shadow-2xl relative">
           <div className="px-4 py-2 bg-[#0A0A0A] border-b border-white/5 flex items-center justify-between">
              <div className="flex items-center gap-2 text-zinc-500">
                <Terminal size={14} />

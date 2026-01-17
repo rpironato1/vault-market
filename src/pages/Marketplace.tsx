@@ -67,22 +67,22 @@ const Marketplace = () => {
   return (
     <AppLayout>
       <div className="flex flex-col gap-12 relative">
-        <header className="relative py-24 px-12 rounded-[40px] bg-[#121212] border border-white/5 overflow-hidden shadow-2xl">
+        <header className="relative py-24 px-12 rounded-[40px] bg-surface-card border border-white/5 overflow-hidden shadow-2xl">
           <div className="absolute top-0 right-0 p-8 flex flex-col items-end gap-1">
              <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Global Payout</span>
-             <span className="text-3xl font-mono font-black text-[#00FF9C] tracking-tighter">$1.482.020,42</span>
+             <span className="text-3xl font-mono font-black text-accent-emerald tracking-tighter">$1.482.020,42</span>
           </div>
-          
+
           <div className="relative z-10 max-w-3xl">
             <div className="flex items-center gap-2 mb-6">
-               <div className="h-6 w-12 rounded-full bg-[#FF007F]/10 border border-[#FF007F]/20 flex items-center justify-center">
-                  <span className="text-[9px] font-black text-[#FF007F] uppercase tracking-widest animate-pulse">Live</span>
+               <div className="h-6 w-12 rounded-full bg-danger-neon/10 border border-danger-neon/20 flex items-center justify-center">
+                  <span className="text-[9px] font-black text-danger-neon uppercase tracking-widest animate-pulse">Live</span>
                </div>
                <span className="text-xs font-bold text-zinc-400">1.240 usuários ativos agora</span>
             </div>
             <h1 className="text-7xl font-black tracking-tighter mb-8 uppercase text-white leading-[0.9]">
               Abra a Caixa do <br />
-              <span className="text-[#FFD700] italic">Milhão por $1.</span>
+              <span className="text-prestige-gold italic">Milhão por $1.</span>
             </h1>
             <div className="flex items-center gap-6">
                <button className="h-16 px-10 rounded-2xl bg-white text-black font-black uppercase tracking-widest hover:scale-105 transition-transform flex items-center gap-3">
@@ -91,12 +91,12 @@ const Marketplace = () => {
                </button>
                <div className="flex flex-col">
                   <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Ticket Médio de Volta</span>
-                  <span className="text-[#00FF9C] font-black text-xl">+142%</span>
+                  <span className="text-accent-emerald font-black text-xl">+142%</span>
                </div>
             </div>
           </div>
-          
-          <div className="absolute -bottom-20 -right-20 h-96 w-96 bg-[#00FF9C]/5 blur-[120px] rounded-full" />
+
+          <div className="absolute -bottom-20 -right-20 h-96 w-96 bg-accent-emerald/5 blur-[120px] rounded-full" />
         </header>
 
         <section>

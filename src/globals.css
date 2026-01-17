@@ -49,6 +49,22 @@
     --sidebar-border: 220 13% 91%;
 
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Surface colors - Design Tokens */
+    --surface-black: 0 0% 2%;
+    --surface-card: 0 0% 7%;
+    --surface-elevated: 240 2% 8%;
+    --surface-input: 0 0% 9%;
+
+    /* Accent colors - Design Tokens */
+    --accent-emerald: 156 100% 50%;
+    --accent-emerald-hover: 156 100% 45%;
+
+    /* Prestige colors - Design Tokens */
+    --prestige-gold: 51 100% 50%;
+
+    /* Danger colors - Design Tokens */
+    --danger-neon: 330 100% 50%;
   }
 
   .dark {
@@ -87,6 +103,22 @@
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Surface colors - Design Tokens */
+    --surface-black: 0 0% 2%;
+    --surface-card: 0 0% 7%;
+    --surface-elevated: 240 2% 8%;
+    --surface-input: 0 0% 9%;
+
+    /* Accent colors - Design Tokens */
+    --accent-emerald: 156 100% 50%;
+    --accent-emerald-hover: 156 100% 45%;
+
+    /* Prestige colors - Design Tokens */
+    --prestige-gold: 51 100% 50%;
+
+    /* Danger colors - Design Tokens */
+    --danger-neon: 330 100% 50%;
   }
 }
 

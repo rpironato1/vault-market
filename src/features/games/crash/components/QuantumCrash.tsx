@@ -17,10 +17,11 @@ interface GameHistory {
 
 const HISTORY_LIMIT = 5;
 
+// Design Tokens: usar classes Tailwind ao invés de cores hex hardcoded
 const TENSION_PHASES = {
-  STABLE: { threshold: 0, color: '#00FF9C', shadow: 'rgba(0,255,156,0.3)' },
-  HEATING: { threshold: 2.0, color: '#FFD700', shadow: 'rgba(255,215,0,0.4)' },
-  CRITICAL: { threshold: 5.0, color: '#FF0055', shadow: 'rgba(255,0,85,0.6)' },
+  STABLE: { threshold: 0, colorClass: 'text-accent-emerald', color: 'rgb(0, 255, 156)', shadow: 'rgba(0,255,156,0.3)' },
+  HEATING: { threshold: 2.0, colorClass: 'text-prestige-gold', color: 'rgb(255, 215, 0)', shadow: 'rgba(255,215,0,0.4)' },
+  CRITICAL: { threshold: 5.0, colorClass: 'text-danger-neon', color: 'rgb(255, 0, 85)', shadow: 'rgba(255,0,85,0.6)' },
 };
 
 const QuantumCrash = () => {
@@ -160,7 +161,7 @@ const QuantumCrash = () => {
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch h-[600px]">
       
       {/* Control Panel */}
-      <div className="bg-[#09090b] rounded-[32px] border border-white/5 p-8 flex flex-col justify-between shadow-2xl relative z-20 overflow-hidden">
+      <div className="bg-surface-card rounded-[32px] border border-white/5 p-8 flex flex-col justify-between shadow-2xl relative z-20 overflow-hidden">
         <div 
           className="absolute inset-0 opacity-20 pointer-events-none transition-colors duration-1000"
           style={{ background: `radial-gradient(circle at top right, ${currentColor}, transparent 70%)` }}
@@ -181,12 +182,12 @@ const QuantumCrash = () => {
           <div className="space-y-4">
             <label className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider block">Alocação (VaultCoins)</label>
             <div className="relative">
-              <input 
-                type="number" 
+              <input
+                type="number"
                 value={bet}
                 onChange={(e) => setBet(Number(e.target.value))}
                 disabled={status === 'FLYING' || status === 'STARTING'}
-                className="w-full bg-[#121212] border border-white/10 rounded-2xl h-16 px-6 font-mono text-2xl font-black text-white outline-none focus:border-[#00FF9C] transition-all disabled:opacity-50"
+                className="w-full bg-surface-card border border-white/10 rounded-2xl h-16 px-6 font-mono text-2xl font-black text-white outline-none focus:border-accent-emerald transition-all disabled:opacity-50"
               />
             </div>
             <div className="flex gap-2">
@@ -213,7 +214,7 @@ const QuantumCrash = () => {
                  {history.map((h, i) => (
                    <div key={i} className={cn(
                      "px-2 py-1 rounded-md text-[10px] font-mono font-bold border",
-                     h.multiplier >= 2.0 ? "bg-[#00FF9C]/10 border-[#00FF9C]/30 text-[#00FF9C]" : "bg-zinc-800 border-zinc-700 text-zinc-400"
+                     h.multiplier >= 2.0 ? "bg-accent-emerald/10 border-accent-emerald/30 text-accent-emerald" : "bg-zinc-800 border-zinc-700 text-zinc-400"
                    )}>
                      {h.multiplier.toFixed(2)}x
                    </div>
@@ -225,11 +226,11 @@ const QuantumCrash = () => {
 
         <div className="space-y-4 relative z-10">
           {status === 'IDLE' || status === 'CRASHED' || status === 'CASHOUT' ? (
-            <button 
-              onClick={startGame} 
-              className="w-full h-20 bg-[#00FF9C] text-black font-black uppercase tracking-[0.2em] text-sm rounded-2xl hover:bg-[#00e68d] hover:shadow-[0_0_30px_rgba(0,255,156,0.3)] transition-all active:scale-95 flex items-center justify-center gap-3"
+            <button
+              onClick={startGame}
+              className="w-full h-20 bg-accent-emerald text-black font-black uppercase tracking-[0.2em] text-sm rounded-2xl hover:bg-accent-emerald-hover shadow-glow-emerald transition-all active:scale-95 flex items-center justify-center gap-3"
             >
-              <Rocket size={20} fill="currentColor" /> 
+              <Rocket size={20} fill="currentColor" />
               {status === 'CRASHED' ? 'RE-SINCRONIZAR' : 'INICIAR SINCRONIA'}
             </button>
           ) : status === 'STARTING' ? (
@@ -240,11 +241,11 @@ const QuantumCrash = () => {
             <div className="relative">
               <AnimatePresence>
                 {cashoutHovered && multiplier < 1.5 && (
-                  <motion.div 
+                  <motion.div
                     initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
                     className="absolute -top-12 left-0 right-0 text-center"
                   >
-                    <span className="bg-[#FFD700] text-black text-[10px] font-black uppercase px-3 py-1 rounded-full shadow-lg">
+                    <span className="bg-prestige-gold text-black text-[10px] font-black uppercase px-3 py-1 rounded-full shadow-lg">
                       Sinal fraco. Manter link?
                     </span>
                   </motion.div>
@@ -280,8 +281,8 @@ const QuantumCrash = () => {
       </div>
 
       {/* Display */}
-      <div 
-        className="lg:col-span-2 bg-[#050505] rounded-[40px] border border-white/5 relative overflow-hidden flex flex-col transition-transform duration-75"
+      <div
+        className="lg:col-span-2 bg-surface-black rounded-[40px] border border-white/5 relative overflow-hidden flex flex-col transition-transform duration-75"
         style={{ transform: `translate(${Math.random() * shakeIntensity - shakeIntensity/2}px, ${Math.random() * shakeIntensity - shakeIntensity/2}px)` }}
       >
         <div className="absolute inset-0 opacity-10 pointer-events-none" 
@@ -363,11 +364,11 @@ const QuantumCrash = () => {
         <div className="absolute inset-0 z-30 flex flex-col items-center justify-center pointer-events-none">
           <AnimatePresence mode="wait">
             {status === 'STARTING' && (
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 1.2 }}
-                className="text-[#00FF9C] text-sm font-black tracking-[0.5em] uppercase animate-pulse"
+                className="text-accent-emerald text-sm font-black tracking-[0.5em] uppercase animate-pulse"
               >
                 Iniciando Motores...
               </motion.div>
@@ -386,10 +387,10 @@ const QuantumCrash = () => {
                  </div>
                  
                  {status === 'CASHOUT' && (
-                   <motion.div 
-                     initial={{ y: 20, opacity: 0, scale: 0.8 }} 
+                   <motion.div
+                     initial={{ y: 20, opacity: 0, scale: 0.8 }}
                      animate={{ y: 0, opacity: 1, scale: 1 }}
-                     className="mt-4 bg-[#00FF9C] text-black px-6 py-2 rounded-full font-black uppercase tracking-widest inline-flex items-center gap-2 shadow-[0_0_30px_#00FF9C]"
+                     className="mt-4 bg-accent-emerald text-black px-6 py-2 rounded-full font-black uppercase tracking-widest inline-flex items-center gap-2 shadow-glow-emerald"
                    >
                      <Zap size={16} fill="black" /> Saque Confirmado
                    </motion.div>
@@ -420,11 +421,11 @@ const QuantumCrash = () => {
           </AnimatePresence>
         </div>
 
-        <div 
+        <div
           className="absolute inset-0 pointer-events-none transition-opacity duration-300 mix-blend-overlay"
-          style={{ 
+          style={{
             opacity: tension === 'CRITICAL' ? 0.3 : 0,
-            background: 'radial-gradient(circle, transparent 50%, #FF0055 100%)' 
+            background: 'radial-gradient(circle, transparent 50%, rgb(255, 0, 85) 100%)'
           }}
         />
       </div>

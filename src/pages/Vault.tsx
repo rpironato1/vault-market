@@ -26,12 +26,12 @@ const Vault = () => {
           <div className="flex items-center gap-4">
             <div className="relative">
               <MagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500" size={18} />
-              <input 
+              <input
                 placeholder="PROCURAR HASH..."
-                className="bg-[#121212] border border-white/10 rounded-2xl h-14 pl-12 pr-6 font-mono text-xs font-bold focus:border-emerald-500/50 outline-none w-64 transition-all text-white placeholder:text-zinc-700"
+                className="bg-surface-card border border-white/10 rounded-2xl h-14 pl-12 pr-6 font-mono text-xs font-bold focus:border-emerald-500/50 outline-none w-64 transition-all text-white placeholder:text-zinc-700"
               />
             </div>
-            <button className="h-14 w-14 rounded-2xl bg-[#121212] border border-white/10 flex items-center justify-center text-zinc-400 hover:text-white hover:border-white/20 transition-all">
+            <button className="h-14 w-14 rounded-2xl bg-surface-card border border-white/10 flex items-center justify-center text-zinc-400 hover:text-white hover:border-white/20 transition-all">
               <Funnel size={20} />
             </button>
           </div>

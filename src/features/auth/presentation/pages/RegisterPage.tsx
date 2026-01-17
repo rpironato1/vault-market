@@ -52,7 +52,7 @@ const RegisterPage = () => {
               <input 
                 value={formData.name}
                 onChange={e => setFormData({...formData, name: e.target.value})}
-                className="w-full bg-[#121212] border border-white/10 rounded-xl h-12 px-4 pl-10 text-white font-medium outline-none focus:border-[#00FF9C]/50 transition-colors"
+                className="w-full bg-surface-card border border-white/10 rounded-xl h-12 px-4 pl-10 text-white font-medium outline-none focus:border-accent-emerald/50 transition-colors"
                 placeholder="Ex: Neo Anderson"
               />
               <User className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-600" size={16} />
@@ -66,7 +66,7 @@ const RegisterPage = () => {
                 type="email"
                 value={formData.email}
                 onChange={e => setFormData({...formData, email: e.target.value})}
-                className="w-full bg-[#121212] border border-white/10 rounded-xl h-12 px-4 pl-10 text-white font-medium outline-none focus:border-[#00FF9C]/50 transition-colors"
+                className="w-full bg-surface-card border border-white/10 rounded-xl h-12 px-4 pl-10 text-white font-medium outline-none focus:border-accent-emerald/50 transition-colors"
                 placeholder="nome@exemplo.com"
               />
               <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-600" size={16} />
@@ -80,7 +80,7 @@ const RegisterPage = () => {
                 type="password"
                 value={formData.password}
                 onChange={e => setFormData({...formData, password: e.target.value})}
-                className="w-full bg-[#121212] border border-white/10 rounded-xl h-12 px-4 pl-10 text-white font-medium outline-none focus:border-[#00FF9C]/50 transition-colors"
+                className="w-full bg-surface-card border border-white/10 rounded-xl h-12 px-4 pl-10 text-white font-medium outline-none focus:border-accent-emerald/50 transition-colors"
                 placeholder="Crie uma senha forte"
               />
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-600" size={16} />
@@ -90,7 +90,7 @@ const RegisterPage = () => {
           <button
             type="submit"
             disabled={isLoading}
-            className="h-12 w-full bg-[#00FF9C] text-black font-black uppercase tracking-widest rounded-xl hover:bg-[#00e68d] hover:shadow-[0_0_20px_rgba(0,255,156,0.3)] transition-all active:scale-[0.98] flex items-center justify-center gap-2 mt-2 disabled:opacity-50"
+            className="h-12 w-full bg-accent-emerald text-black font-black uppercase tracking-widest rounded-xl hover:bg-accent-emerald-hover hover:shadow-glow-emerald transition-all active:scale-[0.98] flex items-center justify-center gap-2 mt-2 disabled:opacity-50"
           >
             {isLoading ? <Loader2 className="animate-spin" /> : <>Continuar <ArrowRight size={18} /></>}
           </button>
@@ -98,8 +98,8 @@ const RegisterPage = () => {
       ) : (
         <form onSubmit={handleVerifyOtp} className="flex flex-col gap-6 animate-in fade-in slide-in-from-right-8 duration-300">
            <div className="flex justify-center my-4">
-             <div className="h-16 w-16 rounded-full bg-[#00FF9C]/10 border border-[#00FF9C]/20 flex items-center justify-center">
-                <Key className="text-[#00FF9C]" size={32} />
+             <div className="h-16 w-16 rounded-full bg-accent-emerald/10 border border-accent-emerald/20 flex items-center justify-center">
+                <Key className="text-accent-emerald" size={32} />
              </div>
            </div>
 
@@ -110,7 +110,7 @@ const RegisterPage = () => {
                onChange={e => {
                  if (e.target.value.length <= 6) setOtp(e.target.value.replace(/\D/g,''));
                }}
-               className="w-full bg-[#121212] border border-white/10 rounded-xl h-16 text-center text-3xl font-mono font-black text-white outline-none focus:border-[#00FF9C] transition-all tracking-[0.5em]"
+               className="w-full bg-surface-card border border-white/10 rounded-xl h-16 text-center text-3xl font-mono font-black text-white outline-none focus:border-accent-emerald transition-all tracking-[0.5em]"
                placeholder="000000"
                autoFocus
              />
@@ -120,7 +120,7 @@ const RegisterPage = () => {
            <button
             type="submit"
             disabled={isLoading || otp.length < 6}
-            className="h-12 w-full bg-[#00FF9C] text-black font-black uppercase tracking-widest rounded-xl hover:bg-[#00e68d] hover:shadow-[0_0_20px_rgba(0,255,156,0.3)] transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="h-12 w-full bg-accent-emerald text-black font-black uppercase tracking-widest rounded-xl hover:bg-accent-emerald-hover hover:shadow-glow-emerald transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? <Loader2 className="animate-spin" /> : "Validar Acesso"}
           </button>
@@ -130,9 +130,9 @@ const RegisterPage = () => {
       <div className="mt-6 text-center">
         <p className="text-xs text-zinc-500">
           Já tem uma conta?{' '}
-          <button 
+          <button
             onClick={() => navigate('/login')}
-            className="text-[#00FF9C] font-bold hover:underline decoration-1 underline-offset-4"
+            className="text-accent-emerald font-bold hover:underline decoration-1 underline-offset-4"
           >
             Fazer login
           </button>

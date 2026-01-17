@@ -3,10 +3,16 @@
 import LandingLayout from '@/components/layout/LandingLayout';
 import { HeroMarketplace, BoxGrid, RewardModal } from '@/features/landing-marketplace';
 import { GiftCardSection } from '@/features/gift-cards';
-import { CreditCard, ShieldCheck, GameController } from '@phosphor-icons/react';
+import { CreditCard, ShieldCheck, GameController, type Icon } from '@phosphor-icons/react';
 
-const FeatureItem = ({ icon: Icon, title, desc }: any) => (
-  <div className="flex flex-col items-center text-center p-6 rounded-2xl bg-[#121212] border border-white/5">
+interface FeatureItemProps {
+  icon: Icon;
+  title: string;
+  desc: string;
+}
+
+const FeatureItem = ({ icon: Icon, title, desc }: FeatureItemProps) => (
+  <div className="flex flex-col items-center text-center p-6 rounded-2xl bg-surface-card border border-white/5">
     <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center text-white mb-4">
       <Icon size={24} weight="duotone" />
     </div>

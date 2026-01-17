@@ -1,17 +1,25 @@
 import { AdminStats } from '../../domain/entities';
-import { Users, Coins, AlertOctagon, Wallet, ArrowUpRight } from 'lucide-react';
+import { Users, Coins, AlertOctagon, Wallet, ArrowUpRight, type LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface Props {
   stats: AdminStats;
 }
 
-const StatCard = ({ label, value, icon: Icon, theme, subValue }: any) => {
+interface StatCardProps {
+  label: string;
+  value: string | number;
+  icon: LucideIcon;
+  theme: 'blue' | 'emerald' | 'gold' | 'red';
+  subValue?: string;
+}
+
+const StatCard = ({ label, value, icon: Icon, theme, subValue }: StatCardProps) => {
   const themes = {
     blue: "text-blue-400 border-blue-500/20 bg-blue-500/5",
-    emerald: "text-[#00FF9C] border-[#00FF9C]/20 bg-[#00FF9C]/5",
-    gold: "text-[#FFD700] border-[#FFD700]/20 bg-[#FFD700]/5",
-    red: "text-[#FF0055] border-[#FF0055]/20 bg-[#FF0055]/5",
+    emerald: "text-accent-emerald border-accent-emerald/20 bg-accent-emerald/5",
+    gold: "text-prestige-gold border-prestige-gold/20 bg-prestige-gold/5",
+    red: "text-danger-neon border-danger-neon/20 bg-danger-neon/5",
   };
 
   const activeTheme = themes[theme as keyof typeof themes] || themes.blue;

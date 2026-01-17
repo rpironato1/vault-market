@@ -50,9 +50,9 @@ const AdminUsersPage = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {isLoading ? (
-            Array.from({ length: 6 }).map((_, i) => <div key={i} className="h-40 bg-[#121212] rounded-xl border border-white/5 animate-pulse" />)
+            Array.from({ length: 6 }).map((_, i) => <div key={i} className="h-40 bg-surface-card rounded-xl border border-white/5 animate-pulse" />)
           ) : users.map(user => (
-            <div key={user.id} className="bg-[#121212] border border-white/5 rounded-xl p-5 hover:border-white/10 transition-all group relative overflow-hidden">
+            <div key={user.id} className="bg-surface-card border border-white/5 rounded-xl p-5 hover:border-white/10 transition-all group relative overflow-hidden">
               {/* Status Stripe */}
               <div className={cn("absolute left-0 top-0 bottom-0 w-1", 
                 user.status === 'ACTIVE' ? "bg-emerald-500" : 

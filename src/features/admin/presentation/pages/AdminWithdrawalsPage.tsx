@@ -85,20 +85,20 @@ const AdminWithdrawalsPage = () => {
              <button className="flex items-center gap-2 px-3 py-2 bg-white/5 hover:bg-white/10 border border-white/5 rounded-lg text-xs font-bold text-zinc-400 transition-colors">
                <Filter size={14} /> Filtros
              </button>
-             <button className="flex items-center gap-2 px-3 py-2 bg-[#00FF9C]/10 text-[#00FF9C] border border-[#00FF9C]/20 rounded-lg text-xs font-bold transition-colors">
+             <button className="flex items-center gap-2 px-3 py-2 bg-accent-emerald/10 text-accent-emerald border border-accent-emerald/20 rounded-lg text-xs font-bold transition-colors">
                <Wallet size={14} /> Treasury Balance
              </button>
           </div>
         </div>
 
-        <div className="bg-[#121212] border border-white/5 rounded-xl overflow-hidden shadow-2xl">
+        <div className="bg-surface-card border border-white/5 rounded-xl overflow-hidden shadow-2xl">
           {/* Toolbar */}
           <div className="px-4 py-3 border-b border-white/5 flex items-center gap-3 bg-[#0A0A0A]">
             <div className="relative flex-1 max-w-sm">
               <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-600" />
               <input 
                 placeholder="Buscar por ID, Email ou Hash..." 
-                className="w-full bg-[#181818] border border-white/5 rounded-lg pl-9 pr-4 py-2 text-xs text-white font-mono placeholder:text-zinc-700 outline-none focus:border-white/10"
+                className="w-full bg-surface-input border border-white/5 rounded-lg pl-9 pr-4 py-2 text-xs text-white font-mono placeholder:text-zinc-700 outline-none focus:border-white/10"
               />
             </div>
           </div>
@@ -130,12 +130,12 @@ const AdminWithdrawalsPage = () => {
                   <div className="text-xs font-bold text-white truncate">{req.userEmail}</div>
                   <div className="flex items-center gap-1 text-[9px] font-mono text-zinc-600 mt-1 truncate group-hover:text-zinc-400 transition-colors">
                     {req.walletAddress}
-                    <ExternalLink size={8} className="cursor-pointer hover:text-[#00FF9C]" />
+                    <ExternalLink size={8} className="cursor-pointer hover:text-accent-emerald" />
                   </div>
                 </div>
 
                 <div className="col-span-2 text-right">
-                  <div className="text-sm font-mono font-bold text-[#FFD700]">${req.amount.toFixed(2)}</div>
+                  <div className="text-sm font-mono font-bold text-prestige-gold">${req.amount.toFixed(2)}</div>
                   <div className="text-[9px] font-mono text-zinc-600">Polygon (USDT)</div>
                 </div>
 

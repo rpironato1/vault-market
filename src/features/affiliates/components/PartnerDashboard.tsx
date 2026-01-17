@@ -1,9 +1,9 @@
 "use client";
 
-import { 
-  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer 
+import {
+  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from 'recharts';
-import { Users, TrendingUp, DollarSign, Share2 } from 'lucide-react';
+import { Users, TrendingUp, DollarSign, Share2, type LucideIcon } from 'lucide-react';
 
 const data = [
   { date: '01/05', value: 400 },
@@ -15,7 +15,14 @@ const data = [
   { date: '07/05', value: 1400 },
 ];
 
-const StatCard = ({ title, value, icon: Icon, trend }: any) => (
+interface StatCardProps {
+  title: string;
+  value: string;
+  icon: LucideIcon;
+  trend: string;
+}
+
+const StatCard = ({ title, value, icon: Icon, trend }: StatCardProps) => (
   <div className="rounded-xl border border-white/5 bg-white/5 p-6">
     <div className="flex justify-between items-start mb-4">
       <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-500">

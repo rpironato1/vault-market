@@ -1,13 +1,20 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { ShieldCheck, LayoutDashboard, Users, Wallet, AlertTriangle, LogOut, Activity } from 'lucide-react';
+import { ShieldCheck, LayoutDashboard, Users, Wallet, AlertTriangle, LogOut, Activity, type LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
 }
 
-const NavItem = ({ icon: Icon, label, path, active }: any) => {
+interface NavItemProps {
+  icon: LucideIcon;
+  label: string;
+  path: string;
+  active: boolean;
+}
+
+const NavItem = ({ icon: Icon, label, path, active }: NavItemProps) => {
   const navigate = useNavigate();
   return (
     <button

@@ -11,16 +11,16 @@ import { WheelSectors } from './WheelSectors';
 import { MockBackend } from '@infra/api/mock-backend';
 import { useStore } from '@infra/state/store';
 
-// A UI precisa saber os setores para desenhar, mas a lógica de escolha saiu.
+// Design Tokens: cores baseadas nos tokens Tailwind
 const SECTORS = [
-  { label: '50 VC', color: '#00FF9C', value: 50 },
-  { label: '10 VC', color: '#121212', value: 10 }, 
-  { label: '250 VC', color: '#FFD700', value: 250 },
-  { label: '5 VC', color: '#1a1a1a', value: 5 },   
-  { label: '100 VC', color: '#00FF9C', value: 100 },
-  { label: 'JACKPOT', color: '#FF007F', value: 2500 },
-  { label: '25 VC', color: '#121212', value: 25 },
-  { label: '500 VC', color: '#FFD700', value: 500 },
+  { label: '50 VC', color: 'rgb(0, 255, 156)', value: 50 }, // accent-emerald
+  { label: '10 VC', color: 'rgb(18, 18, 18)', value: 10 }, // surface-card
+  { label: '250 VC', color: 'rgb(255, 215, 0)', value: 250 }, // prestige-gold
+  { label: '5 VC', color: 'rgb(26, 26, 26)', value: 5 },
+  { label: '100 VC', color: 'rgb(0, 255, 156)', value: 100 }, // accent-emerald
+  { label: 'JACKPOT', color: 'rgb(255, 0, 127)', value: 2500 }, // danger-neon
+  { label: '25 VC', color: 'rgb(18, 18, 18)', value: 25 }, // surface-card
+  { label: '500 VC', color: 'rgb(255, 215, 0)', value: 500 }, // prestige-gold
 ];
 
 const DailyPulse = () => {
@@ -92,11 +92,11 @@ const DailyPulse = () => {
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
       {/* Sidebar de Status Tático */}
       <div className="lg:col-span-4 flex flex-col gap-6">
-        <div className="bg-[#0A0A0A] rounded-[40px] border border-white/5 p-8 relative overflow-hidden group shadow-2xl">
-          <div className="absolute top-0 right-0 h-32 w-32 bg-[#00FF9C]/5 blur-[60px]" />
+        <div className="bg-surface-card rounded-[40px] border border-white/5 p-8 relative overflow-hidden group shadow-2xl">
+          <div className="absolute top-0 right-0 h-32 w-32 bg-accent-emerald/5 blur-[60px]" />
           <header className="mb-10">
             <div className="flex items-center gap-3 mb-2">
-              <Lightning weight="fill" className="text-[#00FF9C]" size={20} />
+              <Lightning weight="fill" className="text-accent-emerald" size={20} />
               <span className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.4em]">Reactor Core v.03</span>
             </div>
             <h2 className="text-4xl font-black text-white uppercase tracking-tighter italic">Orbital Pulse</h2>
@@ -106,11 +106,11 @@ const DailyPulse = () => {
             <div className="p-6 rounded-3xl bg-white/[0.02] border border-white/5 flex justify-between items-center">
               <div>
                 <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-1">Resultado da Sincronia</p>
-                <p className={cn("text-2xl font-mono font-black", lastWin?.includes('JACKPOT') ? "text-[#FF007F]" : "text-[#FFD700]")}>
+                <p className={cn("text-2xl font-mono font-black", lastWin?.includes('JACKPOT') ? "text-danger-neon" : "text-prestige-gold")}>
                   {lastWin || 'Aguardando...'}
                 </p>
               </div>
-              <Trophy weight="duotone" size={32} className="text-[#FFD700]" />
+              <Trophy weight="duotone" size={32} className="text-prestige-gold" />
             </div>
           </div>
 
@@ -119,9 +119,9 @@ const DailyPulse = () => {
             disabled={isSpinning}
             className={cn(
               "w-full h-24 rounded-[30px] font-black uppercase tracking-[0.3em] text-sm transition-all flex flex-col items-center justify-center gap-1",
-              isSpinning 
-                ? "bg-zinc-900 text-zinc-600 border border-white/5 cursor-not-allowed" 
-                : "bg-white text-black hover:bg-[#00FF9C] hover:shadow-[0_0_50px_rgba(0,255,156,0.4)] active:scale-95"
+              isSpinning
+                ? "bg-zinc-900 text-zinc-600 border border-white/5 cursor-not-allowed"
+                : "bg-white text-black hover:bg-accent-emerald shadow-glow-emerald active:scale-95"
             )}
           >
             <span>{isSpinning ? 'CALCULATING...' : 'ENGAGE PULSE'}</span>

@@ -2,10 +2,18 @@
 
 import AppLayout from '@/components/layout/AppLayout';
 import { useStore } from '@infra/state/store';
-import { Lightning, Trophy, GameController, ArrowUpRight, Coins } from '@phosphor-icons/react';
+import { Lightning, Trophy, GameController, ArrowUpRight, Coins, type Icon } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 
-const ExperienceCard = ({ title, description, icon: Icon, reward, locked = false }: any) => (
+interface ExperienceCardProps {
+  title: string;
+  description: string;
+  icon: Icon;
+  reward: string;
+  locked?: boolean;
+}
+
+const ExperienceCard = ({ title, description, icon: Icon, reward, locked = false }: ExperienceCardProps) => (
   <div className={cn(
     "group relative overflow-hidden rounded-2xl border bg-[#121214] p-7 transition-all duration-300",
     locked ? "opacity-60 cursor-not-allowed border-white/5" : "hover:border-emerald-500/40 cursor-pointer border-white/10"

@@ -33,11 +33,11 @@ const AdminDashboardPage = () => {
         
         {/* Banner de Alerta Crítico */}
         {data?.recentAlerts.some(a => a.severity === 'CRITICAL') && (
-          <div className="bg-[#FF0055]/10 border border-[#FF0055]/20 rounded-lg p-4 flex items-center justify-between text-[#FF0055] shadow-[0_0_20px_rgba(255,0,85,0.1)]">
+          <div className="bg-danger-neon/10 border border-danger-neon/20 rounded-lg p-4 flex items-center justify-between text-danger-neon shadow-glow-danger">
             <div className="flex items-center gap-3">
               <BellRing size={20} className="animate-pulse" />
               <span className="text-xs font-black uppercase tracking-widest">Atenção Necessária</span>
-              <span className="w-px h-4 bg-[#FF0055]/20" />
+              <span className="w-px h-4 bg-danger-neon/20" />
               <span className="text-sm font-mono font-bold text-white">
                 {data.recentAlerts.find(a => a.severity === 'CRITICAL')?.message}
               </span>
@@ -48,7 +48,7 @@ const AdminDashboardPage = () => {
 
         {isLoading ? (
           <div className="grid grid-cols-4 gap-4 h-32">
-             {[1,2,3,4].map(i => <div key={i} className="bg-[#121212] border border-white/5 rounded-xl animate-pulse" />)}
+             {[1,2,3,4].map(i => <div key={i} className="bg-surface-card border border-white/5 rounded-xl animate-pulse" />)}
           </div>
         ) : data ? (
           <>
@@ -62,8 +62,8 @@ const AdminDashboardPage = () => {
               </div>
               
               {/* Coluna Secundária - Terminal de Segurança */}
-              <div className="bg-[#09090b] border border-white/10 rounded-xl flex flex-col h-full overflow-hidden shadow-2xl">
-                <div className="px-5 py-4 border-b border-white/5 flex items-center justify-between bg-[#050505]">
+              <div className="bg-surface-card border border-white/10 rounded-xl flex flex-col h-full overflow-hidden shadow-2xl">
+                <div className="px-5 py-4 border-b border-white/5 flex items-center justify-between bg-surface-black">
                   <div className="flex items-center gap-2 text-zinc-400">
                     <Terminal size={14} />
                     <span className="text-[10px] font-black uppercase tracking-[0.2em]">Security Log</span>
@@ -78,7 +78,7 @@ const AdminDashboardPage = () => {
                         [{new Date(alert.timestamp).toLocaleTimeString([], {hour12: false, hour: '2-digit', minute:'2-digit', second:'2-digit'})}]
                       </span>
                       <div className="flex flex-col">
-                        <span className={`font-bold ${alert.severity === 'CRITICAL' ? 'text-[#FF0055]' : 'text-yellow-500'}`}>
+                        <span className={`font-bold ${alert.severity === 'CRITICAL' ? 'text-danger-neon' : 'text-yellow-500'}`}>
                           {alert.severity === 'CRITICAL' ? '[CRITICAL_ERR]' : '[WARN_FLAG]'}
                         </span>
                         <span className="text-zinc-300 group-hover:text-white transition-colors">{alert.message}</span>
@@ -98,8 +98,8 @@ const AdminDashboardPage = () => {
                     </div>
                   ))}
                 </div>
-                
-                <div className="p-2 border-t border-white/5 bg-[#050505]">
+
+                <div className="p-2 border-t border-white/5 bg-surface-black">
                    <div className="flex items-center gap-2 px-3 py-2 bg-white/5 rounded border border-white/5">
                       <span className="text-emerald-500 animate-pulse">_</span>
                       <input className="bg-transparent border-none outline-none text-xs font-mono text-zinc-400 w-full placeholder:text-zinc-700" placeholder="Type command..." disabled />

@@ -62,11 +62,38 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        /* Design Tokens - Surface colors */
+        surface: {
+          black: "hsl(var(--surface-black))",
+          card: "hsl(var(--surface-card))",
+          elevated: "hsl(var(--surface-elevated))",
+          input: "hsl(var(--surface-input))",
+        },
+        /* Design Tokens - Accent colors */
+        "accent-emerald": {
+          DEFAULT: "hsl(var(--accent-emerald))",
+          hover: "hsl(var(--accent-emerald-hover))",
+        },
+        /* Design Tokens - Prestige colors */
+        prestige: {
+          gold: "hsl(var(--prestige-gold))",
+        },
+        /* Design Tokens - Danger colors */
+        danger: {
+          neon: "hsl(var(--danger-neon))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      /* Design Tokens - Glow shadows */
+      boxShadow: {
+        "glow-emerald": "0 0 20px rgba(0, 255, 156, 0.3)",
+        "glow-emerald-lg": "0 0 40px rgba(0, 255, 156, 0.4)",
+        "glow-gold": "0 0 20px rgba(255, 215, 0, 0.3)",
+        "glow-danger": "0 0 20px rgba(255, 0, 127, 0.3)",
       },
       keyframes: {
         "accordion-down": {

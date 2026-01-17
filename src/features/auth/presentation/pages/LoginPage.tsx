@@ -62,14 +62,14 @@ const LoginPage = () => {
             <span className="w-full border-t border-white/5" />
           </div>
           <div className="relative flex justify-center text-[10px] uppercase">
-            <span className="bg-[#09090b] px-2 text-zinc-500 font-bold tracking-widest">Ou continue com</span>
+            <span className="bg-surface-card px-2 text-zinc-500 font-bold tracking-widest">Ou continue com</span>
           </div>
         </div>
 
         {method === 'INITIAL' ? (
           <button
             onClick={() => setMethod('EMAIL')}
-            className="h-12 w-full bg-[#121212] border border-white/10 text-zinc-300 font-bold uppercase tracking-widest rounded-xl hover:bg-white/5 hover:border-white/20 transition-all active:scale-[0.98] flex items-center justify-center gap-3"
+            className="h-12 w-full bg-surface-card border border-white/10 text-zinc-300 font-bold uppercase tracking-widest rounded-xl hover:bg-white/5 hover:border-white/20 transition-all active:scale-[0.98] flex items-center justify-center gap-3"
           >
             <Mail size={18} />
             Email Corporativo
@@ -83,7 +83,7 @@ const LoginPage = () => {
                   type="email" 
                   value={formData.email}
                   onChange={e => setFormData({...formData, email: e.target.value})}
-                  className="w-full bg-[#121212] border border-white/10 rounded-xl h-12 px-4 pl-10 text-white font-medium outline-none focus:border-[#00FF9C]/50 transition-colors"
+                  className="w-full bg-surface-card border border-white/10 rounded-xl h-12 px-4 pl-10 text-white font-medium outline-none focus:border-accent-emerald/50 transition-colors"
                   placeholder="nome@exemplo.com"
                   autoFocus
                 />
@@ -98,7 +98,7 @@ const LoginPage = () => {
                   type="password" 
                   value={formData.password}
                   onChange={e => setFormData({...formData, password: e.target.value})}
-                  className="w-full bg-[#121212] border border-white/10 rounded-xl h-12 px-4 pl-10 text-white font-medium outline-none focus:border-[#00FF9C]/50 transition-colors"
+                  className="w-full bg-surface-card border border-white/10 rounded-xl h-12 px-4 pl-10 text-white font-medium outline-none focus:border-accent-emerald/50 transition-colors"
                   placeholder="••••••••"
                 />
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-600" size={16} />
@@ -108,7 +108,7 @@ const LoginPage = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="h-12 w-full bg-[#00FF9C] text-black font-black uppercase tracking-widest rounded-xl hover:bg-[#00e68d] hover:shadow-[0_0_20px_rgba(0,255,156,0.3)] transition-all active:scale-[0.98] flex items-center justify-center gap-2 mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="h-12 w-full bg-accent-emerald text-black font-black uppercase tracking-widest rounded-xl hover:bg-accent-emerald-hover hover:shadow-glow-emerald transition-all active:scale-[0.98] flex items-center justify-center gap-2 mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? <Loader2 className="animate-spin" /> : <>Acessar <ArrowRight size={18} /></>}
             </button>
@@ -118,9 +118,9 @@ const LoginPage = () => {
         <div className="mt-4 text-center">
           <p className="text-xs text-zinc-500">
             Ainda não tem acesso?{' '}
-            <button 
+            <button
               onClick={() => navigate('/register')}
-              className="text-[#00FF9C] font-bold hover:underline decoration-1 underline-offset-4"
+              className="text-accent-emerald font-bold hover:underline decoration-1 underline-offset-4"
             >
               Criar conta
             </button>

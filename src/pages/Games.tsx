@@ -27,7 +27,7 @@ const Games = () => {
         </header>
 
         <Tabs defaultValue="mines" className="w-full">
-          <TabsList className="bg-[#121212] border border-white/5 p-2 rounded-[24px] mb-12 inline-flex overflow-x-auto max-w-full">
+          <TabsList className="bg-surface-card border border-white/5 p-2 rounded-[24px] mb-12 inline-flex overflow-x-auto max-w-full">
             <TabsTrigger value="mines" className="data-[state=active]:bg-emerald-500 data-[state=active]:text-black rounded-xl px-8 py-3 gap-3 font-black uppercase text-[10px] tracking-widest transition-all text-zinc-400">
               <Zap size={16} fill="currentColor" /> Data Sync
             </TabsTrigger>

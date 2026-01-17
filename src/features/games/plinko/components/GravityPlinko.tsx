@@ -15,13 +15,13 @@ const GRAVITY = 0.25;
 const BOUNCE_DAMPING = 0.6;
 const MULTIPLIERS = [15, 8, 3, 1.5, 1.1, 1, 0.5, 1, 1.1, 1.5, 3, 8, 15];
 
-// Cores
+// Design Tokens: cores baseadas nos tokens Tailwind
 const COLORS = {
-  primary: '#00FF9C',
-  pinIdle: '#333',
-  pinActive: '#FFFFFF',
-  ball: '#00FF9C',
-  text: '#FFFFFF'
+  primary: 'rgb(0, 255, 156)', // accent-emerald
+  pinIdle: 'rgb(51, 51, 51)',
+  pinActive: 'rgb(255, 255, 255)',
+  ball: 'rgb(0, 255, 156)', // accent-emerald
+  text: 'rgb(255, 255, 255)'
 };
 
 interface Particle {
@@ -167,11 +167,11 @@ const GravityPlinko = () => {
       ctx.shadowBlur = 0;
 
       const isHigh = MULTIPLIERS[i] >= 8;
-      ctx.strokeStyle = isHigh ? (intensity > 0 ? '#FFD700' : '#FFD70040') : (intensity > 0 ? '#00FF9C' : '#FFFFFF20');
+      ctx.strokeStyle = isHigh ? (intensity > 0 ? 'rgb(255, 215, 0)' : 'rgba(255, 215, 0, 0.25)') : (intensity > 0 ? 'rgb(0, 255, 156)' : 'rgba(255, 255, 255, 0.125)');
       ctx.lineWidth = 1;
       ctx.stroke();
 
-      ctx.fillStyle = isHigh ? '#FFD700' : '#FFFFFF';
+      ctx.fillStyle = isHigh ? 'rgb(255, 215, 0)' : 'rgb(255, 255, 255)';
       ctx.font = `bold ${Math.min(10, spacing/3)}px monospace`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
@@ -223,9 +223,9 @@ const GravityPlinko = () => {
 
         const multiplier = MULTIPLIERS[slotIndex];
         const win = bet * multiplier;
-        
-        slotsRef.current[slotIndex] = 1; 
-        spawnParticles(ball.x, ball.y, 20, multiplier >= 8 ? '#FFD700' : '#00FF9C');
+
+        slotsRef.current[slotIndex] = 1;
+        spawnParticles(ball.x, ball.y, 20, multiplier >= 8 ? 'rgb(255, 215, 0)' : 'rgb(0, 255, 156)');
         
         if (multiplier >= 1) {
           showSuccess(`+${win.toFixed(0)} VC`);
@@ -326,11 +326,11 @@ const GravityPlinko = () => {
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch h-[700px]">
       
       {/* --- Controles --- */}
-      <div className="bg-[#09090b] rounded-[32px] border border-white/5 p-8 flex flex-col justify-between shadow-2xl relative z-20">
+      <div className="bg-surface-card rounded-[32px] border border-white/5 p-8 flex flex-col justify-between shadow-2xl relative z-20">
         <div className="space-y-6">
           <header>
              <div className="flex items-center gap-2 mb-2">
-               <Database className="text-[#00FF9C] h-4 w-4" />
+               <Database className="text-accent-emerald h-4 w-4" />
                <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Gravity Protocol</span>
             </div>
             <h2 className="text-4xl font-black text-white italic tracking-tighter">PLINKO</h2>
@@ -339,11 +339,11 @@ const GravityPlinko = () => {
           <div>
             <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-3 block">Alocação (VaultCoins)</label>
             <div className="grid grid-cols-2 gap-2 mb-4">
-              <input 
-                 type="number" 
+              <input
+                 type="number"
                  value={bet}
                  onChange={(e) => setBet(Number(e.target.value))}
-                 className="col-span-2 bg-[#121212] border border-white/10 rounded-xl h-12 px-4 font-mono text-white outline-none focus:border-[#00FF9C]"
+                 className="col-span-2 bg-surface-card border border-white/10 rounded-xl h-12 px-4 font-mono text-white outline-none focus:border-accent-emerald"
               />
               {[10, 50, 100, 500].map(v => (
                 <button key={v} onClick={() => setBet(v)} className="h-10 rounded-lg bg-white/5 hover:bg-white/10 text-[10px] font-bold text-zinc-400 border border-white/5 hover:border-white/20 transition-all">
@@ -353,27 +353,27 @@ const GravityPlinko = () => {
             </div>
           </div>
           
-          <div className="p-4 rounded-2xl bg-[#121212] border border-white/5">
+          <div className="p-4 rounded-2xl bg-surface-card border border-white/5">
              <div className="flex justify-between items-center mb-2">
                <span className="text-[10px] font-bold text-zinc-500 uppercase">Último Ganho</span>
-               <span className="text-[#00FF9C] font-mono font-bold">{lastWin?.toFixed(0) || '0'} VC</span>
+               <span className="text-accent-emerald font-mono font-bold">{lastWin?.toFixed(0) || '0'} VC</span>
              </div>
              <div className="h-1 w-full bg-zinc-800 rounded-full overflow-hidden">
-               <motion.div 
+               <motion.div
                  key={lastWin}
                  initial={{ width: '0%' }}
                  animate={{ width: '100%', opacity: 0 }}
                  transition={{ duration: 1 }}
-                 className="h-full bg-[#00FF9C]"
+                 className="h-full bg-accent-emerald"
                />
              </div>
           </div>
         </div>
 
         <div className="flex flex-col gap-4">
-          <button 
-            onClick={dropBall} 
-            className="w-full h-20 bg-[#00FF9C] text-black font-black uppercase tracking-widest rounded-2xl hover:shadow-[0_0_40px_rgba(0,255,156,0.4)] transition-all active:scale-95 flex items-center justify-center gap-3 relative overflow-hidden group"
+          <button
+            onClick={dropBall}
+            className="w-full h-20 bg-accent-emerald text-black font-black uppercase tracking-widest rounded-2xl shadow-glow-emerald transition-all active:scale-95 flex items-center justify-center gap-3 relative overflow-hidden group"
           >
             <span className="relative z-10 flex items-center gap-2"><Coins size={24} fill="currentColor" /> INICIAR PROTOCOLO</span>
             <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
@@ -390,16 +390,16 @@ const GravityPlinko = () => {
       </div>
 
       {/* --- Área do Jogo (Canvas) --- */}
-      <div className="lg:col-span-2 bg-[#050505] rounded-[40px] border border-white/5 relative overflow-hidden flex flex-col p-4 shadow-inner">
-        <div className="absolute inset-0 opacity-20 pointer-events-none" 
-          style={{ 
-            backgroundImage: 'radial-gradient(circle at center, #00FF9C 1px, transparent 1px)', 
+      <div className="lg:col-span-2 bg-surface-black rounded-[40px] border border-white/5 relative overflow-hidden flex flex-col p-4 shadow-inner">
+        <div className="absolute inset-0 opacity-20 pointer-events-none"
+          style={{
+            backgroundImage: 'radial-gradient(circle at center, rgb(0, 255, 156) 1px, transparent 1px)',
             backgroundSize: '30px 30px'
-          }} 
+          }}
         />
-        
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-12 bg-[#121212] rounded-b-3xl border-b border-x border-white/10 flex items-center justify-center z-10 shadow-lg">
-           <ArrowDown className="text-[#00FF9C] animate-bounce" size={20} />
+
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-12 bg-surface-card rounded-b-3xl border-b border-x border-white/10 flex items-center justify-center z-10 shadow-lg">
+           <ArrowDown className="text-accent-emerald animate-bounce" size={20} />
         </div>
 
         <canvas 

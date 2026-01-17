@@ -17,8 +17,8 @@ export const PendingReviews = ({ actions }: Props) => {
   };
 
   return (
-    <div className="bg-[#121212] border border-white/5 rounded-xl overflow-hidden flex flex-col h-full">
-      <div className="px-6 py-4 border-b border-white/5 flex justify-between items-center bg-[#09090b]">
+    <div className="bg-surface-card border border-white/5 rounded-xl overflow-hidden flex flex-col h-full">
+      <div className="px-6 py-4 border-b border-white/5 flex justify-between items-center bg-surface-card">
         <div className="flex items-center gap-3">
           <div className="h-2 w-2 rounded-full bg-orange-500 animate-pulse" />
           <h3 className="text-xs font-black text-white uppercase tracking-[0.2em]">Fila de Análise</h3>
