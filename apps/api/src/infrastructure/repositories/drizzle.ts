@@ -5,6 +5,7 @@ import {
   IRewardsRepository 
 } from '../../domain/ports';
 import { products, orders } from '../db/schema';
+import { CatalogMapper, OrderMapper } from '../../domain/mappers';
 import { eq } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/neon-http';
 import { neon } from '@neondatabase/serverless';
@@ -19,19 +20,26 @@ export class DrizzleCatalogRepo implements ICatalogRepository {
   async findAll(page: number, limit: number) {
     const db = getDb();
     const data = await db.select().from(products).limit(limit).offset((page - 1) * limit);
-    // Cast necessário pois o schema DB pode diferir ligeiramente dos tipos Zod (decimal vs number)
-    return { items: data as any[], total: 100 }; // Count real seria outra query
+    
+    // AQUI OCORRE A TRADUÇÃO: DB -> API Contract
+    const items = data.map(CatalogMapper.toContract);
+    
+    return { items, total: 100 }; 
   }
+
   async findById(id: string) {
     const db = getDb();
     const [item] = await db.select().from(products).where(eq(products.id, id));
-    return (item as any) || null;
+    return item ? CatalogMapper.toContract(item) : null;
   }
+
   async create(p: any) {
     const db = getDb();
+    // Aqui poderíamos usar insertProductSchema.parse(p) para validar antes de inserir
     await db.insert(products).values(p);
     return p;
   }
+
   async updateStock(id: string, qty: number) {
     const db = getDb();
     await db.update(products).set({ stock: qty }).where(eq(products.id, id));
@@ -41,10 +49,20 @@ export class DrizzleCatalogRepo implements ICatalogRepository {
 export class DrizzleOrdersRepo implements IOrdersRepository {
   async create(o: any) {
     const db = getDb();
-    await db.insert(orders).values(o);
+    // O mapper reverso (Contract -> DB) seria usado aqui em um cenário real
+    await db.insert(orders).values({
+      ...o,
+      items: JSON.stringify(o.items) // Exemplo de adaptação de dados
+    });
     return o;
   }
-  async findById(_id: string) { return null as any; }
+  
+  async findById(id: string) { 
+    const db = getDb();
+    const [order] = await db.select().from(orders).where(eq(orders.id, id));
+    return order ? OrderMapper.toContract(order) : null;
+  }
+
   async findByUserId(_uid: string) { return []; }
   async updateStatus(_id: string, _status: any, _tx?: string) {}
 }
