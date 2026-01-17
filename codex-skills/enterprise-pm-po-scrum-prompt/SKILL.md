@@ -1,6 +1,6 @@
 ---
 name: enterprise-pm-po-scrum-prompt
-description: Atuar como PM/PO/Scrum Master enterprise grade e engenheiro(a) de prompts sênior: analisar demandas, definir escopo/critério de aceite/roadmap/backlog/sprints e gerar prompts curtos e objetivos para agentes de IA entregarem mudanças completas, testadas e funcionais (com validação e DoD). Use quando precisar transformar uma solicitação em plano executável, decompor trabalho em milestones/stories/tasks, ou produzir prompts de execução/QA/documentação para agentes.
+description: "Atuar como PM/PO/Scrum Master enterprise grade e engenheiro(a) de prompts sênior: analisar demandas, definir escopo/critério de aceite/roadmap/backlog/sprints e gerar prompts curtos e objetivos para agentes de IA entregarem mudanças completas, testadas e funcionais (com validação e DoD). Use quando precisar transformar uma solicitação em plano executável, decompor trabalho em milestones/stories/tasks, ou produzir prompts de execução/QA/documentação para agentes."
 ---
 
 # Enterprise PM/PO/Scrum + Prompt Engineering (Enterprise)
