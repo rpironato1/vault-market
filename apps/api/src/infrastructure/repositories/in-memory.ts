@@ -4,7 +4,7 @@ import {
   IVaultCoinsRepository, 
   IRewardsRepository 
 } from '../../domain/ports';
-import { Product, Order, WithdrawalRequest, VaultCoinTransactionSchema } from '../../../../packages/contracts';
+import { Product, Order, WithdrawalRequest, VaultCoinTransactionSchema } from '../../../../../packages/contracts';
 import { z } from 'zod';
 
 type VaultCoinTransaction = z.infer<typeof VaultCoinTransactionSchema>;
@@ -80,5 +80,5 @@ export class InMemoryRewardsRepo implements IRewardsRepository {
     const w = DB.withdrawals.get(id);
     if (w) { w.status = status; if(tx) w.txHash = tx; }
   }
-  async getAvailableBalance(userId: string) { return 1000; } // Mock fixo
+  async getAvailableBalance(_userId: string) { return 1000; } // Mock fixo
 }

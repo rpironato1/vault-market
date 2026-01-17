@@ -5,6 +5,9 @@ import { swaggerUI } from '@hono/swagger-ui';
 // Importação de Rotas (Controllers)
 import { adminRoute } from './routes/admin';
 import { catalogRoute } from './routes/catalog';
+import { ordersRoute } from './routes/orders';
+import { meRoute } from './routes/me';
+import { withdrawalsRoute } from './routes/withdrawals';
 
 const app = new OpenAPIHono();
 
@@ -24,9 +27,12 @@ app.doc('/doc', {
 // Swagger UI para visualização dos contratos
 app.get('/ui', swaggerUI({ url: '/doc' }));
 
-// Registro de Rotas
+// Registro de Rotas (Versionamento v1)
 app.route('/v1/admin', adminRoute);
 app.route('/v1/catalog', catalogRoute);
+app.route('/v1/orders', ordersRoute);
+app.route('/v1/me', meRoute);
+app.route('/v1/withdrawals', withdrawalsRoute);
 
 export default {
   port: 8787,

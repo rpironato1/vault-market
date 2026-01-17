@@ -1,10 +1,9 @@
 import { 
   Product, 
   Order, 
-  CreateOrderDTO, 
   VaultCoinTransactionSchema, 
   WithdrawalRequest 
-} from '../../../packages/contracts';
+} from '../../../../packages/contracts';
 import { z } from 'zod';
 
 // Reutilizando tipos do contrato para agilidade, 

@@ -4,8 +4,8 @@ import {
   IVaultCoinsRepository, 
   IRewardsRepository 
 } from '../../domain/ports';
-import { products, orders, vaultCoinLedger, withdrawals } from '../db/schema';
-import { eq, desc, and } from 'drizzle-orm';
+import { products, orders } from '../db/schema';
+import { eq } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/neon-http';
 import { neon } from '@neondatabase/serverless';
 
@@ -38,30 +38,26 @@ export class DrizzleCatalogRepo implements ICatalogRepository {
   }
 }
 
-// ... Outras implementações seguem o mesmo padrão: DB Query -> Map to Domain Entity
-// Para brevidade, implementamos o esqueleto funcional do Catalog como prova de conceito.
-// As demais seriam análogas.
-
 export class DrizzleOrdersRepo implements IOrdersRepository {
   async create(o: any) {
     const db = getDb();
     await db.insert(orders).values(o);
     return o;
   }
-  async findById(id: string) { return null as any; }
-  async findByUserId(uid: string) { return []; }
-  async updateStatus(id: string, status: any, tx?: string) {}
+  async findById(_id: string) { return null as any; }
+  async findByUserId(_uid: string) { return []; }
+  async updateStatus(_id: string, _status: any, _tx?: string) {}
 }
 
 export class DrizzleVaultCoinsRepo implements IVaultCoinsRepository {
-  async getBalance(userId: string) { return 0; }
-  async addTransaction(userId: string, tx: any) {}
-  async getLedger(userId: string) { return []; }
+  async getBalance(_userId: string) { return 0; }
+  async addTransaction(_userId: string, _tx: any) {}
+  async getLedger(_userId: string) { return []; }
 }
 
 export class DrizzleRewardsRepo implements IRewardsRepository {
   async createWithdrawal(req: any) { return req; }
-  async getWithdrawalsByStatus(status: any) { return []; }
+  async getWithdrawalsByStatus(_status: any) { return []; }
   async updateWithdrawalStatus() {}
   async getAvailableBalance() { return 0; }
 }

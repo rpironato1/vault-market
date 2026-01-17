@@ -1,5 +1,5 @@
-import { OpenAPIHono, createRoute, z } from '@hono/zod-openapi';
-import { AdminDashboardResponseSchema } from '../../../packages/contracts/admin';
+import { OpenAPIHono, createRoute } from '@hono/zod-openapi';
+import { AdminDashboardResponseSchema } from '../../../../packages/contracts/admin';
 
 export const adminRoute = new OpenAPIHono();
 
@@ -26,9 +26,6 @@ const getDashboardRoute = createRoute({
 
 // Implementação da Lógica (O Código)
 adminRoute.openapi(getDashboardRoute, (c) => {
-  // AQUI entraria a chamada ao Banco de Dados (Neon / Hyperdrive)
-  // Por enquanto, retornamos um mock que o TypeScript garante ser compatível com o Schema
-  
   return c.json({
     stats: {
       totalUsers: 12500,
@@ -41,7 +38,7 @@ adminRoute.openapi(getDashboardRoute, (c) => {
     recentAlerts: [
       {
         id: '1',
-        severity: 'INFO',
+        severity: 'INFO' as const,
         message: 'API iniciada com sucesso via Hono',
         timestamp: Date.now()
       }
