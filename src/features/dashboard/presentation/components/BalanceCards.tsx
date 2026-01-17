@@ -63,7 +63,7 @@ export const BalanceCards = ({ balances, isLoading }: BalanceCardsProps) => {
       </div>
 
       {/* USDT Rewards Card - Finance / Gold Theme */}
-      <div className="group relative overflow-hidden rounded-2xl bg-[#0A0A0A] border border-[#FFD700]/20 p-6 transition-all hover:border-[#FFD700]/40 hover:bg-[#0F0F0F]">
+      <div className="group relative overflow-hidden rounded-2xl bg-[#0A0A0A] border border-prestige-gold/20 p-6 transition-all hover:border-prestige-gold/40 hover:bg-[#0F0F0F]">
         <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity pointer-events-none">
           <Trophy size={100} weight="fill" />
         </div>
@@ -71,7 +71,7 @@ export const BalanceCards = ({ balances, isLoading }: BalanceCardsProps) => {
         <div className="relative z-10 flex flex-col h-full justify-between">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-[#FFD700]/10 text-[#FFD700] border border-[#FFD700]/20">
+              <div className="p-2 rounded-lg bg-prestige-gold/10 text-prestige-gold border border-prestige-gold/20">
                 <Trophy size={18} weight="fill" />
               </div>
               <div>
@@ -79,7 +79,7 @@ export const BalanceCards = ({ balances, isLoading }: BalanceCardsProps) => {
                 <span className="text-xs font-bold text-white">USDT Rewards</span>
               </div>
             </div>
-            <div className="flex items-center gap-1 text-[10px] font-bold text-[#FFD700] bg-[#FFD700]/10 px-2 py-1 rounded border border-[#FFD700]/20">
+            <div className="flex items-center gap-1 text-[10px] font-bold text-prestige-gold bg-prestige-gold/10 px-2 py-1 rounded border border-prestige-gold/20">
                <ArrowUpRight size={12} />
                <span>POLYGON</span>
             </div>
@@ -87,7 +87,7 @@ export const BalanceCards = ({ balances, isLoading }: BalanceCardsProps) => {
           
           <div>
             <div className="flex items-baseline gap-1">
-              <span className="text-xl font-mono font-bold text-[#FFD700]">$</span>
+              <span className="text-xl font-mono font-bold text-prestige-gold">$</span>
               <span className="text-5xl font-mono font-black text-white tracking-tighter tabular-nums text-transparent bg-clip-text bg-gradient-to-br from-white to-[#FFD700]/50">
                 {balances.usdtAvailable.toFixed(2)}
               </span>
@@ -102,7 +102,7 @@ export const BalanceCards = ({ balances, isLoading }: BalanceCardsProps) => {
                   <strong className="text-zinc-300">${balances.usdtLocked.toFixed(2)}</strong> em análise
                 </span>
               </div>
-              <span className="text-xs font-bold text-[#FFD700] group-hover:underline decoration-1 underline-offset-4 cursor-pointer">
+              <span className="text-xs font-bold text-prestige-gold group-hover:underline decoration-1 underline-offset-4 cursor-pointer">
                  Sacar &rarr;
               </span>
             </div>
@@ -110,7 +110,7 @@ export const BalanceCards = ({ balances, isLoading }: BalanceCardsProps) => {
         </div>
         
         {/* Ambient Glow */}
-        <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-[#FFD700]/5 blur-[50px] rounded-full pointer-events-none" />
+        <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-prestige-gold/5 blur-[50px] rounded-full pointer-events-none" />
       </div>
     </div>
   );

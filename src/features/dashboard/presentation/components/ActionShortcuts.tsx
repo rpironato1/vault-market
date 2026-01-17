@@ -35,7 +35,7 @@ export const ActionShortcuts = () => {
   const themes = {
     blue: "hover:border-blue-500/30 hover:bg-blue-500/5 group-hover:text-blue-400",
     emerald: "hover:border-emerald-500/30 hover:bg-emerald-500/5 group-hover:text-emerald-400",
-    gold: "hover:border-[#FFD700]/30 hover:bg-[#FFD700]/5 group-hover:text-[#FFD700]"
+    gold: "hover:border-prestige-gold/30 hover:bg-prestige-gold/5 group-hover:text-prestige-gold"
   };
 
   return (
@@ -57,7 +57,7 @@ export const ActionShortcuts = () => {
             <div className="flex flex-col relative z-10">
               <span className={cn("text-[9px] font-black uppercase tracking-[0.2em] mb-1.5 opacity-50 group-hover:opacity-100 transition-opacity", 
                  action.theme === 'blue' ? 'text-blue-400' : 
-                 action.theme === 'emerald' ? 'text-emerald-400' : 'text-[#FFD700]'
+                 action.theme === 'emerald' ? 'text-emerald-400' : 'text-prestige-gold'
               )}>
                 {action.tag}
               </span>
@@ -71,7 +71,7 @@ export const ActionShortcuts = () => {
               "h-10 w-10 rounded-xl bg-[#151515] border border-white/5 flex items-center justify-center transition-all group-hover:scale-110",
               action.theme === 'blue' ? 'group-hover:bg-blue-500/10 group-hover:border-blue-500/20 group-hover:text-blue-400' : 
               action.theme === 'emerald' ? 'group-hover:bg-emerald-500/10 group-hover:border-emerald-500/20 group-hover:text-emerald-400' : 
-              'group-hover:bg-[#FFD700]/10 group-hover:border-[#FFD700]/20 group-hover:text-[#FFD700]'
+              'group-hover:bg-prestige-gold/10 group-hover:border-prestige-gold/20 group-hover:text-prestige-gold'
             )}>
               <action.icon size={20} className="text-zinc-600 group-hover:text-current transition-colors" />
             </div>

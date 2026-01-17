@@ -13,16 +13,16 @@ export const WheelPointer = ({ isSpinning }: { isSpinning: boolean }) => (
       {/* Corpo do Ponteiro */}
       <svg width="40" height="60" viewBox="0 0 40 60" fill="none">
         <path d="M20 60L40 20L20 0L0 20L20 60Z" fill="url(#pointerGradient)" />
-        <path d="M20 50L35 22L20 8L5 22L20 50Z" fill="#00FF9C" fillOpacity="0.3" />
+        <path d="M20 50L35 22L20 8L5 22L20 50Z" fill="rgb(0, 255, 156)" fillOpacity="0.3" />
         <defs>
           <linearGradient id="pointerGradient" x1="20" y1="0" x2="20" y2="60" gradientUnits="userSpaceOnUse">
             <stop stopColor="white" />
-            <stop offset="1" stopColor="#00FF9C" />
+            <stop offset="1" stopColor="rgb(0, 255, 156)" />
           </linearGradient>
         </defs>
       </svg>
       {/* Brilho do Ponteiro */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-[#00FF9C] blur-xl opacity-40" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-accent-emerald blur-xl opacity-40" />
     </motion.div>
   </div>
 );

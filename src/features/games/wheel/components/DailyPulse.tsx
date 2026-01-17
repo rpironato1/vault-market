@@ -131,12 +131,12 @@ const DailyPulse = () => {
       </div>
 
       {/* A Super Roleta */}
-      <div className="lg:col-span-8 bg-[#050505] rounded-[60px] border border-white/5 p-16 flex items-center justify-center relative shadow-[inset_0_0_100px_rgba(0,0,0,1)] min-h-[700px]">
+      <div className="lg:col-span-8 bg-surface-black rounded-[60px] border border-white/5 p-16 flex items-center justify-center relative shadow-[inset_0_0_100px_rgba(0,0,0,1)] min-h-[700px]">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,255,156,0.05),transparent)]" />
         
         <div className="relative w-[550px] h-[550px]">
           {/* Chassis Externo com LEDs */}
-          <div className="absolute inset-[-60px] rounded-full border-[20px] border-[#121212] shadow-[0_0_100px_rgba(0,0,0,0.5),inset_0_0_20px_rgba(255,255,255,0.05)]">
+          <div className="absolute inset-[-60px] rounded-full border-[20px] border-surface-card shadow-[0_0_100px_rgba(0,0,0,0.5),inset_0_0_20px_rgba(255,255,255,0.05)]">
             {Array.from({ length: 24 }).map((_, i) => (
               <motion.div 
                 key={i}
@@ -175,10 +175,10 @@ const DailyPulse = () => {
               
               {/* Pinos de Ouro (Pins) */}
               {Array.from({ length: SECTORS.length }).map((_, i) => (
-                <circle 
-                  key={i} 
-                  cx="50" cy="2" r="1.5" 
-                  fill="#FFD700" 
+                <circle
+                  key={i}
+                  cx="50" cy="2" r="1.5"
+                  fill="rgb(255, 215, 0)"
                   style={{ transformOrigin: '50% 50%', transform: `rotate(${i * (360/SECTORS.length)}deg)` }}
                   className="shadow-xl"
                 />

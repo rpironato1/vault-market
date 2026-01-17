@@ -22,7 +22,7 @@ const NavItem = ({ icon: Icon, label, path, active }: NavItemProps) => {
       className={cn(
         "flex items-center gap-3 w-full px-4 py-3 rounded-lg text-xs font-bold transition-all border border-transparent",
         active 
-          ? "bg-[#00FF9C]/10 text-[#00FF9C] border-[#00FF9C]/20 shadow-[0_0_15px_rgba(0,255,156,0.1)]" 
+          ? "bg-accent-emerald/10 text-accent-emerald border-accent-emerald/20 shadow-glow-emerald" 
           : "text-zinc-500 hover:text-zinc-300 hover:bg-white/5 hover:border-white/5"
       )}
     >
@@ -37,17 +37,17 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
   const navigate = useNavigate();
 
   return (
-    <div className="flex min-h-screen bg-[#050505] text-zinc-100 font-sans selection:bg-[#FF0055]/30 selection:text-white">
+    <div className="flex min-h-screen bg-surface-black text-zinc-100 font-sans selection:bg-danger-neon/30 selection:text-white">
       {/* Sidebar */}
-      <aside className="w-72 border-r border-white/5 flex flex-col bg-[#050505] fixed h-full z-30">
+      <aside className="w-72 border-r border-white/5 flex flex-col bg-surface-black fixed h-full z-30">
         <div className="p-6 border-b border-white/5">
           <div className="flex items-center gap-3 mb-1">
-            <div className="h-8 w-8 rounded-lg bg-[#FF0055]/10 flex items-center justify-center text-[#FF0055] border border-[#FF0055]/20 shadow-[0_0_20px_rgba(255,0,85,0.2)]">
+            <div className="h-8 w-8 rounded-lg bg-danger-neon/10 flex items-center justify-center text-danger-neon border border-danger-neon/20 shadow-glow-danger">
               <ShieldCheck size={18} />
             </div>
             <div>
               <h1 className="font-black text-white text-sm uppercase tracking-tighter">VaultNet</h1>
-              <p className="text-[10px] text-[#FF0055] font-black uppercase tracking-[0.2em]">Risk Ops</p>
+              <p className="text-[10px] text-danger-neon font-black uppercase tracking-[0.2em]">Risk Ops</p>
             </div>
           </div>
         </div>
@@ -88,14 +88,14 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
           />
         </nav>
 
-        <div className="p-4 border-t border-white/5 bg-[#09090b]">
+        <div className="p-4 border-t border-white/5 bg-surface-card">
           <div className="flex items-center gap-3 px-4 py-3 mb-2 rounded-lg bg-black/40 border border-white/5">
              <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]" />
              <span className="text-[10px] font-mono text-zinc-400">SYSTEM: <span className="text-emerald-500">NOMINAL</span></span>
           </div>
           <button 
             onClick={() => navigate('/')}
-            className="flex items-center gap-3 w-full px-4 py-3 rounded-lg text-xs font-bold text-zinc-500 hover:text-[#FF0055] hover:bg-[#FF0055]/10 transition-colors uppercase tracking-wider"
+            className="flex items-center gap-3 w-full px-4 py-3 rounded-lg text-xs font-bold text-zinc-500 hover:text-danger-neon hover:bg-danger-neon/10 transition-colors uppercase tracking-wider"
           >
             <LogOut size={16} /> Encerrar Sessão
           </button>
@@ -104,7 +104,7 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
 
       {/* Main Content */}
       <main className="flex-1 ml-72 flex flex-col min-h-screen">
-        <header className="h-16 border-b border-white/5 bg-[#050505]/80 backdrop-blur-xl px-8 flex items-center justify-between sticky top-0 z-20">
+        <header className="h-16 border-b border-white/5 bg-surface-black/80 backdrop-blur-xl px-8 flex items-center justify-between sticky top-0 z-20">
           <div className="flex items-center gap-4">
             <span className="text-xs font-mono text-zinc-600">Session ID: <span className="text-zinc-300">ADMIN-{Math.random().toString(36).substr(2, 6).toUpperCase()}</span></span>
           </div>

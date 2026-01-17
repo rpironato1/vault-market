@@ -76,13 +76,13 @@ export const WheelSectors = ({ sectors, winningIndex }: WheelSectorsProps) => {
                    A 38 38 0 0 1 ${50 + 38 * Math.cos((Math.PI * (endAngle - 90)) / 180)} ${50 + 38 * Math.sin((Math.PI * (endAngle - 90)) / 180)}`}
               />
               <radialGradient id="jackpotGradient" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" stopColor="#FFD700" stopOpacity="0.8" />
-                <stop offset="100%" stopColor="#FF007F" stopOpacity="0" />
+                <stop offset="0%" stopColor="rgb(255, 215, 0)" stopOpacity="0.8" />
+                <stop offset="100%" stopColor="rgb(255, 0, 127)" stopOpacity="0" />
               </radialGradient>
             </defs>
 
-            <motion.text 
-              fill={isWinner ? "white" : (sector.color === '#121212' ? 'rgba(255,255,255,0.4)' : sector.color)} 
+            <motion.text
+              fill={isWinner ? "white" : (sector.color.includes('18, 18, 18') ? 'rgba(255,255,255,0.4)' : sector.color)} 
               fontSize={isWinner ? "5" : "4"} 
               fontWeight="900" 
               letterSpacing="0.1em"

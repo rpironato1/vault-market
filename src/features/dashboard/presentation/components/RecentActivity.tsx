@@ -12,7 +12,7 @@ const TypeBadge = ({ type }: { type: ActivityItem['type'] }) => {
     'NFT_PURCHASE': "text-blue-400 bg-blue-400/10 border-blue-400/20",
     'GAME_WIN': "text-emerald-400 bg-emerald-400/10 border-emerald-400/20",
     'GAME_LOSS': "text-zinc-500 bg-zinc-500/10 border-zinc-500/20",
-    'WITHDRAWAL': "text-[#FFD700] bg-[#FFD700]/10 border-[#FFD700]/20"
+    'WITHDRAWAL': "text-prestige-gold bg-[#FFD700]/10 border-[#FFD700]/20"
   };
 
   const labels = {
@@ -31,7 +31,7 @@ const TypeBadge = ({ type }: { type: ActivityItem['type'] }) => {
 
 export const RecentActivity = ({ activities, isLoading }: Props) => {
   if (isLoading) {
-    return <div className="h-48 bg-[#121212] rounded-2xl border border-white/5 animate-pulse" />;
+    return <div className="h-48 bg-surface-card rounded-2xl border border-white/5 animate-pulse" />;
   }
 
   if (!activities || activities.length === 0) {
@@ -78,7 +78,7 @@ export const RecentActivity = ({ activities, isLoading }: Props) => {
               <div className={cn(
                 "font-mono font-bold text-sm flex items-center justify-end gap-1",
                 item.amount > 0 ? "text-white" : "text-zinc-500",
-                item.currency === 'USDT' && item.amount > 0 ? "text-[#FFD700]" : "",
+                item.currency === 'USDT' && item.amount > 0 ? "text-prestige-gold" : "",
                 item.currency === 'VAULT' && item.amount > 0 ? "text-emerald-400" : ""
               )}>
                 {item.amount > 0 ? '+' : ''}{item.amount}
