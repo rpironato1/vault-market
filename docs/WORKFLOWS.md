@@ -29,7 +29,7 @@
 ## Workflow de validacao (Definition of Done)
 - `npm run lint`
 - `npm run build`
-- `npx tsc --noEmit` (quando aplicavel)
+- `npm run typecheck`  # Type check rigoroso mandatório não modificar não relaxar
 - MCP Playwright manual nos fluxos alterados
 - Console sem erros/warnings
 

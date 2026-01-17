@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 npm run dev          # Servidor dev (http://localhost:8361)
 npm run build        # Build produção
 npm run lint         # ESLint
-npx tsc --noEmit     # Type check
+npm run typecheck    # Type check rigoroso mandatório não modificar não relaxar
 ```
 
 ### Migrações (quando usar DB real)
