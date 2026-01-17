@@ -8,7 +8,7 @@ export default defineConfig(() => ({
     host: "::",
     port: 8080,
     fs: {
-      allow: [".."], // Permite acesso a arquivos fora do root (se necessário) ou no mesmo nível de src
+      allow: [".."], // Permite servir arquivos de _core, _infrastructure e packages
     },
   },
   plugins: [dyadComponentTagger(), react()],
@@ -17,6 +17,7 @@ export default defineConfig(() => ({
       "@": path.resolve(__dirname, "./src"),
       "@core": path.resolve(__dirname, "./_core"),
       "@infra": path.resolve(__dirname, "./_infrastructure"),
+      "@contracts": path.resolve(__dirname, "./packages/contracts"),
     },
   },
 }));
