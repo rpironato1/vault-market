@@ -1,97 +1,76 @@
-# VaultNet Protocol
+# Vault Market
 
 > **Simulação Econômica Descentralizada & Gamificação de Ativos**
 
-O VaultNet é uma aplicação React de alta fidelidade que simula um protocolo de validação de ativos digitais. O projeto combina estética de finanças corporativas (Enterprise Fintech) com mecânicas de jogos (Loot Boxes, Apostas, Mineração), utilizando uma arquitetura robusta e escalável.
+O Vault Market (anteriormente VaultNet) é uma plataforma de marketplace de NFTs com um sistema de economia interna gamificada. O projeto combina estética "Enterprise Fintech" com mecânicas de jogos provably fair, utilizando uma arquitetura robusta e escalável.
 
-## 🛠 Tech Stack
+## 🏗 Arquitetura & Stack
 
-- **Core:** React 18, TypeScript, Vite.
-- **Estilização:** Tailwind CSS, Tailwind Merge, CLSX.
-- **Animações:** Framer Motion (Orquestração complexa e micro-interações).
-- **Gerenciamento de Estado:** Zustand (Stores globais e persistência).
-- **Roteamento:** React Router DOM v6.
-- **Componentes:** Shadcn/UI (Radix Primitives), Lucide React & Phosphor Icons.
-- **Efeitos:** Canvas Confetti.
+O projeto segue estritamente **Hexagonal Architecture (Ports & Adapters)** com **Self-Contained Systems (SCS)** no frontend e backend modular.
 
-## 📐 Arquitetura do Sistema
+### Backend (`apps/api`)
+- **Runtime:** Cloudflare Workers (Edge)
+- **Framework:** Hono + OpenAPI (Zod)
+- **Persistência:** 
+  - **Hexagonal:** Repositórios intercambiáveis (In-Memory para Dev, Drizzle/Postgres para Prod).
+  - **Database:** Neon (Serverless Postgres).
+  - **Schema:** Drizzle ORM com tipagem financeira estrita (`numeric(20, 6)`).
+- **Contratos:** `packages/contracts` (Zod Schemas compartilhados).
 
-O projeto segue uma abordagem híbrida de **Arquitetura Hexagonal** aplicada ao frontend, organizada via **Self-Contained Systems (SCS)**.
+### Frontend (`src`)
+- **Framework:** React 18 + Vite + TypeScript.
+- **Estilização:** Tailwind CSS (Design System "Sophistication & Trust").
+- **Gerenciamento de Estado:** Zustand.
+- **Comunicação:** API Client tipado via contratos Zod.
+- **Admin:** Dashboard "Risk Ops" completa com monitoramento em tempo real.
 
-### Estrutura de Diretórios
+## 🚀 Funcionalidades Implementadas
 
+### 1. Core Economy
+- **VaultCoins (Utility):** Ledger imutável para créditos de jogo (não compráveis diretamente).
+- **USDT Rewards (Treasury):** Ledger de prêmios com estados (Locked, Available, Paid).
+- **Marketplace:** Compra de NFTs que geram VaultCoins (Asset Acquisition Model).
+
+### 2. Admin / Risk Ops
+- **Dashboard:** Monitoramento em tempo real (Live Feed).
+- **Treasury:** Gestão de saques com aprovação/rejeição e badges de risco.
+- **Users:** Grid de operadores com status de risco e bloqueio.
+
+### 3. Games & Experiences (Frontend)
+- **Mines (Data Sync):** Lógica de campo minado.
+- **Crash (Quantum Link):** Multiplicador exponencial.
+- **Plinko (Gravity Protocol):** Física de partículas.
+- **Wheel (Orbital Pulse):** Roleta diária.
+
+## 📦 Como Rodar
+
+### Instalação
 ```bash
-src/
-├── _core/                  # Entidades e interfaces compartilhadas globalmente
-├── _infrastructure/        # Implementações globais (Stores, API Clients)
-├── components/             # Componentes de UI genéricos (Design System)
-├── features/               # Módulos Funcionais Autocontidos
-│   ├── auth/               # Autenticação (Login, Register, OTP)
-│   ├── games/              # Motores de jogo (Mines, Crash, Plinko, Wheel)
-│   ├── gift-cards/         # Módulo de Gift Cards com lógica de lucro garantido
-│   ├── marketplace/        # Venda de Loot Boxes
-│   └── vault/              # Inventário do usuário
-├── pages/                  # Composições de páginas (Roteamento)
-└── lib/                    # Utilitários puros
-```
-
-### Padrão de Feature (SCS)
-Cada pasta em `src/features/` deve conter:
-1.  **domain/**: Tipos, Entidades e Interfaces (Regras de Negócio Puras).
-2.  **infrastructure/**: Stores (Zustand), Adaptadores e Serviços.
-3.  **components/**: Componentes React específicos da feature.
-
-## 🎨 Design System & UI/UX
-
-O design segue a diretriz **"Sophistication & Trust"**.
-
-### Paleta de Cores
-- **Background:** `#050505` (Deep Black) a `#121212` (Surface).
-- **Primary/Accent:** `#00FF9C` (Emerald Neon) - Usado para sucesso, dinheiro e ações primárias.
-- **Prestige:** `#FFD700` (Gold) - Usado para itens lendários e VIP.
-- **Danger:** `#FF0055` ou `#EF4444` - Usado para erros e estados críticos (Crash).
-
-### Tipografia
-- **Interface:** Sans-serif (Inter/Geist) - Legibilidade.
-- **Dados/Valores:** Monospace - Para saldos, hashes, IDs e multiplicadores. Use `tabular-nums` para evitar saltos visuais.
-
-### Diretrizes de Animação
-Utilize **Framer Motion** para todas as interações.
-- **Transições de Página:** Suaves, sem saltos bruscos.
-- **Micro-interações:** `scale: 0.98` no clique (active).
-- **Easing:** Prefira `[0.15, 0, 0.10, 1]` (Curva "exponencial" técnica) em vez de `spring` ou `bounce`. O sistema deve parecer uma ferramenta financeira precisa, não um brinquedo.
-
-## 🚀 Features Implementadas
-
-1.  **Auth System:**
-    *   Login (Email/Google Mock).
-    *   Registro com validação OTP simulada.
-    *   Arquitetura de Portas/Adaptadores preparada para Neon Auth.
-2.  **Marketplace:**
-    *   Compra de Loot Boxes com tiers (Common a Legendary).
-    *   Animações de abertura imersivas (Near Miss, 3D Spin).
-3.  **Games Center:**
-    *   **Mines:** Lógica de campo minado com multiplicador progressivo.
-    *   **Wheel (Daily Pulse):** Roleta diária com física simulada via SVG.
-    *   **Plinko:** Física de partículas e colisão em Canvas 2D.
-    *   **Crash:** Gráfico SVG em tempo real com curva exponencial.
-4.  **Gift Cards:**
-    *   Sistema de "Lucro Garantido" (Valor do card + Moedas > Preço).
-    *   Integração com inventário.
-
-## 📦 Instalação e Execução
-
-```bash
-# Instalar dependências
 npm install
-
-# Rodar servidor de desenvolvimento
-npm run dev
-
-# Build para produção
-npm run build
 ```
 
-## 🤝 Contribuição
+### Desenvolvimento (Full Stack Simulado)
+O projeto está configurado para rodar com **In-Memory Database** por padrão, permitindo desenvolvimento imediato sem configurar infraestrutura externa.
 
-Ao criar novos componentes, verifique sempre se eles pertencem ao **Design System Global** (`src/components/ui`) ou se são específicos de uma **Feature** (`src/features/*/components`). Não acople lógica de negócio diretamente nos componentes de UI.
+```bash
+# Inicia Frontend + Mock Backend
+npm run dev
+```
+
+### Banco de Dados (Opcional para Dev)
+Para rodar com persistência real (Neon):
+
+1. Configure `DATABASE_URL` no `.env`.
+2. Rode as migrações:
+   ```bash
+   npx drizzle-kit generate
+   npx drizzle-kit migrate
+   ```
+3. Defina `DB_TYPE=postgres` no ambiente do Worker.
+
+## 📚 Documentação Técnica
+
+Consulte a pasta `/docs` para detalhes profundos:
+- **PRD.md:** Regras de negócio e visão do produto.
+- **ARCHITECTURE_BASE.md:** Decisões de design e padrões.
+- **UI/*.md:** Especificações de interface por tela.
