@@ -6,7 +6,7 @@ import path from "path";
 export default defineConfig(() => ({
   server: {
     host: "::",
-    port: 8080,
+    port: 8361, // [REGRESSION-GUARD] Não alterar essa porta sem antes validar com a equipe de infraestrutura
     fs: {
       allow: [".."], // Permite servir arquivos de _core, _infrastructure e packages
     },

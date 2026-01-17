@@ -5,7 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Comandos de Desenvolvimento
 
 ```bash
-npm run dev          # Servidor dev (http://localhost:8080)
+npm run dev          # Servidor dev (http://localhost:8361)
 npm run build        # Build produção
 npm run lint         # ESLint
 npx tsc --noEmit     # Type check
