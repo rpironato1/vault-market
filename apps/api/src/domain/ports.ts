@@ -1,6 +1,7 @@
 import { 
   Product, 
   Order, 
+  CreateOrderDTO, 
   VaultCoinTransactionSchema, 
   WithdrawalRequest 
 } from '../../../packages/contracts';

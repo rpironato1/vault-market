@@ -48,7 +48,7 @@ export const useGiftCardStore = create<GiftCardState>((set) => ({
       totalValue: parseFloat(totalRewardValue.toFixed(2))
     };
 
-    useStore.setState((state: any) => ({
+    useStore.setState(state => ({
       engagementTokens: state.engagementTokens + (coinValue * 10)
     }));
 

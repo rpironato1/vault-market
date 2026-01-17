@@ -1,56 +1,34 @@
 import { OpenAPIHono, createRoute } from '@hono/zod-openapi';
-import { CatalogResponseSchema, ProductSchema } from '../../../packages/contracts/catalog';
+import { CatalogResponseSchema } from '../../../packages/contracts/catalog';
 import { RepositoryFactory } from '../factory';
 
 export const catalogRoute = new OpenAPIHono();
 
-const listCatalogRoute = createRoute({
+const getCatalogRoute = createRoute({
   method: 'get',
   path: '/',
-  summary: 'Listar catálogo',
+  summary: 'Listar catálogo de NFTs',
   responses: {
     200: {
-      content: { 'application/json': { schema: CatalogResponseSchema } },
-      description: 'Catálogo recuperado',
+      content: {
+        'application/json': {
+          schema: CatalogResponseSchema,
+        },
+      },
+      description: 'Lista de produtos',
     },
   },
 });
 
-const getProductRoute = createRoute({
-  method: 'get',
-  path: '/:id',
-  summary: 'Obter produto por ID',
-  responses: {
-    200: {
-      content: { 'application/json': { schema: ProductSchema } },
-      description: 'Detalhes do produto',
-    },
-    404: {
-      description: 'Produto não encontrado',
-    }
-  },
-});
-
-catalogRoute.openapi(listCatalogRoute, async (c) => {
+catalogRoute.openapi(getCatalogRoute, async (c) => {
+  // O controlador não sabe se é banco ou memória. Ele apenas pede ao repositório.
   const repo = RepositoryFactory.catalog;
   const result = await repo.findAll(1, 20);
-  
+
   return c.json({
     products: result.items,
     total: result.total,
     page: 1,
     totalPages: Math.ceil(result.total / 20)
   }, 200);
-});
-
-catalogRoute.openapi(getProductRoute, async (c) => {
-  const { id } = c.req.param();
-  const repo = RepositoryFactory.catalog;
-  const product = await repo.findById(id);
-  
-  if (!product) {
-    return c.json({ error: 'Not found' } as any, 404);
-  }
-  
-  return c.json(product, 200);
 });

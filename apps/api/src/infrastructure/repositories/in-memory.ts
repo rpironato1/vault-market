@@ -80,5 +80,5 @@ export class InMemoryRewardsRepo implements IRewardsRepository {
     const w = DB.withdrawals.get(id);
     if (w) { w.status = status; if(tx) w.txHash = tx; }
   }
-  async getAvailableBalance(_userId: string) { return 1000; } // Mock fixo
+  async getAvailableBalance(userId: string) { return 1000; } // Mock fixo
 }
